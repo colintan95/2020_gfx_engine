@@ -7,6 +7,7 @@ set(GLFW_INCLUDE_DIRS "third_party/glfw-3.3.2/include")
 set(GLM_INCLUDE_DIRS "third_party/glm-0.9.9.8/include")
 set(GLEW_STATIC_LIBS "third_party/glew-2.1.0/lib/Release/x64")
 set(GLFW_STATIC_LIBS "third_party/glfw-3.3.2/lib-vc2019")
+set(GLEW_SHARED_LIBS "third_party/glew-2.1.0/bin/Release/x64")
 
 # Find OpenGL
 find_package(OpenGL)
@@ -30,3 +31,10 @@ target_link_libraries(gfx_engine PUBLIC "${CMAKE_SOURCE_DIR}/${GLEW_STATIC_LIBS}
 target_link_libraries(gfx_engine PUBLIC "${CMAKE_SOURCE_DIR}/${GLFW_STATIC_LIBS}/glfw3.lib")
 target_link_libraries(gfx_engine PUBLIC OpenGL::GL)
 target_link_libraries(gfx_engine PUBLIC OpenGL::GLU)
+
+# TODO(colintan): Find a more graceful way to do this - maybe create a function
+# that does what's needed to get GLEW working
+add_custom_command(TARGET gfx_engine PRE_BUILD COMMAND ${CMAKE_COMMAND}
+    -E copy "${CMAKE_SOURCE_DIR}/${GLEW_SHARED_LIBS}/glew32.dll" 
+    $<TARGET_FILE_DIR:gfx_engine>)
+    
