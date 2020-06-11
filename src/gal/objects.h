@@ -52,7 +52,6 @@ public:
   static std::optional<GALVertexDesc> Create();
 
   struct Entry {
-    GALVertexBuffer buffer;
     uint8_t index;
     uint8_t size;
     // TODO(colintan): Add more fields
@@ -66,7 +65,10 @@ public:
     return entries[i];
   }
 
-  
+  const Entry& Index(int i) const {
+    assert(i == 0);
+    return entries[i];
+  }
 };
 
 } // namespace

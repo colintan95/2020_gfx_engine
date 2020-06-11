@@ -65,23 +65,22 @@ Application::Application() {
   if (!pipeline_opt.has_value()) {
     std::cerr << "Failed to create GAL pipeline." << std::endl;
     std::exit(EXIT_FAILURE);
-  }
-
-  auto pos_vert_buf_opt = gal::GALVertexBuffer::Create(reinterpret_cast<uint8_t*>(kVertices.data()),
-                                                       kVertices.size() * sizeof(glm::vec3));
-  if (!pos_vert_buf_opt.has_value()) {
-    std::cerr << "Failed to create GAL vertex buffer." << std::endl;
-    std::exit(EXIT_FAILURE);
-  }                                                 
+  }                                    
 
   auto vert_desc_opt = gal::GALVertexDesc::Create();
   if (!vert_desc_opt.has_value()) {
     std::cerr << "Failed to create GAL vertex description." << std::endl;
     std::exit(EXIT_FAILURE);
   }
-  vert_desc_opt->Index(0).buffer = *pos_vert_buf_opt;
   vert_desc_opt->Index(0).index = 0;
   vert_desc_opt->Index(0).size = 3;
+
+  auto pos_vert_buf_opt = gal::GALVertexBuffer::Create(reinterpret_cast<uint8_t*>(kVertices.data()),
+                                                       kVertices.size() * sizeof(glm::vec3));
+  if (!pos_vert_buf_opt.has_value()) {
+    std::cerr << "Failed to create GAL vertex buffer." << std::endl;
+    std::exit(EXIT_FAILURE);
+  }             
 
   gal::command::SetViewport set_viewport;
   set_viewport.x = 0;
@@ -94,13 +93,14 @@ Application::Application() {
   set_pipeline.pipeline = *pipeline_opt;
   command_buffer_.Add(set_pipeline);
 
-  gal::command::SetVertexBuffer set_vert_buf;
-  set_vert_buf.buffer = *pos_vert_buf_opt;
-  command_buffer_.Add(set_vert_buf);
-
   gal::command::SetVertexDesc set_vert_desc;
   set_vert_desc.vert_desc = *vert_desc_opt;
   command_buffer_.Add(set_vert_desc);
+
+  gal::command::SetVertexBuffer set_vert_buf;
+  set_vert_buf.buffer = *pos_vert_buf_opt;
+  set_vert_buf.vert_idx = 0;
+  command_buffer_.Add(set_vert_buf);
 
   gal::command::ClearScreen clear_screen;
   clear_screen.color = glm::vec4{0.f, 0.f, 0.f, 1.f};
