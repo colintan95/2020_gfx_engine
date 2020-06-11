@@ -1,5 +1,6 @@
 #include "model_loader.h"
 
+#include <cassert>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -26,10 +27,15 @@ std::shared_ptr<Model> ModelLoader::LoadModel(const std::string& path) {
   for (const tinyobj::shape_t& shape : shapes) {
     const tinyobj::mesh_t& mesh = shape.mesh;
 
+    // TODO(colintan): Support num_face_vertices > 3
+    for (int num_face : mesh.num_face_vertices) {
+      assert(num_face == 3);
+    }
+
     for (tinyobj::index_t vert_indices : mesh.indices) {
-      int pos_idx = vert_indices.vertex_index;
-      int norm_idx = vert_indices.normal_index;
-      int tex_idx = vert_indices.texcoord_index;
+      int pos_idx = vert_indices.vertex_index * 3;
+      int norm_idx = vert_indices.normal_index * 3;
+      int tex_idx = vert_indices.texcoord_index * 2;
 
       const std::vector<tinyobj::real_t>& positions = attrib.vertices;
       const std::vector<tinyobj::real_t>& normals = attrib.normals;

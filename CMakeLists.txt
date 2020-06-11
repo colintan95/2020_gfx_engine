@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 project(gfx_engine)
 
-set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_CXX_STANDARD 17)
 
 # OpenGL
@@ -19,7 +18,7 @@ add_library(glew STATIC
 target_include_directories(glew PUBLIC 
     "${CMAKE_SOURCE_DIR}/third_party/glew-2.1.0/include")
 # GLEW_STATIC is defined for both compilation and interface compilation as we need it when
-# we generate the library and when other targets include its header
+# we generate the library and when other files include its header
 # TODO(colintan): Consider using the dll lib instead
 set_target_properties(glew PROPERTIES COMPILE_OPTIONS "-DGLEW_STATIC")
 set_target_properties(glew PROPERTIES INTERFACE_COMPILE_OPTIONS "-DGLEW_STATIC")
