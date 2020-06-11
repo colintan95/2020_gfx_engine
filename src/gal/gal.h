@@ -5,9 +5,4 @@
 #include "commands.h"
 #include "objects.h"
 
-namespace gal {
-
-
-} // namespace
-
 #endif // GAL_GAL_H_

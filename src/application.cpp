@@ -57,7 +57,7 @@ Application::Application() {
 
   auto frag_shader_opt = gal::GALShader::Create(gal::ShaderType::Fragment, kFragShaderSrc);
   if (!frag_shader_opt.has_value()) {
-    std::cerr << "Failed to create GAL vertex shader." << std::endl;
+    std::cerr << "Failed to create GAL fragment shader." << std::endl;
     std::exit(EXIT_FAILURE);
   }
 

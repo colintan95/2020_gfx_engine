@@ -17,34 +17,40 @@ enum class ShaderType {
   Fragment
 };
 
-// TODO(colintan): Make the constructor private. Consider making the fields private.
-struct GALShader {
-  GALId id;
-  ShaderType type;
+// TODO(colintan): Make this an abstract base class
+class GALObject {
+public:
+  GALObject();
+  virtual ~GALObject() {};
 
-  static std::optional<GALShader> Create(ShaderType type, const std::string& source);
+  GALId GetGALId() const { return gal_id_; }
+
+private:
+  GALId gal_id_;
 };
 
-struct GALPipeline {
-  // TODO(colintan): Change this to |gal_id|
-  GALId id;
+class GALShader : public GALObject {
+public:
+  static std::optional<GALShader> Create(ShaderType type, const std::string& source);
 
+private:
+  ShaderType type;
+};
+
+class GALPipeline : public GALObject {
+public:
   static std::optional<GALPipeline> Create(GALShader vert_shader, GALShader frag_shader);
 };
 
-struct GALUniformBuffer {
-  GALId id;
-
-  static std::optional<GALUniformBuffer> Create();
-};
-
-struct GALVertexBuffer {
-   GALId id;
-
+class GALVertexBuffer : public GALObject {
+public:
   static std::optional<GALVertexBuffer> Create(uint8_t* data, size_t num_bytes);
 };
 
-struct GALVertexDesc {
+class GALVertexDesc : public GALObject{
+public:
+  static std::optional<GALVertexDesc> Create();
+
   struct Entry {
     GALVertexBuffer buffer;
     uint8_t index;
@@ -52,7 +58,6 @@ struct GALVertexDesc {
     // TODO(colintan): Add more fields
   };
 
-  GALId id;
   // TODO(colintan): Support more entries
   std::array<Entry, 1> entries;
 
@@ -61,7 +66,7 @@ struct GALVertexDesc {
     return entries[i];
   }
 
-  static std::optional<GALVertexDesc> Create();
+  
 };
 
 } // namespace
