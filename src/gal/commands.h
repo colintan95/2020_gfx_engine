@@ -8,45 +8,25 @@
 namespace gal {
 namespace command {
 
-enum class CommandType {
-  Invalid,
-  SetPipeline,
-  SetVertexDesc,
-  SetUniformBuffer,
-  SetVertexBuffer,
-  DrawTriangles
-};
 
-struct GALCommand {
-  virtual CommandType Type() const = 0;
-}; 
-
-struct SetPipeline : public GALCommand {
+struct SetPipeline {
   GALPipeline pipeline;
-
-  CommandType Type() const final { return CommandType::SetPipeline; }
 };
 
-struct SetVertexDesc : public GALCommand {
+struct SetVertexDesc {
   GALVertexDesc vert_desc;
-
-  CommandType Type() const final { return CommandType::SetVertexDesc; }
 };
 
-struct SetUniformBuffer : public GALCommand {
-  CommandType Type() const final { return CommandType::SetUniformBuffer; }
+struct SetUniformBuffer {
+
 };
 
-struct SetVertexBuffer : public GALCommand {
+struct SetVertexBuffer {
   GALVertexBuffer buffer;
-
-  CommandType Type() const final { return CommandType::SetVertexBuffer; }
 };
 
-struct DrawTriangles : public GALCommand {
+struct DrawTriangles {
   uint32_t num_triangles;
-
-  CommandType Type() const final { return CommandType::DrawTriangles; }
 };
 
 using CommandUnion = 

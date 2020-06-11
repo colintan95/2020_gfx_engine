@@ -11,15 +11,13 @@ class GALCommandBuffer {
 public:
   template<typename T>
   void Add(T command) {
-    AddInternal(command.Type(), command);
+    Entry entry;
+    entry.cmd = command;
+    entries_.push_back(entry);
   }
-
-private:
-  void AddInternal(command::CommandType type, command::CommandUnion cmd);
 
 public:
   struct Entry {
-    command::CommandType type;
     command::CommandUnion cmd;
 
     template<typename T>
