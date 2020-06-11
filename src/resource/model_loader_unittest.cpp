@@ -32,6 +32,8 @@ TEST(ModelLoaderTest, LoadSquare) {
     {0.f, 0.f}, {0.f, 1.f}, {1.f, 0.f}, {1.f, 0.f}, {0.f, 1.f}, {1.f, 1.f}
   };
   EXPECT_EQ(model->texcoords, texcoords);
+
+  EXPECT_EQ(model->faces, 2);
 }
 
 } // namespace resource

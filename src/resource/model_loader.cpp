@@ -32,6 +32,8 @@ std::shared_ptr<Model> ModelLoader::LoadModel(const std::string& path) {
       assert(num_face == 3);
     }
 
+    model->faces = mesh.num_face_vertices.size();
+
     for (tinyobj::index_t vert_indices : mesh.indices) {
       int pos_idx = vert_indices.vertex_index * 3;
       int norm_idx = vert_indices.normal_index * 3;
@@ -41,14 +43,14 @@ std::shared_ptr<Model> ModelLoader::LoadModel(const std::string& path) {
       const std::vector<tinyobj::real_t>& normals = attrib.normals;
       const std::vector<tinyobj::real_t>& texcoords = attrib.texcoords;
 
-      model->positions.push_back(glm::vec3(positions[pos_idx + 0], 
+      model->positions.push_back(glm::vec3{positions[pos_idx + 0], 
                                            positions[pos_idx + 1],
-                                           positions[pos_idx + 2]));
-      model->normals.push_back(glm::vec3(normals[norm_idx + 0],
+                                           positions[pos_idx + 2]});
+      model->normals.push_back(glm::vec3{normals[norm_idx + 0],
                                          normals[norm_idx + 1],
-                                         normals[norm_idx + 2]));
-      model->texcoords.push_back(glm::vec2(texcoords[tex_idx + 0],
-                                           texcoords[tex_idx + 1]));                                   
+                                         normals[norm_idx + 2]});
+      model->texcoords.push_back(glm::vec2{texcoords[tex_idx + 0],
+                                           texcoords[tex_idx + 1]});                                   
     }
   }
 

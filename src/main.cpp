@@ -7,18 +7,25 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform.hpp>
 
+#include <cassert>
 #include <memory>
 #include "resource/model_loader.h"
 
 constexpr int kScreenWidth = 1920;
 constexpr int kScreenHeight = 1080;
 
+constexpr float kAspectRatio = 
+    static_cast<float>(kScreenWidth) / static_cast<float>(kScreenHeight);
+
 const char kVertShaderSrc[] =
     "#version 330 core\n"
     "layout(location = 0) in vec3 vert_pos;\n"
+    "uniform mat4 mvp_mat;\n"
     "void main() {\n"
-    "  gl_Position = vec4(vert_pos, 1.0);\n"
+    "  gl_Position = mvp_mat * vec4(vert_pos, 1.0);\n"
     "}";
 const char kFragShaderSrc[] =
     "#version 330 core\n"
@@ -92,6 +99,7 @@ int main() {
 
   resource::ModelLoader model_loader;
   std::shared_ptr<resource::Model> model = model_loader.LoadModel("assets/cube/cube.obj");
+  assert(model != nullptr);
 
   glViewport(0, 0, kScreenWidth, kScreenHeight);
 
@@ -123,20 +131,27 @@ int main() {
 
   glUseProgram(program);
 
+  glm::mat4 model_mat{1.f};
+  glm::mat4 view_mat = glm::translate(glm::mat4{1.f}, glm::vec3{0.f, 0.f, -10.f});
+  view_mat = glm::rotate(view_mat, glm::radians(15.f), glm::vec3{0.f, 1.f, 0.f});
+
+  glm::mat4 proj_mat = glm::perspective(glm::radians(30.f), kAspectRatio, 0.1f, 1000.f);
+  glm::mat4 mvp_mat = proj_mat * view_mat * model_mat;
+
+  GLint mvp_mat_loc = glGetUniformLocation(program, "mvp_mat");
+  glUniformMatrix4fv(mvp_mat_loc, 1, GL_FALSE, glm::value_ptr(mvp_mat));
+
   GLuint vao;
   glCreateVertexArrays(1, &vao);
   glBindVertexArray(vao);
 
-  glm::vec3 vertices[] = {
-    {-0.5f, -0.5f, 0.f}, {0.f, 0.5f, 0.f}, {0.5f, -0.5f, 0.f}
-  };
-
   GLuint vbo;
   glCreateBuffers(1, &vbo);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), glm::value_ptr(vertices[0]), GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, model->positions.size() * sizeof(glm::vec3), 
+               glm::value_ptr(model->positions[0]), GL_STATIC_DRAW);
 
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), nullptr);
   glEnableVertexAttribArray(0);
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -147,7 +162,7 @@ int main() {
     glClear(GL_COLOR_BUFFER_BIT);
 
     glBindVertexArray(vao);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawArrays(GL_TRIANGLES, 0, model->faces * 3);
 
     glBindVertexArray(0);
 
