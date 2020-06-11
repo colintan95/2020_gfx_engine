@@ -1,19 +1,17 @@
-#include <iostream>
-#include <cstdlib>
-#include <string>
-
 #include <GL/glew.h>
-
-#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
 
 #include <cassert>
+#include <cstdlib>
 #include <memory>
+#include <iostream>
+#include <string>
 #include "resource/image_loader.h"
 #include "resource/model_loader.h"
+#include "window/window.h"
 
 constexpr int kScreenWidth = 1920;
 constexpr int kScreenHeight = 1080;
@@ -75,33 +73,14 @@ bool CheckProgramSuccess(int program) {
 }
 
 int main() {
-  glfwSetErrorCallback([](int err_code, const char* desc) {
-    std::cerr << "Error Code " << err_code << ": " << desc << std::endl;
-  });
+  std::unique_ptr<window::Window> window;
 
-  if (!glfwInit()) {
+  try {
+    window = std::make_unique<window::Window>(kScreenWidth, kScreenHeight, "Hello World");
+  } catch (window::WindowInitException& e) {
+    std::cerr << e.what() << std::endl;
     std::exit(EXIT_FAILURE);
-  }
-
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-  GLFWwindow* window = glfwCreateWindow(kScreenWidth, kScreenHeight, "Hello World",  nullptr, 
-                                        nullptr);
-  if (window == nullptr) {
-    std::cerr << "Failed to create GLFW window." << std::endl;
-    glfwTerminate();
-    std::exit(EXIT_FAILURE);
-  }
-
-  glfwMakeContextCurrent(window);
-
-  glewExperimental = true;
-  if (glewInit() != GLEW_OK) {
-    std::cerr << "Failed to initialize GLEW." << std::endl;
-    return false;
-  }
+  } 
 
   glEnable(GL_TEXTURE_2D);
   glEnable(GL_DEPTH_TEST);
@@ -203,7 +182,7 @@ int main() {
 
   glViewport(0, 0, kScreenWidth, kScreenHeight);
 
-  while (!glfwWindowShouldClose(window)) {
+  while (!window->ShouldClose()) {
     glClearColor(0.f, 0.f, 0.f, 1.f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -212,8 +191,7 @@ int main() {
 
     glBindVertexArray(0);
 
-    glfwSwapBuffers(window);
-    glfwPollEvents();
+    window->Tick();
   }
 
   glDeleteTextures(1, &texture);
@@ -221,9 +199,6 @@ int main() {
   glDeleteBuffers(1, &pos_vbo);
   glDeleteVertexArrays(1, &vao);
   glDeleteProgram(program);
-
-  glfwDestroyWindow(window);
-  glfwTerminate();
 
   return 0;
 }

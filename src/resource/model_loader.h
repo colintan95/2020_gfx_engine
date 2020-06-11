@@ -22,6 +22,6 @@ public:
   std::shared_ptr<Model> LoadModel(const std::string& path);
 };
 
-} // namespace resource
+} // namespace
 
 #endif // RESOURCE_MODEL_LOADER_H_

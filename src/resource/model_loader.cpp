@@ -57,4 +57,4 @@ std::shared_ptr<Model> ModelLoader::LoadModel(const std::string& path) {
   return model;
 }
 
-} // namespace resource
+} // namespace

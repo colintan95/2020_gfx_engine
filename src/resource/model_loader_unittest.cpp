@@ -36,4 +36,4 @@ TEST(ModelLoaderTest, LoadSquare) {
   EXPECT_EQ(model->faces, 2);
 }
 
-} // namespace resource
+} // namespace
