@@ -2,15 +2,13 @@
 #include <cstdlib>
 #include <string>
 
-#define GLEW_STATIC
 #include <GL/glew.h>
-#include <GLFW/glfw3.h>
 
+#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #include <memory>
-
 #include "resource/model_loader.h"
 
 constexpr int kScreenWidth = 1920;

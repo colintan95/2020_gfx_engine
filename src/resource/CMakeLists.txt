@@ -1,8 +1,8 @@
-add_library(resource STATIC
+add_library(resource
     "model_loader.cpp"
     "model_loader.h")
 target_link_libraries(resource PUBLIC glm)
-target_link_libraries(resource PUBLIC tinyobjloader)
+target_link_libraries(resource PRIVATE tinyobjloader)
 
 add_executable(resource_tests
     "model_loader_unittest.cpp")

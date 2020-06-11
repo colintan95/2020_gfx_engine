@@ -4,7 +4,7 @@ add_executable(gfx_engine main.cpp)
 target_link_libraries(gfx_engine PRIVATE resource)
 
 # External libs
-target_link_libraries(gfx_engine PUBLIC glm)
+target_link_libraries(gfx_engine PRIVATE glm)
 target_link_libraries(gfx_engine PRIVATE glfw)
 target_link_libraries(gfx_engine PRIVATE glew)
 target_link_libraries(gfx_engine PRIVATE OpenGL::GL)
