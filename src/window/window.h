@@ -17,6 +17,7 @@ class WindowImpl;
 
 class Window {
 public:
+  // TODO(colintan): Consider moving initialization into its own Init() function
   Window(int width, int height, const std::string& title);
   ~Window();
 

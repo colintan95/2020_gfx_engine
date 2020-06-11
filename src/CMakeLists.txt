@@ -4,6 +4,7 @@ add_executable(gfx_engine
     "main.cpp")
 
 # Internal modules
+target_link_libraries(gfx_engine PRIVATE gal)
 target_link_libraries(gfx_engine PRIVATE resource)
 target_link_libraries(gfx_engine PRIVATE window)
 
@@ -20,5 +21,6 @@ add_custom_command(TARGET gfx_engine POST_BUILD COMMAND ${CMAKE_COMMAND}
     -E create_symlink "${CMAKE_SOURCE_DIR}/assets" 
     "$<TARGET_FILE_DIR:gfx_engine>/assets")
 
+add_subdirectory(gal)
 add_subdirectory(resource)
 add_subdirectory(window)
