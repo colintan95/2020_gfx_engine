@@ -1,8 +1,11 @@
 add_library(resource
+    "image_loader.cpp"
+    "image_loader.h"
     "model_loader.cpp"
     "model_loader.h")
 target_link_libraries(resource PUBLIC glm)
 target_link_libraries(resource PRIVATE tinyobjloader)
+target_link_libraries(resource PRIVATE stb)
 
 add_executable(resource_tests
     "model_loader_unittest.cpp")
