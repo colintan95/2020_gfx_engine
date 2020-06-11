@@ -7,5 +7,6 @@ add_library(gal
     "objects.h"
     "gal.cpp"
     "gal.h")
+target_link_libraries(gal PUBLIC glm)
 
 add_subdirectory(internal)

@@ -166,7 +166,22 @@ std::optional<GALVertexBuffer> CreateVertexBuffer(uint8_t* data, size_t num_byte
 void ExecuteCommandBuffer(const GALCommandBuffer& cmd_buf) {
   for (const GALCommandBuffer::Entry& entry : cmd_buf.entries_) {
 
-    if (entry.IsType<command::SetPipeline>()) {
+    if (entry.IsType<command::SetViewport>()) {
+      auto cmd = entry.AsType<command::SetViewport>();
+      glViewport(cmd.x, cmd.y, cmd.width, cmd.height);
+    
+    } else if (entry.IsType<command::ClearScreen>()) {
+      auto cmd = entry.AsType<command::ClearScreen>();
+
+      glClearColor(cmd.color.r, cmd.color.g, cmd.color.b, cmd.color.a);
+      if (cmd.clear_color) {
+        glClear(GL_COLOR_BUFFER_BIT);
+      }
+      if (cmd.clear_depth) {
+        glClear(GL_DEPTH_BUFFER_BIT);
+      }
+
+    } else if (entry.IsType<command::SetPipeline>()) {
       auto cmd = entry.AsType<command::SetPipeline>();
 
       if (std::optional<GLuint> gl_id_opt = ConvertGALId(cmd.pipeline.id)) {

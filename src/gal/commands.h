@@ -1,6 +1,8 @@
 #ifndef GAL_COMMANDS_H_
 #define GAL_COMMANDS_H_
 
+#include <glm/glm.hpp>
+
 #include <cstdint>
 #include <variant>
 #include "objects.h"
@@ -8,6 +10,19 @@
 namespace gal {
 namespace command {
 
+struct SetViewport {
+  uint16_t x;
+  uint16_t y;
+  uint16_t width;
+  uint16_t height;
+};
+
+// TODO(colintan): May need to be removed - vulkan may not support
+struct ClearScreen {
+  glm::vec4 color;
+  bool clear_color = false;
+  bool clear_depth = false;
+};
 
 struct SetPipeline {
   GALPipeline pipeline;
@@ -31,6 +46,8 @@ struct DrawTriangles {
 
 using CommandUnion = 
     std::variant<
+        SetViewport,
+        ClearScreen,
         SetPipeline,
         SetVertexDesc,
         SetUniformBuffer,

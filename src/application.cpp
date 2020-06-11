@@ -1,6 +1,5 @@
 #include "application.h"
 
-#include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -84,6 +83,13 @@ Application::Application() {
   vert_desc_opt->Index(0).index = 0;
   vert_desc_opt->Index(0).size = 3;
 
+  gal::command::SetViewport set_viewport;
+  set_viewport.x = 0;
+  set_viewport.y = 0;
+  set_viewport.width = kScreenWidth;
+  set_viewport.height = kScreenHeight;
+  command_buffer_.Add(set_viewport);
+
   gal::command::SetPipeline set_pipeline;
   set_pipeline.pipeline = *pipeline_opt;
   command_buffer_.Add(set_pipeline);
@@ -96,11 +102,14 @@ Application::Application() {
   set_vert_desc.vert_desc = *vert_desc_opt;
   command_buffer_.Add(set_vert_desc);
 
+  gal::command::ClearScreen clear_screen;
+  clear_screen.color = glm::vec4{0.f, 0.f, 0.f, 1.f};
+  clear_screen.clear_color = true;
+  command_buffer_.Add(clear_screen);
+
   gal::command::DrawTriangles draw_triangles;
   draw_triangles.num_triangles = 1;
   command_buffer_.Add(draw_triangles);
-
-  glViewport(0, 0, kScreenWidth, kScreenHeight);
 }
 
 Application::~Application() {
@@ -110,8 +119,6 @@ Application::~Application() {
 void Application::RunLoop() {
   gal::ExecuteCommandBuffer(command_buffer_);
   while (!window_->ShouldClose()) {
-    glClearColor(0.f, 0.f, 0.f, 1.f);
-    glClear(GL_COLOR_BUFFER_BIT);
 
     gal::ExecuteCommandBuffer(command_buffer_);
    

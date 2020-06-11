@@ -11,9 +11,6 @@ target_link_libraries(gfx_engine PRIVATE window)
 # External libs
 target_link_libraries(gfx_engine PRIVATE glm)
 target_link_libraries(gfx_engine PRIVATE glfw)
-target_link_libraries(gfx_engine PRIVATE glew)
-target_link_libraries(gfx_engine PRIVATE OpenGL::GL)
-target_link_libraries(gfx_engine PRIVATE OpenGL::GLU)
 
 # TODO(colintan): Don't do this
 # In the binary folder, create a symlink to the assets folder
