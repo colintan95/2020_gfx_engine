@@ -1,4 +1,7 @@
-add_executable(gfx_engine main.cpp)
+add_executable(gfx_engine 
+    "application.cpp"
+    "application.h"
+    "main.cpp")
 
 # Internal modules
 target_link_libraries(gfx_engine PRIVATE resource)
