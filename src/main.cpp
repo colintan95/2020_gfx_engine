@@ -2,11 +2,16 @@
 #include <cstdlib>
 #include <string>
 
+#define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+#include <memory>
+
+#include "resource/model_loader.h"
 
 constexpr int kScreenWidth = 1920;
 constexpr int kScreenHeight = 1080;
@@ -87,6 +92,9 @@ int main() {
     return false;
   }
 
+  resource::ModelLoader model_loader;
+  std::shared_ptr<resource::Model> model = model_loader.LoadModel("assets/cube/cube.obj");
+
   glViewport(0, 0, kScreenWidth, kScreenHeight);
 
   GLuint vert_shader = glCreateShader(GL_VERTEX_SHADER);
@@ -143,7 +151,6 @@ int main() {
     glBindVertexArray(vao);
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
     glfwSwapBuffers(window);
