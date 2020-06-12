@@ -44,7 +44,7 @@ const char kFragShaderSrc[] =
     "  out_color = texture(tex_sampler, frag_texcoord);\n"
     "}";
 
-Application::Application(platform::Window* window) {
+Application::Application(window::Window* window) {
   window_ = window;
   window_->CreateWindow(kScreenWidth, kScreenHeight, "Hello World");
 

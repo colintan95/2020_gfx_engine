@@ -4,8 +4,8 @@ namespace platform {
 
 Platform::Platform() {
   impl_ = CreatePlatformImpl();
-  input_manager_ = std::make_unique<platform::InputManager>();
-  window_ = std::make_unique<platform::Window>();
+  input_manager_ = std::make_unique<input::InputManager>();
+  window_ = std::make_unique<window::Window>();
 }
 
 Platform::~Platform() {

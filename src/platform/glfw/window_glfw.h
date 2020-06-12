@@ -8,7 +8,7 @@
 #include <string>
 #include "platform/window.h"
 
-namespace platform {
+namespace window {
 
 class WindowImplGLFW : public WindowImpl {
 public:

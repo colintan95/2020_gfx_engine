@@ -7,13 +7,13 @@
 
 class Application {
 public:
-  Application(platform::Window* window);
+  Application(window::Window* window);
   ~Application();
 
   void RunLoop();
 
 private:
-  platform::Window* window_;
+  window::Window* window_;
   gal::GALCommandBuffer command_buffer_;
 };
 

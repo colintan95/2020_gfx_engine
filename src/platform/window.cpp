@@ -1,6 +1,6 @@
 #include "platform/window.h"
 
-namespace platform {
+namespace window {
 
 Window::Window()  {
   impl_ = CreateWindowImpl();

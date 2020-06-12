@@ -23,12 +23,12 @@ public:
   bool Initialize();
   void Cleanup();
 
-  platform::Window* GetWindow() { return window_.get(); }
+  window::Window* GetWindow() { return window_.get(); }
 
 private:
   std::unique_ptr<PlatformImpl> impl_;
-  std::unique_ptr<Window> window_;
-  std::unique_ptr<InputManager> input_manager_;
+  std::unique_ptr<window::Window> window_;
+  std::unique_ptr<input::InputManager> input_manager_;
 };
 
 // Defined in platform-specific code

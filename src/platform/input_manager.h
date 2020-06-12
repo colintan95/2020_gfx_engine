@@ -3,15 +3,60 @@
 
 #include <memory>
 
-namespace platform {
+namespace input {
 
 namespace internal {
 class InputSource;
 } // namespace
 
-enum class Keyboard {
-  KeyW
+enum class KeyInput {
+  None,
+  KeyW,
+  Key1
 };
+
+enum class KeyAction {
+  Down,
+  Up
+};
+
+enum class MouseInput {
+  None,
+  ButtonLeft,
+  ButtonRight
+};
+
+enum class MouseAction {
+  Click,
+  DoubleClick,
+  Down, 
+  Up
+};
+
+
+namespace event {
+
+struct Keyboard {
+  KeyInput key;
+  KeyAction action;
+  KeyInput modifier_key;
+};
+
+struct MouseButton {
+  MouseInput button;
+  MouseAction action;
+  double mouse_x;
+  double mouse_y;
+};
+
+struct MouseWheel {
+  double wheel_delta;
+  double mouse_x;
+  double mouse_y;
+  KeyInput modifier_key;
+};
+
+} // namespace
 
 class InputManager {
 public:

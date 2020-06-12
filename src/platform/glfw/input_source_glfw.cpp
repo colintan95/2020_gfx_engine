@@ -2,7 +2,7 @@
 
 #include <memory>
 
-namespace platform {
+namespace input {
 namespace internal {
 
 std::unique_ptr<InputSource> CreateInputSource() {

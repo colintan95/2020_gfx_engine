@@ -3,7 +3,7 @@
 
 #include <memory>
 
-namespace platform {
+namespace input {
 namespace internal {
 
 class InputSource {

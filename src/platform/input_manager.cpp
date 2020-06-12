@@ -2,7 +2,7 @@
 
 #include "platform/input_source.h"
 
-namespace platform {
+namespace input {
 
 InputManager::InputManager() {
   input_source_ = internal::CreateInputSource();

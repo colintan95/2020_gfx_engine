@@ -3,7 +3,7 @@
 
 #include "platform/input_source.h"
 
-namespace platform {
+namespace input {
 namespace internal {
 
 class InputSourceGLFW : public InputSource {

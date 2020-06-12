@@ -4,7 +4,7 @@
 #include <memory>
 #include <string>
 
-namespace platform {
+namespace window {
 
 class WindowImpl {
 public:

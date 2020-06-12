@@ -5,7 +5,7 @@
 
 #include <memory>
 
-namespace platform {
+namespace window {
 
 bool WindowImplGLFW::Initialize() {
   // glfwSetErrorCallback([](int err_code, const char* desc) {
