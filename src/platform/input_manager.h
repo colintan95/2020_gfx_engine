@@ -2,6 +2,14 @@
 #define INPUT_INPUT_MANAGER_H_
 
 #include <memory>
+#include <variant>
+#include <vector>
+
+namespace platform {
+namespace internal {
+class ImplCreator;
+} // namespace
+} // namespace
 
 namespace input {
 
@@ -33,7 +41,6 @@ enum class MouseAction {
   Up
 };
 
-
 namespace event {
 
 struct Keyboard {
@@ -56,11 +63,14 @@ struct MouseWheel {
   KeyInput modifier_key;
 };
 
+using Event = 
+    std::variant<Keyboard, MouseButton, MouseWheel>;
+
 } // namespace
 
 class InputManager {
 public:
-  InputManager();
+  InputManager(platform::internal::ImplCreator* impl_creator);
   ~InputManager();
 
   bool Initialize();
@@ -69,7 +79,12 @@ public:
   void Tick();
 
 private:
+  // For the input source class
+  void AddEvent(event::Event event);
+
+private:
   std::unique_ptr<internal::InputSource> input_source_;
+  std::vector<event::Event> pending_events_;
 };
 
 } // namespace

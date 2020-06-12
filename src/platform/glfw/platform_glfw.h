@@ -10,6 +10,8 @@ public:
   bool Initialize() final;
   void Cleanup() final;
 
+  void Tick() final;
+
 private:
   bool initialized_ = false;
 };

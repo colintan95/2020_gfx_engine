@@ -1,9 +1,11 @@
 #include "platform/window.h"
 
+#include "platform/impl_creator.h"
+
 namespace window {
 
-Window::Window()  {
-  impl_ = CreateWindowImpl();
+Window::Window(platform::internal::ImplCreator* impl_creator)  {
+  impl_ = impl_creator->CreateWindowImpl();
 }
 
 Window::~Window() {

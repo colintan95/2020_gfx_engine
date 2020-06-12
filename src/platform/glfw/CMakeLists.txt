@@ -1,5 +1,7 @@
 target_sources(platform
   PRIVATE
+    "impl_creator_glfw.cpp"
+    "impl_creator_glfw.h"
     "input_source_glfw.cpp"
     "input_source_glfw.h"
     "platform_glfw.cpp"

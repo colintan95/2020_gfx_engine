@@ -11,9 +11,10 @@
 #include <memory>
 #include <vector>
 #include "gal/gal.h"
+#include "platform/window.h"
+#include "platform/input_manager.h"
 #include "resource/image_loader.h"
 #include "resource/model_loader.h"
-#include "platform/window.h"
 
 constexpr int kScreenWidth = 1920;
 constexpr int kScreenHeight = 1080;
@@ -44,8 +45,9 @@ const char kFragShaderSrc[] =
     "  out_color = texture(tex_sampler, frag_texcoord);\n"
     "}";
 
-Application::Application(window::Window* window) {
-  window_ = window;
+Application::Application(platform::Platform* platform) {
+  platform_ = platform;
+  window_ = platform->GetWindow();
   window_->CreateWindow(kScreenWidth, kScreenHeight, "Hello World");
 
   resource::ModelLoader model_loader;
@@ -201,6 +203,7 @@ void Application::RunLoop() {
 
     gal::ExecuteCommandBuffer(command_buffer_);
    
+    platform_->Tick();
     window_->Tick();
   }
 }

@@ -21,8 +21,8 @@ void PlatformImplGLFW::Cleanup() {
   }
 }
 
-std::unique_ptr<PlatformImpl> CreatePlatformImpl() {
-  return std::make_unique<PlatformImplGLFW>();
+void PlatformImplGLFW::Tick() {
+  
 }
 
 } // namespace

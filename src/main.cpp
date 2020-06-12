@@ -5,7 +5,7 @@ int main() {
   platform::Platform platform;
   platform.Initialize();
 
-  std::unique_ptr<Application> app = std::make_unique<Application>(platform.GetWindow());
+  std::unique_ptr<Application> app = std::make_unique<Application>(&platform);
   app->RunLoop();
   app.reset();
 

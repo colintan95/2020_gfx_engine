@@ -4,6 +4,12 @@
 #include <memory>
 #include <string>
 
+namespace platform {
+namespace internal {
+class ImplCreator;
+} // namespace
+} // namespace
+
 namespace window {
 
 class WindowImpl {
@@ -22,7 +28,7 @@ public:
 
 class Window {
 public:
-  Window();
+  Window(platform::internal::ImplCreator* impl_creator);
   ~Window();
 
   bool Initialize() { return impl_->Initialize(); }
@@ -39,9 +45,6 @@ public:
 private:
   std::unique_ptr<WindowImpl> impl_;
 };
-
-// Defined in platform-specific file
-std::unique_ptr<WindowImpl> CreateWindowImpl();
 
 } // namespace
 

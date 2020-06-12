@@ -1,12 +1,22 @@
 #include "platform/glfw/input_source_glfw.h"
 
+#include <GLFW/glfw3.h>
+
 #include <memory>
 
 namespace input {
 namespace internal {
 
-std::unique_ptr<InputSource> CreateInputSource() {
-  return std::make_unique<InputSourceGLFW>();
+bool InputSourceGLFW::Initialize() {
+  return true;
+}
+
+void InputSourceGLFW::Cleanup() {
+
+}
+
+void InputSourceGLFW::Tick() {
+  glfwPollEvents();
 }
 
 } // namespace

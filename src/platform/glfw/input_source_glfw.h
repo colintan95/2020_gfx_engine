@@ -4,11 +4,17 @@
 #include "platform/input_source.h"
 
 namespace input {
+
+class InputManager;
+
 namespace internal {
 
 class InputSourceGLFW : public InputSource {
 public:
+  bool Initialize() final;
+  void Cleanup() final;
 
+  void Tick() final;
 };
 
 } // namespace

@@ -53,15 +53,10 @@ bool WindowImplGLFW::CreateWindow(int width, int height, const std::string& titl
 
 void WindowImplGLFW::Tick() {
   glfwSwapBuffers(glfw_window_);
-  glfwPollEvents();
 }
 
 bool WindowImplGLFW::ShouldClose() {
   return glfwWindowShouldClose(glfw_window_);
-}
-
-std::unique_ptr<WindowImpl> CreateWindowImpl() {
-  return std::make_unique<WindowImplGLFW>();
 }
 
 } // namespace
