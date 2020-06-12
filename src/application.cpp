@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <memory>
+#include <vector>
 #include "gal/gal.h"
 #include "resource/image_loader.h"
 #include "resource/model_loader.h"
@@ -72,8 +73,11 @@ Application::Application() {
     std::cerr << "Failed to create GAL vertex description." << std::endl;
     std::exit(EXIT_FAILURE);
   }
-  vert_desc_opt->Index(0).index = 0;
-  vert_desc_opt->Index(0).size = 3;
+  vert_desc_opt->entries = std::make_shared<std::vector<gal::GALVertexDesc::Entry>>();
+  auto& entries = *(vert_desc_opt->entries);
+  entries.push_back({});
+  entries[0].index = 0;
+  entries[0].size = 3;
 
   auto pos_vert_buf_opt = gal::GALVertexBuffer::Create(reinterpret_cast<uint8_t*>(kVertices.data()),
                                                        kVertices.size() * sizeof(glm::vec3));

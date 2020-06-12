@@ -4,8 +4,10 @@
 #include <array>
 #include <cassert>
 #include <cstdint>
+#include <memory>
 #include <optional>
 #include <string>
+#include <vector>
 
 namespace gal {
 
@@ -57,18 +59,7 @@ public:
     // TODO(colintan): Add more fields
   };
 
-  // TODO(colintan): Support more entries
-  std::array<Entry, 1> entries;
-
-  Entry& Index(int i) {
-    assert(i == 0);
-    return entries[i];
-  }
-
-  const Entry& Index(int i) const {
-    assert(i == 0);
-    return entries[i];
-  }
+  std::shared_ptr<std::vector<Entry>> entries;
 };
 
 } // namespace

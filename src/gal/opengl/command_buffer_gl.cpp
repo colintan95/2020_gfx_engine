@@ -2,6 +2,7 @@
 
 #include <GL/glew.h>
 
+#include <unordered_map>
 #include "../commands.h"
 #include "../objects.h"
 #include "../gal.h"
@@ -13,7 +14,8 @@ namespace {
 
 // Temporary variables that lasts through the lifetime of the command buffer
 struct TempState {
-  const GALVertexDesc* vert_desc = nullptr;
+  // Maps a vertex index to its vertex description information
+  std::unordered_map<uint8_t, GALVertexDesc::Entry> vert_desc_map;
 };
 
 void SetVertexDesc(const command::SetVertexDesc& cmd, TempState& tmp_state) {
@@ -21,22 +23,24 @@ void SetVertexDesc(const command::SetVertexDesc& cmd, TempState& tmp_state) {
     GLuint vao = *gl_id_opt;
     glBindVertexArray(vao);
 
-    tmp_state.vert_desc = &cmd.vert_desc;
+    for (const GALVertexDesc::Entry& entry : *(cmd.vert_desc.entries)) {
+      tmp_state.vert_desc_map[entry.index] = entry;
+    }
   }
 }
 
 void SetVertexBuffer(const command::SetVertexBuffer& cmd, TempState& tmp_state) {
-  if (tmp_state.vert_desc == nullptr) {
-    // TODO(colintan): Log an error
-    return;
-  }
-  
   if (std::optional<GLuint> gl_id_opt = opengl::ConvertGALId(cmd.buffer.GetGALId())) {
     GLuint vbo = *gl_id_opt;
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-    // TODO(colintan): Support multiple entries
-    const GALVertexDesc::Entry& entry = tmp_state.vert_desc->Index(0);
+    auto desc_map_it = tmp_state.vert_desc_map.find(cmd.vert_idx);
+    if (desc_map_it == tmp_state.vert_desc_map.end()) {
+      // TODO(colintan): Log error
+      return;
+    }
+    const GALVertexDesc::Entry& entry = desc_map_it->second;
+
     glVertexAttribPointer(entry.index, entry.size, GL_FLOAT, GL_FALSE, 
                           entry.size * sizeof(float), nullptr);
     glEnableVertexAttribArray(entry.index);
