@@ -1,7 +1,7 @@
-#include "id_converter.h"
+#include "gal/opengl/id_converter.h"
 
 #include <unordered_map>
-#include "../objects.h"
+#include "gal/objects.h"
 
 namespace gal {
 namespace opengl {

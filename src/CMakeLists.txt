@@ -8,12 +8,15 @@ add_executable(gfx_engine
 # Internal modules
 target_link_libraries(gfx_engine PRIVATE gal)
 target_link_libraries(gfx_engine PRIVATE input)
+target_link_libraries(gfx_engine PRIVATE logging)
 target_link_libraries(gfx_engine PRIVATE resource)
 target_link_libraries(gfx_engine PRIVATE window)
 
 # External libs
 target_link_libraries(gfx_engine PRIVATE glm)
 target_link_libraries(gfx_engine PRIVATE glfw)
+
+target_include_directories(gfx_engine PRIVATE "${SRC_INCLUDE_DIRS}")
 
 # TODO(colintan): Don't do this
 # In the binary folder, create a symlink to the assets folder
@@ -23,5 +26,6 @@ add_custom_command(TARGET gfx_engine POST_BUILD COMMAND ${CMAKE_COMMAND}
 
 add_subdirectory(gal)
 add_subdirectory(input)
+add_subdirectory(logging)
 add_subdirectory(resource)
 add_subdirectory(window)

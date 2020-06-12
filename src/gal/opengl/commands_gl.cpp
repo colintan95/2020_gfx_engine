@@ -1,12 +1,11 @@
-#include "../commands.h"
+#include "gal/commands.h"
 
 #include <GL/glew.h>
 
 #include <iostream>
 #include <unordered_map>
-#include "../objects.h"
-#include "../gal.h"
-#include "id_converter.h"
+#include "gal/objects.h"
+#include "gal/opengl/id_converter.h"
 
 namespace gal {
 

@@ -4,7 +4,7 @@
 #include <GL/glew.h>
 
 #include <optional>
-#include "../objects.h"
+#include "gal/objects.h"
 
 namespace gal {
 namespace opengl {

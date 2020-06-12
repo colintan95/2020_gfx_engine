@@ -1,9 +1,9 @@
-#include "../objects.h"
+#include "gal/objects.h"
 
 #include <GL/glew.h>
 
 #include <iostream>
-#include "id_converter.h"
+#include "gal/opengl/id_converter.h"
 
 namespace gal {
 

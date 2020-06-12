@@ -5,7 +5,7 @@
 
 #include <cstdint>
 #include <variant>
-#include "objects.h"
+#include "gal/objects.h"
 
 namespace gal {
   

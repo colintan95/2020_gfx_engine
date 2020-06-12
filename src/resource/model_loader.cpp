@@ -1,4 +1,4 @@
-#include "model_loader.h"
+#include "resource/model_loader.h"
 
 #include <cassert>
 #include <iostream>

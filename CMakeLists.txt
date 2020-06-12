@@ -51,4 +51,6 @@ set(GTEST_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/third_party/googletest/googletest/in
 
 enable_testing()
 
+set(SRC_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
+
 add_subdirectory(src)

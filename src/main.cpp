@@ -6,9 +6,7 @@ int main() {
   systems.InitSystems();
 
   std::unique_ptr<Application> app = std::make_unique<Application>(systems.GetWindow());
-
   app->RunLoop();
-
   app.reset();
 
   systems.DestroySystems();

@@ -1,5 +1,5 @@
-#include "../window.h"
-#include "window_glfw.h"
+#include "window/window.h"
+#include "window/glfw/window_glfw.h"
 
 #include <GL/glew.h>
 
