@@ -19,6 +19,11 @@ enum class ShaderType {
   Fragment
 };
 
+enum class BufferType {
+  Vertex,
+  Uniform
+};
+
 // TODO(colintan): Make this an abstract base class
 class GALObject {
 public:
@@ -31,6 +36,7 @@ private:
   GALId gal_id_;
 };
 
+// TODO(colintan): Deal with destruction of graphics API objects
 class GALShader : public GALObject {
 public:
   static std::optional<GALShader> Create(ShaderType type, const std::string& source);
@@ -60,6 +66,20 @@ public:
   };
 
   std::shared_ptr<std::vector<Entry>> entries;
+};
+
+class GALBuffer : public GALObject {
+public:
+  static std::optional<GALBuffer> Create(BufferType type, uint8_t* data, size_t size);
+
+  // bool Update(uint8_t* data, size_t start_idx, size_t update_size);
+
+  BufferType GetType() { return type_; }
+  size_t GetSize() { return size_; }
+
+private:
+  BufferType type_;
+  size_t size_;
 };
 
 } // namespace

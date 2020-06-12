@@ -122,4 +122,40 @@ std::optional<GALVertexDesc> GALVertexDesc::Create() {
   return result;
 }
 
+std::optional<GALBuffer> GALBuffer::Create(BufferType type, uint8_t* data, size_t size) {
+  GLuint gl_buf;
+  glCreateBuffers(1, &gl_buf);
+  
+  GLuint buf_target;
+  switch (type) {
+  case BufferType::Vertex:
+    buf_target = GL_ARRAY_BUFFER;
+    break;
+  case BufferType::Uniform:
+    buf_target = GL_UNIFORM_BUFFER;
+    break;
+  default:
+    return std::nullopt;
+  }
+
+  glBindBuffer(buf_target, gl_buf);
+  glBufferData(buf_target, size, data, GL_STATIC_DRAW);
+  glBindBuffer(buf_target, 0);
+    
+  GALBuffer result;
+  opengl::AddGALId(result.GetGALId(), gl_buf);
+  result.type_ = type;
+  result.size_ = size;
+
+  return result;
+}
+
+// bool GALBuffer::Update(uint8_t* data, size_t start_idx, size_t update_size) {
+//   if ((start_idx + update_size) > size_) {
+//     return false;
+//   }
+  
+//   // TODO(colintan): Implement
+// }
+
 } // namespace

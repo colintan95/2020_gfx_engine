@@ -2,6 +2,7 @@
 
 #include <GL/glew.h>
 
+#include <iostream>
 #include <unordered_map>
 #include "../commands.h"
 #include "../objects.h"
@@ -17,6 +18,12 @@ struct TempState {
   // Maps a vertex index to its vertex description information
   std::unordered_map<uint8_t, GALVertexDesc::Entry> vert_desc_map;
 };
+
+void SetUniformBuffer(const command::SetUniformBuffer& cmd) {
+  if (std::optional<GLuint> gl_buf_opt = opengl::ConvertGALId(cmd.buffer.GetGALId())) {
+    glBindBufferBase(GL_UNIFORM_BUFFER, cmd.idx, *gl_buf_opt);
+  }
+}
 
 void SetVertexDesc(const command::SetVertexDesc& cmd, TempState& tmp_state) {
   if (std::optional<GLuint> gl_id_opt = opengl::ConvertGALId(cmd.vert_desc.GetGALId())) {
@@ -72,9 +79,11 @@ void ExecuteCommandBuffer(const GALCommandBuffer& cmd_buf) {
     } else if (entry.IsType<command::SetPipeline>()) {
       auto cmd = entry.AsType<command::SetPipeline>();
 
-      if (std::optional<GLuint> gl_id_opt = opengl::ConvertGALId(cmd.pipeline.GetGALId())) {
-        glUseProgram(*gl_id_opt);
+      if (std::optional<GLuint> gl_program_opt = opengl::ConvertGALId(cmd.pipeline.GetGALId())) {
+        glUseProgram(*gl_program_opt);
       }
+    } else if (entry.IsType<command::SetUniformBuffer>()) {
+      SetUniformBuffer(entry.AsType<command::SetUniformBuffer>());
 
     } else if (entry.IsType<command::SetVertexDesc>()) {
       SetVertexDesc(entry.AsType<command::SetVertexDesc>(), tmp_state);

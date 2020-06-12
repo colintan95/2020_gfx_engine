@@ -33,7 +33,8 @@ struct SetVertexDesc {
 };
 
 struct SetUniformBuffer {
-
+  GALBuffer buffer;
+  uint8_t idx; // Equivalent of opengl bindings
 };
 
 struct SetVertexBuffer {
