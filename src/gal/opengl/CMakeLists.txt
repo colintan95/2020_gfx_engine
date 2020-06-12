@@ -1,6 +1,6 @@
 target_sources(gal
   PRIVATE
-    "command_buffer_gl.cpp"
+    "commands_gl.cpp"
     "id_converter.cpp"
     "id_converter.h"
     "objects_gl.cpp")

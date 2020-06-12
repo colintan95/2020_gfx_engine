@@ -1,10 +1,9 @@
-#include "../command_buffer.h"
+#include "../commands.h"
 
 #include <GL/glew.h>
 
 #include <iostream>
 #include <unordered_map>
-#include "../commands.h"
 #include "../objects.h"
 #include "../gal.h"
 #include "id_converter.h"

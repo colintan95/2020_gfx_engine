@@ -1,9 +1,8 @@
 add_library(gal
-    "command_buffer.h"
     "commands.h"
+    "gal.h"
     "objects.cpp"
-    "objects.h"
-    "gal.h")
+    "objects.h")
 target_link_libraries(gal PUBLIC glm)
 
 add_subdirectory(opengl)
