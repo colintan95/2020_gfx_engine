@@ -82,6 +82,11 @@ private:
   size_t size_;
 };
 
+// class GALTexture : public GALObject {
+// public:
+//   static std::optional<GALTexture> Create();
+// }
+
 } // namespace
 
 #endif // GAL_OBJECTS_H_

@@ -1,6 +1,8 @@
 #include "window.h"
 #include "window_impl.h"
 
+#include <GL/glew.h>
+
 #include <memory>
 
 namespace window {
@@ -32,6 +34,11 @@ WindowImpl::WindowImpl(int width, int height, const std::string& title) {
   if (glewInit() != GLEW_OK) {
     throw WindowInitException("WindowInitException: Failed to init GLEW.");
   }
+
+  // TODO(colintan): Do this somewhere else
+  glEnable(GL_TEXTURE_2D);
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_CULL_FACE);
 
   initialized_ = true;
 }
