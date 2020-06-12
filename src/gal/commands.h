@@ -32,6 +32,11 @@ struct SetVertexDesc {
   GALVertexDesc vert_desc;
 };
 
+struct SetTextureSampler {
+  GALTextureSampler sampler;
+  uint8_t idx;
+};
+
 struct SetUniformBuffer {
   GALBuffer buffer;
   uint8_t idx; // Equivalent of opengl bindings
@@ -52,6 +57,7 @@ using CommandUnion =
         ClearScreen,
         SetPipeline,
         SetVertexDesc,
+        SetTextureSampler,
         SetUniformBuffer,
         SetVertexBuffer,
         DrawTriangles>;

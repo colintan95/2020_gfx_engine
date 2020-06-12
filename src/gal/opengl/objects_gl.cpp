@@ -158,4 +158,59 @@ std::optional<GALBuffer> GALBuffer::Create(BufferType type, uint8_t* data, size_
 //   // TODO(colintan): Implement
 // }
 
+std::optional<GALTexture> GALTexture::Create(TextureType type, TextureFormat format,
+                                             uint16_t width, uint16_t height, uint8_t* data) {
+  GLuint gl_tex;
+  glGenTextures(1, &gl_tex);
+
+  if (type == TextureType::Texture2D && format == TextureFormat::RGB) {
+    glBindTexture(GL_TEXTURE_2D, gl_tex);
+
+    // TODO(colintan): Expose these as parameters to user
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+  } else {
+    return std::nullopt;
+  }
+
+  GALTexture result;
+  opengl::AddGALId(result.GetGALId(), gl_tex);
+  result.type_ = type;
+  result.format_ = format;
+  result.width_ = width;
+  result.height_ = height;
+  
+  return result;
+}
+
+std::optional<GALTextureSampler> GALTextureSampler::Create(const GALTexture& texture) {
+  // TODO(colintan): Replace this with something better
+  static GLuint unit_counter = 0;
+
+  std::optional<GLuint> gl_tex_opt = opengl::ConvertGALId(texture.GetGALId());
+  if (!gl_tex_opt.has_value()) {
+    return std::nullopt;
+  }
+
+  ++unit_counter;
+  GLuint gl_tex_unit = unit_counter;
+  glActiveTexture(GL_TEXTURE0 + gl_tex_unit);
+  if (texture.GetType() == TextureType::Texture2D) {
+    glBindTexture(GL_TEXTURE_2D, *gl_tex_opt);
+  } else {
+    return std::nullopt;
+  }
+
+  GALTextureSampler result;
+  opengl::AddGALId(result.GetGALId(), gl_tex_unit);
+  result.type_ = texture.GetType();
+  result.texture_gal_id_ = texture.GetGALId();
+
+  return result;
+}
+
 } // namespace

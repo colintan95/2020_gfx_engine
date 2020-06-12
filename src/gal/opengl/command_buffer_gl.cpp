@@ -19,6 +19,14 @@ struct TempState {
   std::unordered_map<uint8_t, GALVertexDesc::Entry> vert_desc_map;
 };
 
+void SetTextureSampler(const command::SetTextureSampler& cmd) {
+  std::optional<GLuint> gl_sampler_opt = opengl::ConvertGALId(cmd.sampler.GetGALId());
+  if (!gl_sampler_opt.has_value()) {
+    return;
+  }
+  glUniform1i(cmd.idx, *gl_sampler_opt);
+}
+
 void SetUniformBuffer(const command::SetUniformBuffer& cmd) {
   if (std::optional<GLuint> gl_buf_opt = opengl::ConvertGALId(cmd.buffer.GetGALId())) {
     glBindBufferBase(GL_UNIFORM_BUFFER, cmd.idx, *gl_buf_opt);
@@ -82,6 +90,9 @@ void ExecuteCommandBuffer(const GALCommandBuffer& cmd_buf) {
       if (std::optional<GLuint> gl_program_opt = opengl::ConvertGALId(cmd.pipeline.GetGALId())) {
         glUseProgram(*gl_program_opt);
       }
+    } else if (entry.IsType<command::SetTextureSampler>()) {
+      SetTextureSampler(entry.AsType<command::SetTextureSampler>());
+
     } else if (entry.IsType<command::SetUniformBuffer>()) {
       SetUniformBuffer(entry.AsType<command::SetUniformBuffer>());
 

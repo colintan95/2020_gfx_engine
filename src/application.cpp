@@ -41,7 +41,7 @@ const char kFragShaderSrc[] =
     "out vec4 out_color;\n"
     "layout(location = 1) uniform sampler2D tex_sampler;\n"
     "void main() {\n"
-    "  out_color = vec4(frag_texcoord.x, frag_texcoord.y, 0.0, 1.0);\n"
+    "  out_color = texture(tex_sampler, frag_texcoord);\n"
     "}";
 
 Application::Application() {
@@ -78,13 +78,11 @@ Application::Application() {
     std::cerr << "Failed to create GAL vertex shader." << std::endl;
     std::exit(EXIT_FAILURE);
   }
-
   auto frag_shader_opt = gal::GALShader::Create(gal::ShaderType::Fragment, kFragShaderSrc);
   if (!frag_shader_opt.has_value()) {
     std::cerr << "Failed to create GAL fragment shader." << std::endl;
     std::exit(EXIT_FAILURE);
   }
-
   auto pipeline_opt = gal::GALPipeline::Create(*vert_shader_opt, *frag_shader_opt);
   if (!pipeline_opt.has_value()) {
     std::cerr << "Failed to create GAL pipeline." << std::endl;
@@ -119,6 +117,24 @@ Application::Application() {
   set_uniform_buf.buffer = *uniform_buf_opt;
   set_uniform_buf.idx = 0;
   command_buffer_.Add(set_uniform_buf);
+
+  auto texture_opt = gal::GALTexture::Create(gal::TextureType::Texture2D, gal::TextureFormat::RGB,
+                                             image->width, image->height, image->pixels.data());
+  if (!texture_opt.has_value()) {
+    std::cerr << "Failed to create GAL texture." << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+
+  auto tex_sampler_opt = gal::GALTextureSampler::Create(*texture_opt);
+  if (!tex_sampler_opt.has_value()) {
+    std::cerr << "Failed to create GAL texture sampler." << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+
+  gal::command::SetTextureSampler set_tex_sampler;
+  set_tex_sampler.sampler = *tex_sampler_opt;
+  set_tex_sampler.idx = 1;
+  command_buffer_.Add(set_tex_sampler);
 
   // uniform_data.view_mat = glm::translate(glm::mat4{1.f}, glm::vec3{0.f, 0.f, -10.f}) *
   //     glm::rotate(glm::mat4{1.f}, glm::radians(-15.f), glm::vec3{0.f, 1.f, 0.f});

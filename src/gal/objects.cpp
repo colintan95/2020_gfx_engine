@@ -15,7 +15,7 @@ GALId GenerateGALId() {
   return static_cast<GALId>(counter);
 }
 
-}//
+} // namespace
 
 GALObject::GALObject() {
   gal_id_ = GenerateGALId();

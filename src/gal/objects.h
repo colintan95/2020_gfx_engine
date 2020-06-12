@@ -82,10 +82,39 @@ private:
   size_t size_;
 };
 
-// class GALTexture : public GALObject {
-// public:
-//   static std::optional<GALTexture> Create();
-// }
+enum class TextureType {
+  Texture2D,
+  Texture3D
+};
+
+enum class TextureFormat {
+  Invalid,
+  RGB,
+  RGBA
+};
+
+class GALTexture : public GALObject {
+public:
+  static std::optional<GALTexture> Create(TextureType type, TextureFormat format,
+                                          uint16_t width, uint16_t height, uint8_t* data);
+
+  TextureType GetType() const { return type_; }
+
+private:
+  TextureType type_;
+  TextureFormat format_;
+  uint16_t width_;
+  uint16_t height_;
+};
+
+class GALTextureSampler : public GALObject {
+public:
+  static std::optional<GALTextureSampler> Create(const GALTexture& texture);
+
+private:
+  TextureType type_;
+  GALId texture_gal_id_;
+};
 
 } // namespace
 
