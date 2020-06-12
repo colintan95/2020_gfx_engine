@@ -13,7 +13,7 @@
 #include "gal/gal.h"
 #include "resource/image_loader.h"
 #include "resource/model_loader.h"
-#include "window/window.h"
+#include "platform/window.h"
 
 constexpr int kScreenWidth = 1920;
 constexpr int kScreenHeight = 1080;
@@ -44,7 +44,7 @@ const char kFragShaderSrc[] =
     "  out_color = texture(tex_sampler, frag_texcoord);\n"
     "}";
 
-Application::Application(window::Window* window) {
+Application::Application(platform::Window* window) {
   window_ = window;
   window_->Initialize(kScreenWidth, kScreenHeight, "Hello World");
 

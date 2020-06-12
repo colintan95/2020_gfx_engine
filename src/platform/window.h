@@ -1,20 +1,17 @@
-#ifndef WINDOW_WINDOW_H_
-#define WINDOW_WINDOW_H_
+#ifndef PLATFORM_WINDOW_H_
+#define PLATFORM_WINDOW_H_
 
 #include <memory>
 #include <string>
 
-namespace input {
-class InputManager;
-} // namespace
-
-namespace window {
+namespace platform {
 
 class WindowImpl;
+class InputManager;
 
 class Window {
 public:
-  Window(input::InputManager* input_manager);
+  Window(InputManager* input_manager);
   ~Window();
 
   bool Initialize(int width, int height, const std::string& title);
@@ -26,9 +23,9 @@ public:
 
 private:
   std::unique_ptr<WindowImpl> impl_;
-  input::InputManager* input_manager_;
+  InputManager* input_manager_;
 };
 
 } // namespace
 
-#endif // WINDOW_WINDOW_H_
+#endif // PLATFORM_WINDOW_H_

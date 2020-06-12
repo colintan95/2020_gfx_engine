@@ -1,7 +1,7 @@
 #ifndef INPUT_INPUT_MANAGER_H_
 #define INPUT_INPUT_MANAGER_H_
 
-namespace input {
+namespace platform {
 
 enum class Keyboard {
   KeyW

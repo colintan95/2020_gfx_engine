@@ -1,11 +1,11 @@
-#include "window/window.h"
-#include "window/glfw/window_glfw.h"
+#include "platform/window.h"
+#include "platform/glfw/window_glfw.h"
 
 #include <GL/glew.h>
 
 #include <memory>
 
-namespace window {
+namespace platform {
 
 bool WindowImpl::Initialize(int width, int height, const std::string& title) {
   // glfwSetErrorCallback([](int err_code, const char* desc) {
@@ -62,7 +62,7 @@ bool WindowImpl::ShouldClose() {
 }
 
 // TODO(colintan): Figure out not to duplicate the code to set input_manager_
-Window::Window(input::InputManager* input_manager)  {
+Window::Window(InputManager* input_manager)  {
   impl_ = std::make_unique<WindowImpl>();
   input_manager_ = input_manager;
 }

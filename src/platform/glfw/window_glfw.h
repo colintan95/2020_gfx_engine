@@ -1,5 +1,5 @@
-#ifndef WINDOW_GLFW_WINDOW_GLFW_H_
-#define WINDOW_GLFW_WINDOW_GLFW_H_
+#ifndef PLATFORM_GLFW_WINDOW_GLFW_H_
+#define PLATFORM_GLFW_WINDOW_GLFW_H_
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -7,7 +7,7 @@
 #include <memory>
 #include <string>
 
-namespace window {
+namespace platform {
 
 class WindowImpl {
 public:
@@ -29,4 +29,4 @@ private:
 
 } // namespace
 
-#endif // WINDOW_GLFW_WINDOW_GLFW_H_
+#endif // PLATFORM_GLFW_WINDOW_GLFW_H_
