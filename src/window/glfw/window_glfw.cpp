@@ -7,12 +7,12 @@
 
 namespace window {
 
-WindowImpl::WindowImpl(int width, int height, const std::string& title) {
+bool WindowImpl::Initialize(int width, int height, const std::string& title) {
   // glfwSetErrorCallback([](int err_code, const char* desc) {
   //   std::cerr << "Error Code " << err_code << ": " << desc << std::endl;
   // });
   if (!glfwInit()) {
-    throw WindowInitException("WindowInitException: Failed to init GLFW.");
+    return false;
   }
 
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -21,7 +21,7 @@ WindowImpl::WindowImpl(int width, int height, const std::string& title) {
 
   glfw_window_ = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
   if (glfw_window_ == nullptr) {
-    throw WindowInitException("WindowInitException: Failed to create GLFW window.");
+    return false;
   }
   width_ = width;
   height_ = height;
@@ -32,7 +32,7 @@ WindowImpl::WindowImpl(int width, int height, const std::string& title) {
   // TODO(colintan): Is glewExperiment needed?
   glewExperimental = true;
   if (glewInit() != GLEW_OK) {
-    throw WindowInitException("WindowInitException: Failed to init GLEW.");
+    return false;
   }
 
   // TODO(colintan): Do this somewhere else
@@ -41,9 +41,11 @@ WindowImpl::WindowImpl(int width, int height, const std::string& title) {
   glEnable(GL_CULL_FACE);
 
   initialized_ = true;
+  
+  return true;
 }
 
-WindowImpl::~WindowImpl() {
+void WindowImpl::Destroy() {
   if (initialized_) {
     glfwDestroyWindow(glfw_window_);
     glfwTerminate();
@@ -59,12 +61,23 @@ bool WindowImpl::ShouldClose() {
   return glfwWindowShouldClose(glfw_window_);
 }
 
-Window::Window(int width, int height, const std::string& title) {
-  impl_ = std::make_unique<WindowImpl>(width, height, title);
+// TODO(colintan): Figure out not to duplicate the code to set input_manager_
+Window::Window(input::InputManager* input_manager)  {
+  impl_ = std::make_unique<WindowImpl>();
+  input_manager_ = input_manager;
 }
 
 Window::~Window() {
+  input_manager_ = nullptr;
   impl_.reset();
+}
+
+bool Window::Initialize(int width, int height, const std::string& title) {
+  return impl_->Initialize(width, height, title);
+}
+
+void Window::Destroy() {
+  impl_->Destroy();
 }
 
 void Window::Tick() {

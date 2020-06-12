@@ -2,24 +2,23 @@
 #define WINDOW_WINDOW_H_
 
 #include <memory>
-#include <stdexcept>
 #include <string>
 
-namespace window {
+namespace input {
+class InputManager;
+} // namespace
 
-// TODO(colintan): Append WindowInitException at beginning
-class WindowInitException : public std::runtime_error {
-public:
-  WindowInitException(const std::string& msg) : std::runtime_error(msg) {}
-}; 
+namespace window {
 
 class WindowImpl;
 
 class Window {
 public:
-  // TODO(colintan): Consider moving initialization into its own Init() function
-  Window(int width, int height, const std::string& title);
+  Window(input::InputManager* input_manager);
   ~Window();
+
+  bool Initialize(int width, int height, const std::string& title);
+  void Destroy();
 
   void Tick();
 
@@ -27,6 +26,7 @@ public:
 
 private:
   std::unique_ptr<WindowImpl> impl_;
+  input::InputManager* input_manager_;
 };
 
 } // namespace

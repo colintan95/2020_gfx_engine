@@ -44,13 +44,9 @@ const char kFragShaderSrc[] =
     "  out_color = texture(tex_sampler, frag_texcoord);\n"
     "}";
 
-Application::Application() {
-  try {
-    window_ = std::make_unique<window::Window>(kScreenWidth, kScreenHeight, "Hello World");
-  } catch (window::WindowInitException& e) {
-    // TODO(colintan): Do something else
-    std::exit(EXIT_FAILURE);
-  } 
+Application::Application(window::Window* window) {
+  window_ = window;
+  window_->Initialize(kScreenWidth, kScreenHeight, "Hello World");
 
   resource::ModelLoader model_loader;
   std::shared_ptr<resource::Model> model = model_loader.LoadModel("assets/cube/cube.obj");
@@ -198,7 +194,7 @@ Application::Application() {
 }
 
 Application::~Application() {
-  window_.reset();
+  window_->Destroy();
 }
 
 void Application::RunLoop() {

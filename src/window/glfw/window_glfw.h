@@ -11,8 +11,8 @@ namespace window {
 
 class WindowImpl {
 public:
-  WindowImpl(int width, int height, const std::string& title);
-  ~WindowImpl();
+  bool Initialize(int width, int height, const std::string& title);
+  void Destroy();
 
   void Tick();
 
