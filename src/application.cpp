@@ -46,7 +46,7 @@ const char kFragShaderSrc[] =
 
 Application::Application(platform::Window* window) {
   window_ = window;
-  window_->Initialize(kScreenWidth, kScreenHeight, "Hello World");
+  window_->CreateWindow(kScreenWidth, kScreenHeight, "Hello World");
 
   resource::ModelLoader model_loader;
   std::shared_ptr<resource::Model> model = model_loader.LoadModel("assets/cube/cube.obj");
@@ -193,9 +193,7 @@ Application::Application(platform::Window* window) {
   command_buffer_.Add(draw_triangles);
 }
 
-Application::~Application() {
-  window_->Destroy();
-}
+Application::~Application() {}
 
 void Application::RunLoop() {
   gal::ExecuteCommandBuffer(command_buffer_);

@@ -6,20 +6,23 @@
 
 #include <memory>
 #include <string>
+#include "platform/window.h"
 
 namespace platform {
 
-class WindowImpl {
+class WindowImplGLFW : public WindowImpl {
 public:
-  bool Initialize(int width, int height, const std::string& title);
-  void Destroy();
+  bool Initialize() final;
+  void Cleanup() final;
 
-  void Tick();
+  bool CreateWindow(int width, int height, const std::string& title) final;
 
-  bool ShouldClose();
+  void Tick() final;
+
+  bool ShouldClose() final;
 
 private:
-  bool initialized_ = false;
+  bool has_window_ = false;
   GLFWwindow* glfw_window_ = nullptr;
 
   int width_ = 0;

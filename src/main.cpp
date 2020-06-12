@@ -1,15 +1,15 @@
 #include "application.h"
-#include "systems.h"
+#include "platform/platform.h"
 
 int main() {
-  Systems systems;
-  systems.InitSystems();
+  platform::Platform platform;
+  platform.Initialize();
 
-  std::unique_ptr<Application> app = std::make_unique<Application>(systems.GetWindow());
+  std::unique_ptr<Application> app = std::make_unique<Application>(platform.GetWindow());
   app->RunLoop();
   app.reset();
 
-  systems.DestroySystems();
+  platform.Cleanup();
   
   return 0;
 }

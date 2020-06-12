@@ -7,7 +7,7 @@
 
 namespace platform {
 
-bool WindowImpl::Initialize(int width, int height, const std::string& title) {
+bool WindowImplGLFW::Initialize() {
   // glfwSetErrorCallback([](int err_code, const char* desc) {
   //   std::cerr << "Error Code " << err_code << ": " << desc << std::endl;
   // });
@@ -18,7 +18,17 @@ bool WindowImpl::Initialize(int width, int height, const std::string& title) {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+}
 
+void WindowImplGLFW::Cleanup() {
+  if (has_window_) {
+    glfwDestroyWindow(glfw_window_);
+  }
+
+  glfwTerminate();
+}
+
+bool WindowImplGLFW::CreateWindow(int width, int height, const std::string& title) {
   glfw_window_ = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
   if (glfw_window_ == nullptr) {
     return false;
@@ -40,52 +50,22 @@ bool WindowImpl::Initialize(int width, int height, const std::string& title) {
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
 
-  initialized_ = true;
+  has_window_ = true;
   
   return true;
 }
 
-void WindowImpl::Destroy() {
-  if (initialized_) {
-    glfwDestroyWindow(glfw_window_);
-    glfwTerminate();
-  }
-}
-
-void WindowImpl::Tick() {
+void WindowImplGLFW::Tick() {
   glfwSwapBuffers(glfw_window_);
   glfwPollEvents();
 }
 
-bool WindowImpl::ShouldClose() {
+bool WindowImplGLFW::ShouldClose() {
   return glfwWindowShouldClose(glfw_window_);
 }
 
-// TODO(colintan): Figure out not to duplicate the code to set input_manager_
-Window::Window(InputManager* input_manager)  {
-  impl_ = std::make_unique<WindowImpl>();
-  input_manager_ = input_manager;
-}
-
-Window::~Window() {
-  input_manager_ = nullptr;
-  impl_.reset();
-}
-
-bool Window::Initialize(int width, int height, const std::string& title) {
-  return impl_->Initialize(width, height, title);
-}
-
-void Window::Destroy() {
-  impl_->Destroy();
-}
-
-void Window::Tick() {
-  impl_->Tick();
-}
-
-bool Window::ShouldClose() {
-  return impl_->ShouldClose();
+std::unique_ptr<WindowImpl> CreateWindowImpl() {
+  return std::make_unique<WindowImplGLFW>();
 }
 
 } // namespace

@@ -1,9 +1,7 @@
 add_executable(gfx_engine 
     "application.cpp"
     "application.h"
-    "main.cpp"
-    "systems.cpp"
-    "systems.h")
+    "main.cpp")
 
 # Internal modules
 target_link_libraries(gfx_engine PRIVATE gal)
