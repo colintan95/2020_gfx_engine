@@ -8,10 +8,18 @@
 #include <string>
 #include "platform/window.h"
 
+namespace platform {
+namespace internal {
+class SharedState;
+} // namespace
+} // namespace
+
 namespace window {
 
 class WindowImplGLFW : public WindowImpl {
 public:
+  WindowImplGLFW(std::shared_ptr<platform::internal::SharedState> shared_state);
+
   bool Initialize() final;
   void Cleanup() final;
 
@@ -22,6 +30,8 @@ public:
   bool ShouldClose() final;
 
 private:
+  std::shared_ptr<platform::internal::SharedState> shared_state_;
+
   bool has_window_ = false;
   GLFWwindow* glfw_window_ = nullptr;
 

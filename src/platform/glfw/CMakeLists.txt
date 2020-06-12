@@ -6,6 +6,8 @@ target_sources(platform
     "input_source_glfw.h"
     "platform_glfw.cpp"
     "platform_glfw.h"
+    "shared_state.cpp"
+    "shared_state.h"
     "window_glfw.cpp"
     "window_glfw.h")
 target_link_libraries(platform PRIVATE glew)
