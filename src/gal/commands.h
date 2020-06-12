@@ -8,6 +8,7 @@
 #include "objects.h"
 
 namespace gal {
+  
 namespace command {
 
 struct SetViewport {

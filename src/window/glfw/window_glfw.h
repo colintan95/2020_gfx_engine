@@ -1,5 +1,5 @@
-#ifndef WINDOW_WINDOW_IMPL_H_
-#define WINDOW_WINDOW_IMPL_H_
+#ifndef WINDOW_GLFW_WINDOW_GLFW_H_
+#define WINDOW_GLFW_WINDOW_GLFW_H_
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -29,4 +29,4 @@ private:
 
 } // namespace
 
-#endif // WINDOW_WINDOW_IMPL_H_
+#endif // WINDOW_GLFW_WINDOW_GLFW_H_
