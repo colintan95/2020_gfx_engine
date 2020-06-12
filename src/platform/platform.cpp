@@ -5,7 +5,7 @@ namespace platform {
 Platform::Platform() {
   impl_ = CreatePlatformImpl();
   input_manager_ = std::make_unique<platform::InputManager>();
-  window_ = std::make_unique<platform::Window>(input_manager_.get());
+  window_ = std::make_unique<platform::Window>();
 }
 
 Platform::~Platform() {
@@ -21,10 +21,12 @@ bool Platform::Initialize() {
   if (!window_->Initialize()) {
     return false;
   }
+  return true;
 }
   
 void Platform::Cleanup() {
   window_->Cleanup();
+  input_manager_->Cleanup();
   impl_->Cleanup();
 }
 

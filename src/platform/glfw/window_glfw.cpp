@@ -11,24 +11,20 @@ bool WindowImplGLFW::Initialize() {
   // glfwSetErrorCallback([](int err_code, const char* desc) {
   //   std::cerr << "Error Code " << err_code << ": " << desc << std::endl;
   // });
-  if (!glfwInit()) {
-    return false;
-  }
-
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  return true;
 }
 
 void WindowImplGLFW::Cleanup() {
   if (has_window_) {
     glfwDestroyWindow(glfw_window_);
   }
-
-  glfwTerminate();
 }
 
 bool WindowImplGLFW::CreateWindow(int width, int height, const std::string& title) {
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
   glfw_window_ = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
   if (glfw_window_ == nullptr) {
     return false;

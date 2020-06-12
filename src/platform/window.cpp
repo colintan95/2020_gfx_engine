@@ -2,13 +2,11 @@
 
 namespace platform {
 
-Window::Window(InputManager* input_manager)  {
+Window::Window()  {
   impl_ = CreateWindowImpl();
-  input_manager_ = input_manager;
 }
 
 Window::~Window() {
-  input_manager_ = nullptr;
   impl_.reset();
 }
 

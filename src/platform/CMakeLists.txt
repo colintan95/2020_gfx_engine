@@ -1,6 +1,7 @@
 add_library(platform
     "input_manager.cpp"
     "input_manager.h"
+    "input_source.h"
     "platform.cpp"
     "platform.h"
     "window.h"

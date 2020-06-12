@@ -6,8 +6,6 @@
 
 namespace platform {
 
-class InputManager;
-
 class WindowImpl {
 public:
   virtual ~WindowImpl() {}
@@ -24,7 +22,7 @@ public:
 
 class Window {
 public:
-  Window(InputManager* input_manager);
+  Window();
   ~Window();
 
   bool Initialize() { return impl_->Initialize(); }
@@ -40,7 +38,6 @@ public:
 
 private:
   std::unique_ptr<WindowImpl> impl_;
-  InputManager* input_manager_;
 };
 
 // Defined in platform-specific file

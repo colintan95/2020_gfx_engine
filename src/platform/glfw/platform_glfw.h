@@ -9,6 +9,9 @@ class PlatformImplGLFW : public PlatformImpl {
 public:
   bool Initialize() final;
   void Cleanup() final;
+
+private:
+  bool initialized_ = false;
 };
 
 } // namespace
