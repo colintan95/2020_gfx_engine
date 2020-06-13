@@ -23,7 +23,7 @@ public:
 
   bool ShouldClose() final;
 
-  std::optional<Event> ConsumeEvent() final;
+  std::optional<event::Event> ConsumeEvent() final;
 
 private:
   static EventStore event_store_;

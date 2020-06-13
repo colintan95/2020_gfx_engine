@@ -13,7 +13,7 @@ void WindowRef::SwapBuffers() {
   impl_->SwapBuffers();
 }
 
-std::optional<Event> WindowRef::ConsumeEvent() {
+std::optional<event::Event> WindowRef::ConsumeEvent() {
   return impl_->ConsumeEvent();
 }
 

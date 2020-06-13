@@ -4,7 +4,7 @@
 #include <memory>
 #include <string>
 #include <optional>
-#include "window/event.h"
+#include "event/event.h"
 
 namespace window {
 namespace internal {
@@ -22,7 +22,7 @@ public:
 
   virtual bool ShouldClose() = 0;
 
-  virtual std::optional<Event> ConsumeEvent() = 0;
+  virtual std::optional<event::Event> ConsumeEvent() = 0;
 
 public:
   static std::unique_ptr<Window> Create();

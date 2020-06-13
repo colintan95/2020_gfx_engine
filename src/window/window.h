@@ -3,7 +3,7 @@
 
 #include <cstdint>
 #include <optional>
-#include "window/event.h"
+#include "event/event.h"
 
 namespace window {
 
@@ -23,7 +23,7 @@ public:
   void SwapBuffers();
 
   // TODO(colintan): Consider a more flexible event listener approach instead
-  std::optional<Event> ConsumeEvent();
+  std::optional<event::Event> ConsumeEvent();
 
   bool ShouldClose();
 

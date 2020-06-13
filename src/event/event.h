@@ -1,9 +1,9 @@
-#ifndef WINDOW_EVENTS_H_
-#define WINDOW_EVENTS_H_
+#ifndef EVENT_EVENTS_H_
+#define EVENT_EVENTS_H_
 
 #include <variant>
 
-namespace window {
+namespace event {
 
 enum class KeyInput {
   None = 0,
@@ -77,4 +77,4 @@ private:
 
 } // namespace
 
-#endif // WINDOW_EVENTS_H_
+#endif // EVENT_EVENTS_H_

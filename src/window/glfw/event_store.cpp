@@ -8,17 +8,17 @@
 namespace window {
 namespace internal {
 
-std::optional<Event> EventStore::ConsumeEvent(GLFWwindow* window) {
+std::optional<event::Event> EventStore::ConsumeEvent(GLFWwindow* window) {
   auto it = window_events_.find(window);
   if (it == window_events_.end()) {
     return std::nullopt;
   }
-  std::deque<Event>& events = it->second;
+  std::deque<event::Event>& events = it->second;
 
   if (events.empty()) {
     return std::nullopt;
   } else {
-    Event result = events.front();
+    event::Event result = events.front();
     events.pop_front();
     return std::move(result);
   }
@@ -29,25 +29,25 @@ void EventStore::KeyboardCallback(GLFWwindow* window, int key, int scancode, int
   if (key_it == glfw_key_mapping.end()) {
     return;
   }
-  KeyInput internal_key = key_it->second;
+  event::KeyInput internal_key = key_it->second;
 
-  KeyAction internal_action;
+  event::KeyAction internal_action;
   switch (action) {
   case GLFW_PRESS:
-    internal_action = KeyAction::Down;
+    internal_action = event::KeyAction::Down;
     break;
   case GLFW_RELEASE:
-    internal_action = KeyAction::Up;
+    internal_action = event::KeyAction::Up;
     break;
   default:
     return;
   }
 
-  KeyboardEvent event;
+  event::KeyboardEvent event;
   event.key = internal_key;
   event.action = internal_action;
-  event.modifier_key = KeyInput::None;
-  window_events_[window].push_back(Event::Create(std::move(event)));
+  event.modifier_key = event::KeyInput::None;
+  window_events_[window].push_back(event::Event::Create(std::move(event)));
 }
 
 } // namespace

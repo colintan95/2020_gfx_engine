@@ -46,7 +46,7 @@ void WindowGLFW::SwapBuffers() {
   glfwSwapBuffers(glfw_window_);
 }
 
-std::optional<Event> WindowGLFW::ConsumeEvent() {
+std::optional<event::Event> WindowGLFW::ConsumeEvent() {
   return event_store_.ConsumeEvent(glfw_window_);
 }
 
