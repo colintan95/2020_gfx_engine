@@ -192,7 +192,7 @@ std::optional<GALTextureSampler> GALTextureSampler::Create(const GALTexture& tex
   static GLuint unit_counter = 0;
 
   std::optional<GLuint> gl_tex_opt = opengl::ConvertGALId(texture.GetGALId());
-  if (!gl_tex_opt.has_value()) {
+  if (!gl_tex_opt) {
     return std::nullopt;
   }
 

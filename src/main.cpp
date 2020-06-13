@@ -13,7 +13,7 @@ int main() {
 
   std::optional<window::WindowRef> window_ref_opt = 
       window_manager.CreateWindow(1920, 1080, "Hello World");
-  if (!window_ref_opt.has_value()) {
+  if (!window_ref_opt) {
     std::cerr << "Failed to create window." << std::endl;
     std::exit(EXIT_FAILURE);
   }

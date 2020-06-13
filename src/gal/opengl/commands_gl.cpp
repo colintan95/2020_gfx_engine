@@ -19,7 +19,7 @@ struct TempState {
 
 void SetTextureSampler(const command::SetTextureSampler& cmd) {
   std::optional<GLuint> gl_sampler_opt = opengl::ConvertGALId(cmd.sampler.GetGALId());
-  if (!gl_sampler_opt.has_value()) {
+  if (!gl_sampler_opt) {
     return;
   }
   glUniform1i(cmd.idx, *gl_sampler_opt);
