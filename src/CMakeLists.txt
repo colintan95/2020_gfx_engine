@@ -8,6 +8,7 @@ target_link_libraries(gfx_engine PRIVATE gal)
 target_link_libraries(gfx_engine PRIVATE logging)
 target_link_libraries(gfx_engine PRIVATE platform)
 target_link_libraries(gfx_engine PRIVATE resource)
+target_link_libraries(gfx_engine PRIVATE window)
 
 # External libs
 target_link_libraries(gfx_engine PRIVATE glm)
@@ -25,3 +26,4 @@ add_subdirectory(gal)
 add_subdirectory(logging)
 add_subdirectory(platform)
 add_subdirectory(resource)
+add_subdirectory(window)
