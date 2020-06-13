@@ -1,4 +1,4 @@
-#include "window/glfw/window_manager_impl_glfw.h"
+#include "window/glfw/window_manager_glfw.h"
 
 #include <GLFW/glfw3.h>
 

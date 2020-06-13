@@ -23,10 +23,14 @@ void WindowManager::Cleanup() {
   }
   impl_->Cleanup();
 }
+
+void WindowManager::Tick() {
+  window_->Tick();
+}
    
 std::optional<WindowRef> WindowManager::CreateWindow(int width, int height, 
                                                      const std::string& title) {
-  window_ = WindowInternal::Create();
+  window_ = internal::Window::Create();
   window_->CreateWindow(width, height, title);
   
   return WindowRef(0, window_.get());

@@ -2,10 +2,14 @@
 #define WINDOW_WINDOW_H_
 
 #include <cstdint>
+#include <optional>
+#include "window/event.h"
 
 namespace window {
 
-class WindowInternal;
+namespace internal {
+class Window;
+} // namespace
 
 using WindowId = uint32_t;
 
@@ -13,18 +17,17 @@ class WindowRef {
   friend class WindowManager;
 
 public:
-  // SwapBuffer()
+  void SwapBuffers();
 
-  // BindEventHandler()
-
-  // ResizeWindow()
+  // TODO(colintan): Consider a more flexible event listener approach instead
+  std::optional<Event> ConsumeEvent();
 
 private:
-  WindowRef(WindowId window_id, WindowInternal* impl);
+  WindowRef(WindowId window_id, internal::Window* impl);
 
 private:
   WindowId window_id_;
-  WindowInternal* impl_;
+  internal::Window* impl_;
 };
 
 } // namespace

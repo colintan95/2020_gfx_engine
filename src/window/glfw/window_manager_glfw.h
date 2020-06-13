@@ -1,5 +1,5 @@
-#ifndef WINDOW_GLFW_WINDOW_MANAGER_IMPL_GLFW_H_
-#define WINDOW_GLFW_WINDOW_MANAGER_IMPL_GLFW_H_
+#ifndef WINDOW_GLFW_WINDOW_MANAGER_GLFW_H_
+#define WINDOW_GLFW_WINDOW_MANAGER_GLFW_H_
 
 #include "window/window_manager.h"
 
@@ -13,4 +13,4 @@ public:
 
 } // namespace
 
-#endif // WINDOW_GLFW_WINDOW_MANAGER_IMPL_GLFW_H_
+#endif // WINDOW_GLFW_WINDOW_MANAGER_GLFW_H_

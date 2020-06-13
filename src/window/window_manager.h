@@ -5,12 +5,10 @@
 #include <memory>
 #include <string>
 #include <optional>
-#include <unordered_map>
 #include "window/window.h"
+#include "window/window_internal.h"
 
 namespace window {
-
-class WindowInternal;
 
 class WindowManagerImpl {
 public:
@@ -31,14 +29,15 @@ public:
   bool Initialize();
   void Cleanup();
 
+  void Tick();
+
   std::optional<WindowRef> CreateWindow(int width, int height, const std::string& title);
 
 private:
   std::unique_ptr<WindowManagerImpl> impl_;
-  // std::unordered_map<WindowId, std::unique_ptr<WindowInternal>> windows_;
 
   // TODO(colintan): Support one window for now
-  std::unique_ptr<WindowInternal> window_;
+  std::unique_ptr<internal::Window> window_;
 }; 
 
 } // namespace

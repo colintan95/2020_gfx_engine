@@ -1,4 +1,5 @@
 add_library(window
+    "event.h"
     "window_internal.h"
     "window_manager.cpp"
     "window_manager.h"

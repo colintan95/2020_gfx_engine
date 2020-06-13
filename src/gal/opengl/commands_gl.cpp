@@ -67,6 +67,8 @@ void ExecuteCommandBuffer(const GALCommandBuffer& cmd_buf) {
 
   for (const GALCommandBuffer::Entry& entry : cmd_buf.entries_) {
 
+    // TODO(colintan): Consider using std::visit to iterate through variant
+
     if (entry.IsType<command::SetViewport>()) {
       auto cmd = entry.AsType<command::SetViewport>();
       glViewport(cmd.x, cmd.y, cmd.width, cmd.height);

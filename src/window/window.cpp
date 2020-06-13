@@ -4,9 +4,17 @@
 
 namespace window {
 
-WindowRef::WindowRef(WindowId window_id, WindowInternal* impl) { 
+WindowRef::WindowRef(WindowId window_id, internal::Window* impl) { 
   window_id_ = window_id; 
   impl_ = impl; 
+}
+
+void WindowRef::SwapBuffers() {
+  impl_->SwapBuffers();
+}
+
+std::optional<Event> WindowRef::ConsumeEvent() {
+  return impl_->ConsumeEvent();
 }
 
 } // namespace
