@@ -1,11 +1,13 @@
-#ifndef GAL_COMMANDS_H_
-#define GAL_COMMANDS_H_
+#ifndef GAL_COMMAND_H_
+#define GAL_COMMAND_H_
 
 #include <glm/glm.hpp>
 
 #include <cstdint>
+#include <utility>
 #include <variant>
-#include "gal/objects.h"
+#include <vector>
+#include "gal/object.h"
 
 namespace gal {
   
@@ -68,7 +70,14 @@ using CommandUnion =
 // adding commands - helps safeguard against the user accidentally adding more commands to a
 // command buffer that they have already considered finished
 class GALCommandBuffer {
+  friend class GALPlatform;
+  
 public:
+  // TODO(colintan): How to do this better
+  void SetPlatform(GALPlatform* platform) {
+    platform_ = platform;
+  }
+
   template<typename T>
   void Add(T command) {
     Entry entry;
@@ -87,12 +96,16 @@ public:
     const T& AsType() const { return std::get<T>(cmd); }
   };
 
-public:
+private:
+  void Execute() const;
+
+private:
+  GALPlatform* platform_;
   std::vector<Entry> entries_;
 };
 
-void ExecuteCommandBuffer(const GALCommandBuffer& cmd_buf);
+// void ExecuteCommandBuffer(const GALCommandBuffer& cmd_buf);
 
 } // namespace
 
-#endif // GAL_COMMANDS_H_
+#endif // GAL_COMMAND_H_

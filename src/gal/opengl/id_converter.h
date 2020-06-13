@@ -4,14 +4,22 @@
 #include <GL/glew.h>
 
 #include <optional>
-#include "gal/objects.h"
+#include <unordered_map>
+#include "gal/object.h"
 
 namespace gal {
-namespace opengl {
+namespace internal {
 
-void AddGALId(GALId gal_id, GLuint gl_id);
+class IdConverter {
+public:
+  void AddGALId(GALId gal_id, GLuint gl_id);
+  void RemoveGALId(GALId gal_id);
 
-std::optional<GLuint> ConvertGALId(GALId gal_id);
+  std::optional<GLuint> ConvertGALId(GALId gal_id);
+
+private:
+  std::unordered_map<GALId, GLuint> gal_to_gl_;
+};
 
 } // namespace
 } // namespace

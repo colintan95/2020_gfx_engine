@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <memory>
+#include <utility>
 #include <vector>
 #include "gal/gal.h"
 #include "resource/image_loader.h"
@@ -46,6 +47,11 @@ const char kFragShaderSrc[] =
 bool Application::Initialize(window::WindowRef window_ref) {
   window_ref_ = window_ref;
 
+  if (!gal_platform_.Initialize()) {
+    std::cerr << "Failed to initialize gal platform." << std::endl;
+    return false;
+  }
+
   resource::ModelLoader model_loader;
   std::shared_ptr<resource::Model> model = model_loader.LoadModel("assets/cube/cube.obj");
   if (model == nullptr) {
@@ -60,6 +66,8 @@ bool Application::Initialize(window::WindowRef window_ref) {
     return false;
   }
 
+  command_buffer_.SetPlatform(&gal_platform_);
+
   gal::command::SetViewport set_viewport;
   set_viewport.x = 0;
   set_viewport.y = 0;
@@ -67,17 +75,20 @@ bool Application::Initialize(window::WindowRef window_ref) {
   set_viewport.height = kScreenHeight;
   command_buffer_.Add(set_viewport);
 
-  auto vert_shader_opt = gal::GALShader::Create(gal::ShaderType::Vertex, kVertShaderSrc);
+  auto vert_shader_opt = 
+      gal_platform_.Create<gal::GALShader>(gal::ShaderType::Vertex, kVertShaderSrc);
   if (!vert_shader_opt) {
     std::cerr << "Failed to create GAL vertex shader." << std::endl;
     return false;
   }
-  auto frag_shader_opt = gal::GALShader::Create(gal::ShaderType::Fragment, kFragShaderSrc);
+  auto frag_shader_opt = 
+      gal_platform_.Create<gal::GALShader>(gal::ShaderType::Fragment, kFragShaderSrc);
   if (!frag_shader_opt) {
     std::cerr << "Failed to create GAL fragment shader." << std::endl;
     return false;
   }
-  auto pipeline_opt = gal::GALPipeline::Create(*vert_shader_opt, *frag_shader_opt);
+  auto pipeline_opt = 
+      gal_platform_.Create<gal::GALPipeline>(*vert_shader_opt, *frag_shader_opt);
   if (!pipeline_opt) {
     std::cerr << "Failed to create GAL pipeline." << std::endl;
     return false;
@@ -99,9 +110,10 @@ bool Application::Initialize(window::WindowRef window_ref) {
       glm::rotate(glm::mat4{1.f}, glm::radians(-15.f), glm::vec3{0.f, 1.f, 0.f});
   uniform_data.proj_mat = glm::perspective(glm::radians(30.f), kAspectRatio, 0.1f, 1000.f);
 
-  auto uniform_buf_opt = gal::GALBuffer::Create(gal::BufferType::Uniform, 
-                                                reinterpret_cast<uint8_t*>(&uniform_data), 
-                                                sizeof(uniform_data));
+  auto uniform_buf_opt = 
+      gal_platform_.Create<gal::GALBuffer>(gal::BufferType::Uniform, 
+                                           reinterpret_cast<uint8_t*>(&uniform_data),
+                                           sizeof(uniform_data));
   if (!uniform_buf_opt) {
     std::cerr << "Failed to create GAL buffer for uniforms." << std::endl;
     return false;
@@ -112,14 +124,15 @@ bool Application::Initialize(window::WindowRef window_ref) {
   set_uniform_buf.idx = 0;
   command_buffer_.Add(set_uniform_buf);
 
-  auto texture_opt = gal::GALTexture::Create(gal::TextureType::Texture2D, gal::TextureFormat::RGB,
-                                             image->width, image->height, image->pixels.data());
+  auto texture_opt = 
+      gal_platform_.Create<gal::GALTexture>(gal::TextureType::Texture2D, gal::TextureFormat::RGB,
+                                            image->width, image->height, image->pixels.data());
   if (!texture_opt) {
     std::cerr << "Failed to create GAL texture." << std::endl;
     return false;
   }
 
-  auto tex_sampler_opt = gal::GALTextureSampler::Create(*texture_opt);
+  auto tex_sampler_opt =  gal_platform_.Create<gal::GALTextureSampler>(*texture_opt);
   if (!tex_sampler_opt) {
     std::cerr << "Failed to create GAL texture sampler." << std::endl;
     return false;
@@ -134,7 +147,7 @@ bool Application::Initialize(window::WindowRef window_ref) {
   //     glm::rotate(glm::mat4{1.f}, glm::radians(-15.f), glm::vec3{0.f, 1.f, 0.f});
   // uniform_buf_opt->Update(reinterpret_cast<uint8_t*>(&uniform_data), 0, sizeof(uniform_data));           
 
-  auto vert_desc_opt = gal::GALVertexDesc::Create();
+  auto vert_desc_opt = gal_platform_.Create<gal::GALVertexDesc>();
   if (!vert_desc_opt) {
     std::cerr << "Failed to create GAL vertex description." << std::endl;
     return false;
@@ -152,10 +165,11 @@ bool Application::Initialize(window::WindowRef window_ref) {
   set_vert_desc.vert_desc = *vert_desc_opt;
   command_buffer_.Add(set_vert_desc);
 
-  auto pos_vert_buf_opt = gal::GALVertexBuffer::Create(
-      reinterpret_cast<uint8_t*>(model->positions.data()), 
-      model->positions.size() * sizeof(glm::vec3)
-  );
+  auto pos_vert_buf_opt = 
+      gal_platform_.Create<gal::GALVertexBuffer>(
+          reinterpret_cast<uint8_t*>(model->positions.data()), 
+          model->positions.size() * sizeof(glm::vec3)
+      );
   if (!pos_vert_buf_opt) {
     std::cerr << "Failed to create GAL vertex buffer for positions." << std::endl;
     return false;
@@ -166,10 +180,11 @@ bool Application::Initialize(window::WindowRef window_ref) {
   set_pos_vert_buf.vert_idx = 0;
   command_buffer_.Add(set_pos_vert_buf);
 
-  auto texcoord_vert_buf_opt = gal::GALVertexBuffer::Create(
-      reinterpret_cast<uint8_t*>(model->texcoords.data()),
-      model->texcoords.size() * sizeof(glm::vec2)
-  );    
+  auto texcoord_vert_buf_opt = 
+      gal_platform_.Create<gal::GALVertexBuffer>(
+          reinterpret_cast<uint8_t*>(model->texcoords.data()),
+          model->texcoords.size() * sizeof(glm::vec2)
+      );    
   if (!texcoord_vert_buf_opt) {
     std::cerr << "Failed to create GAL vertex buffer for texcoords." << std::endl;
     return false;
@@ -195,9 +210,9 @@ bool Application::Initialize(window::WindowRef window_ref) {
 
 // TODO(colintan): Do proper cleanup if needed
 void Application::Cleanup() {
-
+  gal_platform_.Cleanup();
 }
 
 void Application::Tick() {
-  gal::ExecuteCommandBuffer(command_buffer_);
+  gal_platform_.ExecuteCommandBuffer(command_buffer_);
 }

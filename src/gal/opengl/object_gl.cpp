@@ -1,9 +1,10 @@
-#include "gal/objects.h"
+#include "gal/object.h"
 
 #include <GL/glew.h>
 
 #include <iostream>
 #include "gal/opengl/id_converter.h"
+#include "gal/opengl/platform_gl.h"
 
 namespace gal {
 
@@ -47,7 +48,8 @@ bool CheckProgramSuccess(int program) {
 
 } // namespace
 
-std::optional<GALShader> GALShader::Create(ShaderType type, const std::string& source) {
+std::optional<GALShader> GALShader::Create(GALPlatform* platform, ShaderType type, 
+                                           const std::string& source) {
   GLuint gl_shader;
   switch (type) {
   case ShaderType::Vertex:
@@ -66,23 +68,33 @@ std::optional<GALShader> GALShader::Create(ShaderType type, const std::string& s
   if (!CheckShaderSuccess(gl_shader)) {
     std::exit(EXIT_FAILURE);
   }
+  
 
-  GALShader result;
-  opengl::AddGALId(result.GetGALId(), gl_shader);
+  GALShader result{platform};
+  platform->GetPlatformDetails()->AddGALId(result.GetGALId(), gl_shader);
   result.type = type;
-
   return result;
 }
 
-std::optional<GALPipeline> GALPipeline::Create(GALShader vert_shader, GALShader frag_shader) {
+GALShader::~GALShader() {
+  if (IsLastRef()) {
+    if (auto gl_shader_opt = platform_details_->ConvertGALId(GetGALId())) {
+      glDeleteShader(*gl_shader_opt);
+      platform_details_->RemoveGALId(GetGALId());
+    }
+  }
+}
+
+std::optional<GALPipeline> GALPipeline::Create(GALPlatform* platform, GALShader vert_shader, 
+                                               GALShader frag_shader) {
   GLuint gl_program = glCreateProgram();
 
-  if (auto vert_shader_opt = opengl::ConvertGALId(vert_shader.GetGALId())) {
+  if (auto vert_shader_opt = platform->GetPlatformDetails()->ConvertGALId(vert_shader.GetGALId())) {
     glAttachShader(gl_program, *vert_shader_opt);
   } else {
     return std::nullopt;
   }
-  if (auto frag_shader_opt = opengl::ConvertGALId(frag_shader.GetGALId())) {
+  if (auto frag_shader_opt = platform->GetPlatformDetails()->ConvertGALId(frag_shader.GetGALId())) {
     glAttachShader(gl_program, *frag_shader_opt);
   } else {
     return std::nullopt;
@@ -93,36 +105,65 @@ std::optional<GALPipeline> GALPipeline::Create(GALShader vert_shader, GALShader 
     return std::nullopt;
   }
 
-  GALPipeline result;
-  opengl::AddGALId(result.GetGALId(), gl_program);
+  GALPipeline result{platform};
+  platform->GetPlatformDetails()->AddGALId(result.GetGALId(), gl_program);
 
   return result;
 }
 
-std::optional<GALVertexBuffer> GALVertexBuffer::Create(uint8_t* data, size_t num_bytes) {
+GALPipeline::~GALPipeline() {
+  if (IsLastRef()) {
+    if (auto gl_program_opt = platform_details_->ConvertGALId(GetGALId())) {
+      glDeleteProgram(*gl_program_opt);
+      platform_details_->RemoveGALId(GetGALId());
+    }
+  }
+}
+
+std::optional<GALVertexBuffer> GALVertexBuffer::Create(GALPlatform* platform, uint8_t* data, 
+                                                       size_t num_bytes) {
   GLuint gl_vbo;
   glCreateBuffers(1, &gl_vbo);
   glBindBuffer(GL_ARRAY_BUFFER, gl_vbo);
   glBufferData(GL_ARRAY_BUFFER, num_bytes, data, GL_STATIC_DRAW);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-  GALVertexBuffer result;
-  opengl::AddGALId(result.GetGALId(), gl_vbo);
+  GALVertexBuffer result{platform};
+  platform->GetPlatformDetails()->AddGALId(result.GetGALId(), gl_vbo);
 
   return result;
 }
 
-std::optional<GALVertexDesc> GALVertexDesc::Create() {
+GALVertexBuffer::~GALVertexBuffer() {
+  if (IsLastRef()) {
+    if (auto gl_vbo_opt = platform_details_->ConvertGALId(GetGALId())) {
+      glDeleteBuffers(1, &(*gl_vbo_opt));
+      platform_details_->RemoveGALId(GetGALId());
+    }
+  }
+}
+
+std::optional<GALVertexDesc> GALVertexDesc::Create(GALPlatform* platform) {
   GLuint gl_vao;
   glCreateVertexArrays(1, &gl_vao);
 
-  GALVertexDesc result;
-  opengl::AddGALId(result.GetGALId(), gl_vao);
+  GALVertexDesc result{platform};
+  platform->GetPlatformDetails()->AddGALId(result.GetGALId(), gl_vao);
 
   return result;
 }
 
-std::optional<GALBuffer> GALBuffer::Create(BufferType type, uint8_t* data, size_t size) {
+GALVertexDesc::~GALVertexDesc() {
+  if (IsLastRef()) {
+    if (auto gl_vao_opt = platform_details_->ConvertGALId(GetGALId())) {
+      glDeleteBuffers(1, &(*gl_vao_opt));
+      platform_details_->RemoveGALId(GetGALId());
+    }
+  }
+}
+
+std::optional<GALBuffer> GALBuffer::Create(GALPlatform* platform, BufferType type, uint8_t* data, 
+                                           size_t size) {
   GLuint gl_buf;
   glCreateBuffers(1, &gl_buf);
   
@@ -142,12 +183,21 @@ std::optional<GALBuffer> GALBuffer::Create(BufferType type, uint8_t* data, size_
   glBufferData(buf_target, size, data, GL_STATIC_DRAW);
   glBindBuffer(buf_target, 0);
     
-  GALBuffer result;
-  opengl::AddGALId(result.GetGALId(), gl_buf);
+  GALBuffer result{platform};
+  platform->GetPlatformDetails()->AddGALId(result.GetGALId(), gl_buf);
   result.type_ = type;
   result.size_ = size;
 
   return result;
+}
+
+GALBuffer::~GALBuffer() {
+  if (IsLastRef()) {
+    if (auto gl_buf_opt = platform_details_->ConvertGALId(GetGALId())) {
+      glDeleteBuffers(1, &(*gl_buf_opt));
+      platform_details_->RemoveGALId(GetGALId());
+    }
+  }
 }
 
 // bool GALBuffer::Update(uint8_t* data, size_t start_idx, size_t update_size) {
@@ -158,8 +208,9 @@ std::optional<GALBuffer> GALBuffer::Create(BufferType type, uint8_t* data, size_
 //   // TODO(colintan): Implement
 // }
 
-std::optional<GALTexture> GALTexture::Create(TextureType type, TextureFormat format,
-                                             uint16_t width, uint16_t height, uint8_t* data) {
+std::optional<GALTexture> GALTexture::Create(GALPlatform* platform, TextureType type, 
+                                             TextureFormat format, uint16_t width, uint16_t height, 
+                                             uint8_t* data) {
   GLuint gl_tex;
   glGenTextures(1, &gl_tex);
 
@@ -177,8 +228,8 @@ std::optional<GALTexture> GALTexture::Create(TextureType type, TextureFormat for
     return std::nullopt;
   }
 
-  GALTexture result;
-  opengl::AddGALId(result.GetGALId(), gl_tex);
+  GALTexture result{platform};
+  platform->GetPlatformDetails()->AddGALId(result.GetGALId(), gl_tex);
   result.type_ = type;
   result.format_ = format;
   result.width_ = width;
@@ -187,11 +238,22 @@ std::optional<GALTexture> GALTexture::Create(TextureType type, TextureFormat for
   return result;
 }
 
-std::optional<GALTextureSampler> GALTextureSampler::Create(const GALTexture& texture) {
+GALTexture::~GALTexture() {
+  if (IsLastRef()) {
+    if (auto gl_tex_opt = platform_details_->ConvertGALId(GetGALId())) {
+      glDeleteTextures(1, &(*gl_tex_opt));
+      platform_details_->RemoveGALId(GetGALId());
+    }
+  }
+}
+
+std::optional<GALTextureSampler> GALTextureSampler::Create(GALPlatform* platform, 
+                                                           const GALTexture& texture) {
   // TODO(colintan): Replace this with something better
   static GLuint unit_counter = 0;
 
-  std::optional<GLuint> gl_tex_opt = opengl::ConvertGALId(texture.GetGALId());
+  std::optional<GLuint> gl_tex_opt = 
+      platform->GetPlatformDetails()->ConvertGALId(texture.GetGALId());
   if (!gl_tex_opt) {
     return std::nullopt;
   }
@@ -205,12 +267,13 @@ std::optional<GALTextureSampler> GALTextureSampler::Create(const GALTexture& tex
     return std::nullopt;
   }
 
-  GALTextureSampler result;
-  opengl::AddGALId(result.GetGALId(), gl_tex_unit);
-  result.type_ = texture.GetType();
-  result.texture_gal_id_ = texture.GetGALId();
+  GALTextureSampler result{platform};
+  platform->GetPlatformDetails()->AddGALId(result.GetGALId(), gl_tex_unit);
+  result.texture_ = texture;
 
   return result;
 }
+
+GALTextureSampler::~GALTextureSampler() {}
 
 } // namespace
