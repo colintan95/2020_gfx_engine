@@ -1,6 +1,7 @@
 #ifndef WINDOW_GLFW_WINDOW_GLFW_H_
 #define WINDOW_GLFW_WINDOW_GLFW_H_
 
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #include <string>
@@ -19,6 +20,8 @@ public:
   void Tick() final;
 
   void SwapBuffers() final;
+
+  bool ShouldClose() final;
 
   std::optional<Event> ConsumeEvent() final;
 

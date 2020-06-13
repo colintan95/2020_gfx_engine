@@ -3,19 +3,17 @@
 
 #include "gal/gal.h"
 #include "resource/model_loader.h"
-#include "platform/platform.h"
-#include "platform/window.h"
+#include "window/window.h"
 
 class Application {
 public:
-  Application(platform::Platform* platform);
-  ~Application();
+  bool Initialize(window::WindowRef window_ref);
+  void Cleanup();
 
-  void RunLoop();
+  void Tick();
 
 private:
-  platform::Platform* platform_;
-  window::Window* window_;
+  window::WindowRef window_ref_;
   gal::GALCommandBuffer command_buffer_;
 };
 

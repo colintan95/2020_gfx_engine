@@ -17,4 +17,8 @@ std::optional<Event> WindowRef::ConsumeEvent() {
   return impl_->ConsumeEvent();
 }
 
+bool WindowRef::ShouldClose() {
+  return impl_->ShouldClose();
+}
+
 } // namespace

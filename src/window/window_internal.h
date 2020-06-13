@@ -20,6 +20,8 @@ public:
 
   virtual void SwapBuffers() = 0;
 
+  virtual bool ShouldClose() = 0;
+
   virtual std::optional<Event> ConsumeEvent() = 0;
 
 public:

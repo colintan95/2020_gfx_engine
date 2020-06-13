@@ -11,8 +11,6 @@
 #include <memory>
 #include <vector>
 #include "gal/gal.h"
-#include "platform/window.h"
-#include "platform/input_manager.h"
 #include "resource/image_loader.h"
 #include "resource/model_loader.h"
 
@@ -45,23 +43,21 @@ const char kFragShaderSrc[] =
     "  out_color = texture(tex_sampler, frag_texcoord);\n"
     "}";
 
-Application::Application(platform::Platform* platform) {
-  platform_ = platform;
-  window_ = platform->GetWindow();
-  window_->CreateWindow(kScreenWidth, kScreenHeight, "Hello World");
+bool Application::Initialize(window::WindowRef window_ref) {
+  window_ref_ = window_ref;
 
   resource::ModelLoader model_loader;
   std::shared_ptr<resource::Model> model = model_loader.LoadModel("assets/cube/cube.obj");
   if (model == nullptr) {
     std::cerr << "Failed to load model." << std::endl;
-    std::exit(EXIT_FAILURE);
+    return false;
   }
 
   resource::ImageLoader image_loader;
   std::shared_ptr<resource::Image> image = image_loader.LoadImage("assets/cube/default.png");
   if (image == nullptr) {
     std::cerr << "Failed to load image." << std::endl;
-    std::exit(EXIT_FAILURE);
+    return false;
   }
 
   gal::command::SetViewport set_viewport;
@@ -74,17 +70,17 @@ Application::Application(platform::Platform* platform) {
   auto vert_shader_opt = gal::GALShader::Create(gal::ShaderType::Vertex, kVertShaderSrc);
   if (!vert_shader_opt.has_value()) {
     std::cerr << "Failed to create GAL vertex shader." << std::endl;
-    std::exit(EXIT_FAILURE);
+    return false;
   }
   auto frag_shader_opt = gal::GALShader::Create(gal::ShaderType::Fragment, kFragShaderSrc);
   if (!frag_shader_opt.has_value()) {
     std::cerr << "Failed to create GAL fragment shader." << std::endl;
-    std::exit(EXIT_FAILURE);
+    return false;
   }
   auto pipeline_opt = gal::GALPipeline::Create(*vert_shader_opt, *frag_shader_opt);
   if (!pipeline_opt.has_value()) {
     std::cerr << "Failed to create GAL pipeline." << std::endl;
-    std::exit(EXIT_FAILURE);
+    return false;
   }          
 
   gal::command::SetPipeline set_pipeline;
@@ -108,7 +104,7 @@ Application::Application(platform::Platform* platform) {
                                                 sizeof(uniform_data));
   if (!uniform_buf_opt.has_value()) {
     std::cerr << "Failed to create GAL buffer for uniforms." << std::endl;
-    std::exit(EXIT_FAILURE);
+    return false;
   }
 
   gal::command::SetUniformBuffer set_uniform_buf;
@@ -120,13 +116,13 @@ Application::Application(platform::Platform* platform) {
                                              image->width, image->height, image->pixels.data());
   if (!texture_opt.has_value()) {
     std::cerr << "Failed to create GAL texture." << std::endl;
-    std::exit(EXIT_FAILURE);
+    return false;
   }
 
   auto tex_sampler_opt = gal::GALTextureSampler::Create(*texture_opt);
   if (!tex_sampler_opt.has_value()) {
     std::cerr << "Failed to create GAL texture sampler." << std::endl;
-    std::exit(EXIT_FAILURE);
+    return false;
   }
 
   gal::command::SetTextureSampler set_tex_sampler;
@@ -141,7 +137,7 @@ Application::Application(platform::Platform* platform) {
   auto vert_desc_opt = gal::GALVertexDesc::Create();
   if (!vert_desc_opt.has_value()) {
     std::cerr << "Failed to create GAL vertex description." << std::endl;
-    std::exit(EXIT_FAILURE);
+    return false;
   }
   vert_desc_opt->entries = std::make_shared<std::vector<gal::GALVertexDesc::Entry>>();
   auto& entries = *(vert_desc_opt->entries);
@@ -162,7 +158,7 @@ Application::Application(platform::Platform* platform) {
   );
   if (!pos_vert_buf_opt.has_value()) {
     std::cerr << "Failed to create GAL vertex buffer for positions." << std::endl;
-    std::exit(EXIT_FAILURE);
+    return false;
   }        
 
   gal::command::SetVertexBuffer set_pos_vert_buf;
@@ -176,7 +172,7 @@ Application::Application(platform::Platform* platform) {
   );    
   if (!texcoord_vert_buf_opt.has_value()) {
     std::cerr << "Failed to create GAL vertex buffer for texcoords." << std::endl;
-    std::exit(EXIT_FAILURE);
+    return false;
   }
 
   gal::command::SetVertexBuffer set_texcoord_vert_buf;
@@ -193,17 +189,15 @@ Application::Application(platform::Platform* platform) {
   gal::command::DrawTriangles draw_triangles;
   draw_triangles.num_triangles = model->faces;
   command_buffer_.Add(draw_triangles);
+
+  return true;
 }
 
-Application::~Application() {}
+// TODO(colintan): Do proper cleanup if needed
+void Application::Cleanup() {
 
-void Application::RunLoop() {
+}
+
+void Application::Tick() {
   gal::ExecuteCommandBuffer(command_buffer_);
-  while (!window_->ShouldClose()) {
-
-    gal::ExecuteCommandBuffer(command_buffer_);
-   
-    platform_->Tick();
-    window_->Tick();
-  }
 }

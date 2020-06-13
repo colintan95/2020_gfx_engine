@@ -17,13 +17,15 @@ class WindowRef {
   friend class WindowManager;
 
 public:
+  WindowRef(WindowId window_id, internal::Window* impl);
+  WindowRef() {}
+
   void SwapBuffers();
 
   // TODO(colintan): Consider a more flexible event listener approach instead
   std::optional<Event> ConsumeEvent();
 
-private:
-  WindowRef(WindowId window_id, internal::Window* impl);
+  bool ShouldClose();
 
 private:
   WindowId window_id_;

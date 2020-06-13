@@ -1,55 +1,38 @@
 #include "application.h"
-#include "platform/platform.h"
 
 #include <iostream>
 #include "window/window_manager.h"
 #include "window/window.h"
 
-void Test() {
+int main() {
   window::WindowManager window_manager;
-
-  window_manager.Initialize();
+  if (!window_manager.Initialize()) {
+    std::cerr << "Failed to initialize window manager." << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
 
   std::optional<window::WindowRef> window_ref_opt = 
       window_manager.CreateWindow(1920, 1080, "Hello World");
   if (!window_ref_opt.has_value()) {
-    return;
+    std::cerr << "Failed to create window." << std::endl;
+    std::exit(EXIT_FAILURE);
   }
 
-  while(1) {
+  Application application;
+  if (!application.Initialize(*window_ref_opt)) {
+    std::cerr << "Failed to initialize application." << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+
+  while (!window_manager.ShouldClose()) {
     window_manager.Tick();
-
-    while (std::optional<window::Event> event_opt = window_ref_opt->ConsumeEvent()) {
-      if (event_opt->IsType<window::KeyboardEvent>()) {
-        window::KeyboardEvent event = event_opt->AsType<window::KeyboardEvent>();
-
-        if (event.key == window::KeyInput::KeyA) {
-          if (event.action == window::KeyAction::Down) {
-            std::cout << "Key A Down" << std::endl;
-          } else {
-            std::cout << "Key A Up" << std::endl;
-          }
-        }
-      }
-    }
+    application.Tick();
 
     window_ref_opt->SwapBuffers();
   }
 
+  application.Cleanup();
   window_manager.Cleanup();
-}
-
-int main() {
-  Test();
-
-  // platform::Platform platform;
-  // platform.Initialize();
-
-  // std::unique_ptr<Application> app = std::make_unique<Application>(&platform);
-  // app->RunLoop();
-  // app.reset();
-
-  // platform.Cleanup();
   
   return 0;
 }

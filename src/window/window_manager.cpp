@@ -27,6 +27,10 @@ void WindowManager::Cleanup() {
 void WindowManager::Tick() {
   window_->Tick();
 }
+
+bool WindowManager::ShouldClose() {
+  return window_->ShouldClose();
+}
    
 std::optional<WindowRef> WindowManager::CreateWindow(int width, int height, 
                                                      const std::string& title) {

@@ -15,6 +15,14 @@ bool WindowGLFW::CreateWindow(int width, int height, const std::string& title) {
   height_ = height;
   title_ = title;
 
+  glfwMakeContextCurrent(glfw_window_);
+
+  glewExperimental = true;
+  if (glewInit() != GLEW_OK) {
+    std::cerr << "Failed to initialize GLEW." << std::endl;
+    return false;
+  }
+
   glfwSetKeyCallback(glfw_window_, KeyboardCallback);
 
   return true;
@@ -24,6 +32,10 @@ void WindowGLFW::DestroyWindow() {
   if (glfw_window_ != nullptr) {
     glfwDestroyWindow(glfw_window_);
   }
+
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 }
 
 void WindowGLFW::Tick() {
@@ -36,6 +48,10 @@ void WindowGLFW::SwapBuffers() {
 
 std::optional<Event> WindowGLFW::ConsumeEvent() {
   return event_store_.ConsumeEvent(glfw_window_);
+}
+
+bool WindowGLFW::ShouldClose() {
+  return glfwWindowShouldClose(glfw_window_);
 }
 
 EventStore WindowGLFW::event_store_;

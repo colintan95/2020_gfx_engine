@@ -31,6 +31,8 @@ public:
 
   void Tick();
 
+  bool ShouldClose();
+
   std::optional<WindowRef> CreateWindow(int width, int height, const std::string& title);
 
 private:

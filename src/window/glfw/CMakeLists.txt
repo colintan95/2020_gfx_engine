@@ -6,4 +6,5 @@ target_sources(window
     "window_glfw.h"
     "window_manager_glfw.cpp"
     "window_manager_glfw.h")
+target_link_libraries(window PRIVATE glew)
 target_link_libraries(window PRIVATE glfw)
