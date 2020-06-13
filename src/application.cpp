@@ -152,15 +152,9 @@ bool Application::Initialize(window::WindowRef window_ref) {
     std::cerr << "Failed to create GAL vertex description." << std::endl;
     return false;
   }
-  vert_desc_opt->entries = std::make_shared<std::vector<gal::GALVertexDesc::Entry>>();
-  auto& entries = *(vert_desc_opt->entries);
-  entries.push_back({});
-  entries[0].index = 0;
-  entries[0].size = 3;
-  entries.push_back({});
-  entries[1].index = 2;
-  entries[1].size = 2;
-
+  vert_desc_opt->SetAttribute(0, 3);
+  vert_desc_opt->SetAttribute(2, 2);
+  
   gal::command::SetVertexDesc set_vert_desc;
   set_vert_desc.vert_desc = *vert_desc_opt;
   command_buffer_.Add(set_vert_desc);

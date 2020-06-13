@@ -51,7 +51,7 @@ public:
       GLuint vao = *gl_id_opt;
       glBindVertexArray(vao);
 
-      for (const GALVertexDesc::Entry& entry : *(cmd.vert_desc.entries)) {
+      for (const GALVertexDesc::Entry& entry : cmd.vert_desc.entries) {
         temp_state_.vert_desc_map[entry.index] = entry;
       }
     }

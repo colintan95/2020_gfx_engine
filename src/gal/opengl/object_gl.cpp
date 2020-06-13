@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 
 #include <iostream>
+#include <utility>
 #include "gal/opengl/id_converter.h"
 #include "gal/opengl/platform_gl.h"
 
@@ -160,6 +161,13 @@ GALVertexDesc::~GALVertexDesc() {
       platform_details_->RemoveGALId(GetGALId());
     }
   }
+}
+
+void GALVertexDesc::SetAttribute(uint8_t index, uint8_t size) {
+  Entry entry;
+  entry.index = index;
+  entry.size = size;
+  entries.push_back(std::move(entry));
 }
 
 std::optional<GALBuffer> GALBuffer::Create(GALPlatform* platform, BufferType type, uint8_t* data, 

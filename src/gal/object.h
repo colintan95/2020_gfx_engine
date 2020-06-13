@@ -86,11 +86,14 @@ public:
                                                size_t num_bytes);                                      
 };
 
+// TODO(colintan): See if this is too big to be passed around by value
 class GALVertexDesc : public GALObject{
 public:
   GALVertexDesc(GALPlatform* platform) : GALObject(platform) {}
   GALVertexDesc() {}
   ~GALVertexDesc();
+
+  void SetAttribute(uint8_t index, uint8_t size);
 
   static std::optional<GALVertexDesc> Create(GALPlatform* platform);
 
@@ -100,7 +103,10 @@ public:
     // TODO(colintan): Add more fields
   };
 
-  std::shared_ptr<std::vector<Entry>> entries;
+  // TODO(colintan): Make this private?
+  // TODO(colintan): May be expensive to copy. Change to something else that's more pass-by-value
+  // friendly
+  std::vector<Entry> entries;
 };
 
 class GALBuffer : public GALObject {
