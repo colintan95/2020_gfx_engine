@@ -1,14 +1,17 @@
 #ifndef RESOURCE_RESOURCE_MANAGER_H_
 #define RESOURCE_RESOURCE_MANAGER_H_
 
+#include <cassert>
 #include <memory>
 #include <unordered_map>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 #include "resource/resource.h"
 
 namespace resource {
 
+// TODO(colintan): Do I need custom Initialize() and Cleanup() functions?
 class ResourceManagerBase {
 friend class HandleBase;
 
@@ -24,15 +27,42 @@ public:
   }
 
 protected:
-  void SetupLookupTables(HandleId handle_id, ResourceBase* resource);
+  template<typename HandleType>
+  HandleType CreateHandle(ResourceBase* resource) {
+    HandleType handle(this, resource);
+    return std::move(handle);
+  }
 
+  // TODO(colintan): Need to test this
+  void InvalidateHandles(ResourceBase* resource) {
+    assert(resource != nullptr);
+
+    auto handles_it = resource_to_handles_.find(resource);
+
+    if (handles_it != resource_to_handles_.end()) {
+      for (HandleId handle_id : handles_it->second) {
+
+        auto handle_ptr_it = handle_locations_.find(handle_id);
+        
+        if (handle_ptr_it != handle_locations_.end()) {
+          HandleBase* handle_ptr = handle_ptr_it->second;
+          handle_ptr->Invalidate();
+        }
+      }
+    }
+  }
+
+private:
   void SetHandleLocation(HandleId id, HandleBase* handle) {
     handle_locations_[id] = handle;
   }
 
+  void InsertHandle(HandleId id, ResourceBase* resource);
+  void RemoveHandle(HandleId id);
+
 private:
   std::unordered_map<HandleId, ResourceBase*> handle_to_resource_;
-  std::unordered_map<ResourceBase*, HandleId> resource_to_handle_;
+  std::unordered_map<ResourceBase*, std::unordered_set<HandleId>> resource_to_handles_;
   std::unordered_map<HandleId, HandleBase*> handle_locations_;
 };
 
@@ -42,18 +72,12 @@ template<typename T> friend class Handle;
 public:
   template<typename T>
   Handle<T> CreateResource() {
-    static int counter = 0;
-    ++counter;
-    HandleId handle_id = counter;
-
     std::unique_ptr<Resource<T>> resource = std::make_unique<Resource<T>>();
     resource->Alloc();
-    
-    SetupLookupTables(handle_id, resource.get());
+
+    Handle<T> handle = CreateHandle<Handle<T>>(resource.get());
     resources_.push_back(std::move(resource));
 
-    Handle<T> handle;
-    handle.Initialize(handle_id, this);
     return std::move(handle);
   }
 

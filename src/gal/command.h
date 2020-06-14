@@ -46,7 +46,7 @@ struct SetUniformBuffer {
 };
 
 struct SetVertexBuffer {
-  GALVertexBuffer buffer;
+  GALBuffer buffer;
   uint8_t vert_idx; // Index of vertex in the vertex description
 };
 

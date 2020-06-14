@@ -7,26 +7,6 @@
 #include "window/window.h"
 #include "window/window_manager.h"
 
-#include "resource/resource.h"
-#include "resource/resource_manager.h"
-
-void Test() {
-  resource::ResourceManager manager;
-
-  resource::Handle<double> handle = manager.CreateResource<double>();
-
-  auto& res = handle.Get();
-  std::cout << res << std::endl;
-  res = 1.0;
-  std::cout << res << std::endl;
-  auto& res2 = handle.Get();
-  std::cout << res2 << std::endl;
-
-  std::cout << "Valid: " << handle.IsValid() << std::endl;
-  manager.Invalidate(handle.GetId());
-  std::cout << "Valid: " << handle.IsValid() << std::endl;
-}
-
 class MyEventHandlerImpl : public event::IEventHandlerImpl {
 public:
   void Handle(const event::Event& event) {
@@ -35,8 +15,6 @@ public:
 };
 
 int main() {
-  Test();
-
   window::WindowManager window_manager;
   if (!window_manager.Initialize()) {
     std::cerr << "Failed to initialize window manager." << std::endl;
