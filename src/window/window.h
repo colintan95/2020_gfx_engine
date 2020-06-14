@@ -3,23 +3,27 @@
 
 #include <cstdint>
 #include <optional>
+#include <memory>
+#include <string>
 #include "event/event.h"
 
 namespace window {
 
 namespace internal {
-class Window;
+class WindowImpl;
 } // namespace
 
-using WindowId = uint32_t;
-
-class WindowRef {
+class Window {
 friend class WindowManager;
 friend class EventConsumer;
 
 public:
-  WindowRef(WindowId window_id, internal::Window* impl);
-  WindowRef() {}
+  // TODO(colintan): Consider making this private (see abseil lib's WrapUnique) -
+  // https://abseil.io/tips/134
+  Window();
+
+  Window(const Window&) = delete;
+  Window& operator=(const Window&) = delete;
 
   void SwapBuffers();
 
@@ -29,12 +33,16 @@ public:
   bool ShouldClose();
 
 private:
+  bool CreateWindow(int width, int height, const std::string& title);
+  void DestroyWindow();
+
+  void Tick();
+
   void AddEventConsumer(EventConsumer* consumer);
   void RemoveEventConsumer(EventConsumer* consumer);
 
 private:
-  WindowId window_id_;
-  internal::Window* impl_;
+  std::unique_ptr<internal::WindowImpl> impl_;
 };
 
 } // namespace

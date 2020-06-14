@@ -8,13 +8,13 @@
 
 class Application {
 public:
-  bool Initialize(window::WindowRef window_ref);
+  bool Initialize(window::Window* window_);
   void Cleanup();
 
   void Tick();
 
 private:
-  window::WindowRef window_ref_;
+  window::Window* window_;
   gal::GALPlatform gal_platform_;
   gal::GALCommandBuffer command_buffer_;
 };

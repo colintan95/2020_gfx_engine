@@ -1,7 +1,7 @@
 #include "window/window_manager.h"
 
 #include <memory>
-#include "window/window_internal.h"
+#include "window/window_impl.h"
 
 namespace window {
 
@@ -32,12 +32,15 @@ bool WindowManager::ShouldClose() {
   return window_->ShouldClose();
 }
    
-std::optional<WindowRef> WindowManager::CreateWindow(int width, int height, 
-                                                     const std::string& title) {
-  window_ = internal::Window::Create();
+Window* WindowManager::CreateWindow(int width, int height, const std::string& title) {
+  window_ = std::make_unique<Window>();
   window_->CreateWindow(width, height, title);
-  
-  return WindowRef(0, window_.get());
+  return window_.get();
+}
+
+void WindowManager::DestroyWindow() {
+  window_->DestroyWindow();
+  window_.release();
 }
 
 } // namespace

@@ -5,7 +5,7 @@
 
 namespace window {
 
-EventConsumer::EventConsumer(WindowRef* window) {
+EventConsumer::EventConsumer(Window* window) {
   assert(window != nullptr);
   window_ = window;
   window_->AddEventConsumer(this);

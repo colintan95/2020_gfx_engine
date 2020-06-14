@@ -6,20 +6,20 @@
 
 namespace window {
 
-class WindowRef;
+class Window;
 
 class EventConsumer {
-friend class WindowRef;
+friend class Window;
 
 public:
-  EventConsumer(WindowRef* window);
+  EventConsumer(Window* window);
   ~EventConsumer();
 
 private:
   void EnqueueEvent(const event::Event& event);
 
 private:
-  WindowRef* window_;
+  Window* window_;
   std::deque<event::Event> events_;
 };
 

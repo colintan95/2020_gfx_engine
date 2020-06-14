@@ -1,32 +1,43 @@
 #include "window/window.h"
 
 #include "window/event_consumer.h"
-#include "window/window_internal.h"
+#include "window/window_impl.h"
 
 namespace window {
 
-WindowRef::WindowRef(WindowId window_id, internal::Window* impl) { 
-  window_id_ = window_id; 
-  impl_ = impl; 
+Window::Window() { 
+  impl_ = internal::WindowImpl::Create();
 }
 
-void WindowRef::SwapBuffers() {
+void Window::SwapBuffers() {
   impl_->SwapBuffers();
 }
 
-std::optional<event::Event> WindowRef::ConsumeEvent() {
+std::optional<event::Event> Window::ConsumeEvent() {
   return impl_->ConsumeEvent();
 }
 
-bool WindowRef::ShouldClose() {
+bool Window::ShouldClose() {
   return impl_->ShouldClose();
 }
 
-void WindowRef::AddEventConsumer(EventConsumer* consumer) {
+bool Window::CreateWindow(int width, int height, const std::string& title) {
+  return impl_->CreateWindow(width, height, title);
+}
+
+void Window::DestroyWindow() {
+  impl_->DestroyWindow();
+}
+
+void Window::Tick() {
+  impl_->Tick();
+}
+
+void Window::AddEventConsumer(EventConsumer* consumer) {
 
 }
 
-void WindowRef::RemoveEventConsumer(EventConsumer* consumer) {
+void Window::RemoveEventConsumer(EventConsumer* consumer) {
 
 }
 

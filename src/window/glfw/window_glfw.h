@@ -7,12 +7,12 @@
 #include <string>
 #include <vector>
 #include "window/glfw/event_store.h"
-#include "window/window_internal.h"
+#include "window/window_impl.h"
 
 namespace window {
 namespace internal {
 
-class WindowGLFW : public Window {
+class WindowImplGLFW : public WindowImpl {
 public:
   bool CreateWindow(int width, int height, const std::string& title) final;
   void DestroyWindow() final;

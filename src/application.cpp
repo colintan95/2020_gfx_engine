@@ -44,8 +44,8 @@ const char kFragShaderSrc[] =
     "  out_color = texture(tex_sampler, frag_texcoord);\n"
     "}";
 
-bool Application::Initialize(window::WindowRef window_ref) {
-  window_ref_ = window_ref;
+bool Application::Initialize(window::Window* window) {
+  window_= window;
 
   if (!gal_platform_.Initialize()) {
     std::cerr << "Failed to initialize gal platform." << std::endl;
@@ -205,6 +205,7 @@ bool Application::Initialize(window::WindowRef window_ref) {
 // TODO(colintan): Do proper cleanup if needed
 void Application::Cleanup() {
   gal_platform_.Cleanup();
+  window_ = nullptr;
 }
 
 void Application::Tick() {

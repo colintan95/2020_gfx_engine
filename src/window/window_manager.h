@@ -6,7 +6,6 @@
 #include <string>
 #include <optional>
 #include "window/window.h"
-#include "window/window_internal.h"
 
 namespace window {
 
@@ -33,13 +32,14 @@ public:
 
   bool ShouldClose();
 
-  std::optional<WindowRef> CreateWindow(int width, int height, const std::string& title);
+  Window* CreateWindow(int width, int height, const std::string& title);
+  void DestroyWindow();
 
 private:
   std::unique_ptr<WindowManagerImpl> impl_;
 
   // TODO(colintan): Support one window for now
-  std::unique_ptr<internal::Window> window_;
+  std::unique_ptr<Window> window_;
 }; 
 
 } // namespace

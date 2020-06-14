@@ -1,5 +1,5 @@
-#ifndef WINDOW_WINDOW_INTERNAL_H_
-#define WINDOW_WINDOW_INTERNAL_H_
+#ifndef WINDOW_WINDOW_IMPL_H_
+#define WINDOW_WINDOW_IMPL_H_
 
 #include <memory>
 #include <string>
@@ -9,12 +9,12 @@
 namespace window {
 namespace internal {
 
-class Window {
+class WindowImpl {
 public:
   virtual bool CreateWindow(int width, int height, const std::string& title) = 0;
   virtual void DestroyWindow() = 0;
 
-  virtual ~Window() {}
+  virtual ~WindowImpl() {}
 
   virtual void Tick() = 0;
 
@@ -25,10 +25,10 @@ public:
   virtual std::optional<event::Event> ConsumeEvent() = 0;
 
 public:
-  static std::unique_ptr<Window> Create();
+  static std::unique_ptr<WindowImpl> Create();
 };
 
 } // namespace
 } // namespace
 
-#endif // WINDOW_WINDOW_INTERNAL_H_
+#endif // WINDOW_WINDOW_IMPL_H_

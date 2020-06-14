@@ -6,7 +6,7 @@
 #include "event/event_handler.h"
 
 namespace window {
-class WindowRef;
+class Window;
 } // namespace
 
 namespace event {
@@ -15,8 +15,8 @@ class EventManager {
 friend class HandlerRef;
 
 public:
-  EventManager(window::WindowRef* window);
-  ~EventManager();
+  bool Initialize(window::Window* window);
+  void Cleanup();
 
   // T should be of type IEventHandler
   template<typename T>
@@ -33,7 +33,7 @@ private:
   void RemoveEventHandler(HandlerRef* handler);
 
 private:
-  window::WindowRef* window_;
+  window::Window* window_;
   std::vector<HandlerRef*> handler_refs_;
 };
 

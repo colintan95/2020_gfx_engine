@@ -6,7 +6,7 @@
 namespace window {
 namespace internal {
 
-bool WindowGLFW::CreateWindow(int width, int height, const std::string& title) {
+bool WindowImplGLFW::CreateWindow(int width, int height, const std::string& title) {
   glfw_window_ = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
   if (glfw_window_ == nullptr) {
     return false;
@@ -28,7 +28,7 @@ bool WindowGLFW::CreateWindow(int width, int height, const std::string& title) {
   return true;
 }
 
-void WindowGLFW::DestroyWindow() {
+void WindowImplGLFW::DestroyWindow() {
   if (glfw_window_ != nullptr) {
     glfwDestroyWindow(glfw_window_);
   }
@@ -38,30 +38,30 @@ void WindowGLFW::DestroyWindow() {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 }
 
-void WindowGLFW::Tick() {
+void WindowImplGLFW::Tick() {
   glfwPollEvents();
 }
    
-void WindowGLFW::SwapBuffers() {
+void WindowImplGLFW::SwapBuffers() {
   glfwSwapBuffers(glfw_window_);
 }
 
-std::optional<event::Event> WindowGLFW::ConsumeEvent() {
+std::optional<event::Event> WindowImplGLFW::ConsumeEvent() {
   return event_store_.ConsumeEvent(glfw_window_);
 }
 
-bool WindowGLFW::ShouldClose() {
+bool WindowImplGLFW::ShouldClose() {
   return glfwWindowShouldClose(glfw_window_);
 }
 
-EventStore WindowGLFW::event_store_;
+EventStore WindowImplGLFW::event_store_;
 
-void WindowGLFW::KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+void WindowImplGLFW::KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
   event_store_.KeyboardCallback(window, key, scancode, action, mods);
 }
 
-std::unique_ptr<Window> Window::Create() {
-  return std::make_unique<WindowGLFW>();
+std::unique_ptr<WindowImpl> WindowImpl::Create() {
+  return std::make_unique<WindowImplGLFW>();
 }
 
 } // namespace

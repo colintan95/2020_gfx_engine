@@ -6,11 +6,12 @@
 
 namespace event {
 
-EventManager::EventManager(window::WindowRef* window) {
+bool EventManager::Initialize(window::Window* window) {
   window_ = window;
+  return true;
 }
 
-EventManager::~EventManager() {
+void EventManager::Cleanup() {
   window_ = nullptr;
 }
 

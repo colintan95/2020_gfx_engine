@@ -1,7 +1,7 @@
 add_library(window
     "event_consumer.cpp"
     "event_consumer.h"
-    "window_internal.h"
+    "window_impl.h"
     "window_manager.cpp"
     "window_manager.h"
     "window.cpp"
