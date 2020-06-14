@@ -76,18 +76,8 @@ public:
                                            GALShader frag_shader);
 };
 
-class GALVertexBuffer : public GALObject {
-public:
-  GALVertexBuffer(GALPlatform* platform) : GALObject(platform) {}
-  GALVertexBuffer() {}
-  ~GALVertexBuffer();   
-
-  static std::optional<GALVertexBuffer> Create(GALPlatform* platform, uint8_t* data, 
-                                               size_t num_bytes);                                      
-};
-
 // TODO(colintan): See if this is too big to be passed around by value
-class GALVertexDesc : public GALObject{
+class GALVertexDesc : public GALObject {
 public:
   GALVertexDesc(GALPlatform* platform) : GALObject(platform) {}
   GALVertexDesc() {}

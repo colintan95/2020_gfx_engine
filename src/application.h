@@ -4,6 +4,7 @@
 #include <memory>
 #include "gal/gal.h"
 #include "resource/model_loader.h"
+#include "resource/gal_resource_manager.h"
 #include "window/window.h"
 
 class Application {
@@ -17,6 +18,8 @@ private:
   window::Window* window_;
   gal::GALPlatform gal_platform_;
   gal::GALCommandBuffer command_buffer_;
+
+  std::unique_ptr<resource::GALResourceManager> resource_manager_;
 };
 
 #endif // APPLICATION_H_

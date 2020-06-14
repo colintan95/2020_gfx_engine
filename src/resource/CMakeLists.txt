@@ -1,4 +1,8 @@
 add_library(resource
+    "gal_resource_manager.cpp"
+    "gal_resource_manager.h"
+    "gal_resource.cpp"
+    "gal_resource.h"
     "image_loader.cpp"
     "image_loader.h"
     "model_loader.cpp"

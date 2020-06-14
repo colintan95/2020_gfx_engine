@@ -15,6 +15,9 @@
 #include "resource/image_loader.h"
 #include "resource/model_loader.h"
 
+#include "resource/gal_resource.h"
+#include "resource/gal_resource_manager.h"
+
 constexpr int kScreenWidth = 1920;
 constexpr int kScreenHeight = 1080;
 
@@ -51,6 +54,8 @@ bool Application::Initialize(window::Window* window) {
     std::cerr << "Failed to initialize gal platform." << std::endl;
     return false;
   }
+
+  resource_manager_ = std::make_unique<resource::GALResourceManager>(&gal_platform_);
 
   resource::ModelLoader model_loader;
   std::shared_ptr<resource::Model> model = model_loader.LoadModel("assets/cube/cube.obj");
@@ -105,34 +110,41 @@ bool Application::Initialize(window::Window* window) {
   } uniform_data;
 
   uniform_data.model_mat = glm::mat4{1.f};
-  // uniform_data.view_mat = glm::mat4{1.f};
   uniform_data.view_mat = glm::translate(glm::mat4{1.f}, glm::vec3{0.f, 0.f, -10.f}) *
       glm::rotate(glm::mat4{1.f}, glm::radians(-15.f), glm::vec3{0.f, 1.f, 0.f});
   uniform_data.proj_mat = glm::perspective(glm::radians(30.f), kAspectRatio, 0.1f, 1000.f);
 
-  auto uniform_buf_opt = 
-      gal_platform_.Create<gal::GALBuffer>(gal::BufferType::Uniform, 
-                                           reinterpret_cast<uint8_t*>(&uniform_data),
-                                           sizeof(uniform_data));
-  if (!uniform_buf_opt) {
+  resource::GALResource::BufferConfig buffer_config;
+  buffer_config.type = gal::BufferType::Uniform;
+  buffer_config.data = reinterpret_cast<uint8_t*>(&uniform_data);
+  buffer_config.size = sizeof(uniform_data);
+  resource::GALHandle uniform_buf_handle = 
+      resource_manager_->CreateResource(resource::GALResource::Type::Buffer, buffer_config);
+  if (!uniform_buf_handle.IsValid()) {
     std::cerr << "Failed to create GAL buffer for uniforms." << std::endl;
     return false;
   }
 
   gal::command::SetUniformBuffer set_uniform_buf;
-  set_uniform_buf.buffer = *uniform_buf_opt;
+  set_uniform_buf.buffer = uniform_buf_handle.Get<gal::GALBuffer>();
   set_uniform_buf.idx = 0;
   command_buffer_.Add(set_uniform_buf);
 
-  auto texture_opt = 
-      gal_platform_.Create<gal::GALTexture>(gal::TextureType::Texture2D, gal::TextureFormat::RGB,
-                                            image->width, image->height, image->pixels.data());
-  if (!texture_opt) {
+  resource::GALResource::TextureConfig texture_config;
+  texture_config.type = gal::TextureType::Texture2D;
+  texture_config.format = gal::TextureFormat::RGB;
+  texture_config.width = image->width;
+  texture_config.height = image->height;
+  texture_config.data = image->pixels.data();
+  resource::GALHandle texture_handle =
+      resource_manager_->CreateResource(resource::GALResource::Type::Texture, texture_config);
+  if (!texture_handle.IsValid()) {
     std::cerr << "Failed to create GAL texture." << std::endl;
     return false;
   }
 
-  auto tex_sampler_opt =  gal_platform_.Create<gal::GALTextureSampler>(*texture_opt);
+  auto tex_sampler_opt =  
+      gal_platform_.Create<gal::GALTextureSampler>(texture_handle.Get<gal::GALTexture>());
   if (!tex_sampler_opt) {
     std::cerr << "Failed to create GAL texture sampler." << std::endl;
     return false;
@@ -141,11 +153,7 @@ bool Application::Initialize(window::Window* window) {
   gal::command::SetTextureSampler set_tex_sampler;
   set_tex_sampler.sampler = *tex_sampler_opt;
   set_tex_sampler.idx = 1;
-  command_buffer_.Add(set_tex_sampler);
-
-  // uniform_data.view_mat = glm::translate(glm::mat4{1.f}, glm::vec3{0.f, 0.f, -10.f}) *
-  //     glm::rotate(glm::mat4{1.f}, glm::radians(-15.f), glm::vec3{0.f, 1.f, 0.f});
-  // uniform_buf_opt->Update(reinterpret_cast<uint8_t*>(&uniform_data), 0, sizeof(uniform_data));           
+  command_buffer_.Add(set_tex_sampler);           
 
   auto vert_desc_opt = gal_platform_.Create<gal::GALVertexDesc>();
   if (!vert_desc_opt) {
@@ -159,33 +167,35 @@ bool Application::Initialize(window::Window* window) {
   set_vert_desc.vert_desc = *vert_desc_opt;
   command_buffer_.Add(set_vert_desc);
 
-  auto pos_vert_buf_opt = 
-      gal_platform_.Create<gal::GALVertexBuffer>(
-          reinterpret_cast<uint8_t*>(model->positions.data()), 
-          model->positions.size() * sizeof(glm::vec3)
-      );
-  if (!pos_vert_buf_opt) {
+  resource::GALResource::BufferConfig pos_buf_config;
+  pos_buf_config.type = gal::BufferType::Vertex;
+  pos_buf_config.data = reinterpret_cast<uint8_t*>(model->positions.data());
+  pos_buf_config.size = model->positions.size() * sizeof(glm::vec3);
+  resource::GALHandle pos_buf_handle = 
+      resource_manager_->CreateResource(resource::GALResource::Type::Buffer, pos_buf_config);
+  if (!pos_buf_handle.IsValid()) {
     std::cerr << "Failed to create GAL vertex buffer for positions." << std::endl;
     return false;
-  }        
+  }
 
   gal::command::SetVertexBuffer set_pos_vert_buf;
-  set_pos_vert_buf.buffer = *pos_vert_buf_opt;
+  set_pos_vert_buf.buffer = pos_buf_handle.Get<gal::GALBuffer>();
   set_pos_vert_buf.vert_idx = 0;
   command_buffer_.Add(set_pos_vert_buf);
 
-  auto texcoord_vert_buf_opt = 
-      gal_platform_.Create<gal::GALVertexBuffer>(
-          reinterpret_cast<uint8_t*>(model->texcoords.data()),
-          model->texcoords.size() * sizeof(glm::vec2)
-      );    
-  if (!texcoord_vert_buf_opt) {
+  resource::GALResource::BufferConfig texcoord_buf_config;
+  texcoord_buf_config.type = gal::BufferType::Vertex;
+  texcoord_buf_config.data = reinterpret_cast<uint8_t*>(model->texcoords.data());
+  texcoord_buf_config.size = model->texcoords.size() * sizeof(glm::vec2);
+  resource::GALHandle texcoord_buf_handle = 
+      resource_manager_->CreateResource(resource::GALResource::Type::Buffer, texcoord_buf_config);
+  if (!texcoord_buf_handle.IsValid()) {
     std::cerr << "Failed to create GAL vertex buffer for texcoords." << std::endl;
     return false;
   }
 
   gal::command::SetVertexBuffer set_texcoord_vert_buf;
-  set_texcoord_vert_buf.buffer = *texcoord_vert_buf_opt;
+  set_texcoord_vert_buf.buffer = texcoord_buf_handle.Get<gal::GALBuffer>();
   set_texcoord_vert_buf.vert_idx = 2;
   command_buffer_.Add(set_texcoord_vert_buf);
   
@@ -204,6 +214,7 @@ bool Application::Initialize(window::Window* window) {
 
 // TODO(colintan): Do proper cleanup if needed
 void Application::Cleanup() {
+  resource_manager_.release();
   gal_platform_.Cleanup();
   window_ = nullptr;
 }

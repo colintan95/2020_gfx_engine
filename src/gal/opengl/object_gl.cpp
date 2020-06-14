@@ -121,29 +121,6 @@ GALPipeline::~GALPipeline() {
   }
 }
 
-std::optional<GALVertexBuffer> GALVertexBuffer::Create(GALPlatform* platform, uint8_t* data, 
-                                                       size_t num_bytes) {
-  GLuint gl_vbo;
-  glCreateBuffers(1, &gl_vbo);
-  glBindBuffer(GL_ARRAY_BUFFER, gl_vbo);
-  glBufferData(GL_ARRAY_BUFFER, num_bytes, data, GL_STATIC_DRAW);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-  GALVertexBuffer result{platform};
-  platform->GetPlatformDetails()->AddGALId(result.GetGALId(), gl_vbo);
-
-  return result;
-}
-
-GALVertexBuffer::~GALVertexBuffer() {
-  if (IsLastRef()) {
-    if (auto gl_vbo_opt = platform_details_->ConvertGALId(GetGALId())) {
-      glDeleteBuffers(1, &(*gl_vbo_opt));
-      platform_details_->RemoveGALId(GetGALId());
-    }
-  }
-}
-
 std::optional<GALVertexDesc> GALVertexDesc::Create(GALPlatform* platform) {
   GLuint gl_vao;
   glCreateVertexArrays(1, &gl_vao);

@@ -12,6 +12,7 @@ class ResourceManager;
 
 using HandleId = uint32_t;
 
+// TODO(colintan): Add move constructor, then call it from the base classes
 class ResourceBase {
 public:
   virtual ~ResourceBase() {}
@@ -28,8 +29,13 @@ public:
 
   Resource(const Resource&) = delete;
   Resource& operator=(const Resource&) = delete;
-  Resource(Resource&&) = delete;
-  Resource& operator=(const Resource&&) = delete;
+  
+  Resource(Resource&& other) 
+    : resource_(std::move(other.resource_)) {}
+  Resource& operator=(const Resource&& other) {
+    resource_ = std::move(other.resource_);
+    return *this;
+  }
 
   void Alloc() final {
     resource_ = std::make_unique<T>();
@@ -46,29 +52,18 @@ private:
   std::unique_ptr<T> resource_;
 };
 
-// template<typename T>
-// class ResourceGAL : public ResourceBase {
-// public:
-
-// }
-
 class HandleBase {
 
 public:
-  HandleBase() {}
-  virtual ~HandleBase() {}
+  HandleBase();
+  HandleBase(ResourceManagerBase* manager, ResourceBase* resource);
+  virtual ~HandleBase();
 
   HandleBase(const HandleBase&) = delete;
   HandleBase& operator=(const HandleBase&) = delete;
 
   HandleBase(HandleBase&& other);
   HandleBase& operator=(HandleBase&& other);
-
-  void Initialize(HandleId id, ResourceManagerBase* manager) {
-    valid_ = true;
-    id_ = id;
-    manager_ = manager;
-  }
 
   void Invalidate() { valid_ = false; }
   
@@ -78,6 +73,13 @@ public:
 
   ResourceManagerBase* GetManager() {
     return manager_;
+  }
+
+private:
+  HandleId GenerateId() {
+    static int counter = 0;
+    ++counter;
+    return counter;
   }
 
 private:
@@ -92,6 +94,7 @@ friend class ResourceManager;
 
 public:
   Handle() {}
+  Handle(ResourceManagerBase* manager, ResourceBase* resource) : HandleBase(manager, resource) {}
   ~Handle() {}
 
   Handle(const Handle&) = delete;
