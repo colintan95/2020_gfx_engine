@@ -5,7 +5,6 @@
 
 namespace render {
 
-
 class Renderer {
 public:
   Renderer();
