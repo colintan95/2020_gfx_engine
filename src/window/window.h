@@ -14,7 +14,8 @@ class Window;
 using WindowId = uint32_t;
 
 class WindowRef {
-  friend class WindowManager;
+friend class WindowManager;
+friend class EventConsumer;
 
 public:
   WindowRef(WindowId window_id, internal::Window* impl);
@@ -26,6 +27,10 @@ public:
   std::optional<event::Event> ConsumeEvent();
 
   bool ShouldClose();
+
+private:
+  void AddEventConsumer(EventConsumer* consumer);
+  void RemoveEventConsumer(EventConsumer* consumer);
 
 private:
   WindowId window_id_;

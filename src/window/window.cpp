@@ -1,5 +1,6 @@
 #include "window/window.h"
 
+#include "window/event_consumer.h"
 #include "window/window_internal.h"
 
 namespace window {
@@ -19,6 +20,14 @@ std::optional<event::Event> WindowRef::ConsumeEvent() {
 
 bool WindowRef::ShouldClose() {
   return impl_->ShouldClose();
+}
+
+void WindowRef::AddEventConsumer(EventConsumer* consumer) {
+
+}
+
+void WindowRef::RemoveEventConsumer(EventConsumer* consumer) {
+
 }
 
 } // namespace
