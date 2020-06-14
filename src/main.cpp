@@ -3,8 +3,16 @@
 #include <iostream>
 #include <memory>
 #include "event/event_manager.h"
+#include "window/event_consumer.h"
 #include "window/window_manager.h"
 #include "window/window.h"
+
+class MyEventHandlerImpl : public event::IEventHandlerImpl {
+public:
+  void Handle(const event::Event& event) {
+    std::cout << "Event!" << std::endl;
+  }
+};
 
 int main() {
   window::WindowManager window_manager;
@@ -18,11 +26,15 @@ int main() {
     std::cerr << "Failed to create window." << std::endl;
     std::exit(EXIT_FAILURE);
   }
-
+  
   event::EventManager event_manager;
   if (!event_manager.Initialize(window)) {
-
+    std::cerr << "Failed to initialize event manager." << std::endl;
+    std::exit(EXIT_FAILURE);
   }
+
+  std::unique_ptr<event::EventHandler> event_handler = 
+      event_manager.CreateHandler<MyEventHandlerImpl>();
 
   Application application;
   if (!application.Initialize(window)) {
@@ -32,14 +44,16 @@ int main() {
 
   while (!window_manager.ShouldClose()) {
     window_manager.Tick();
+    event_manager.Tick();
     application.Tick();
 
     window->SwapBuffers();
   }
 
+  event_handler.release();
   event_manager.Cleanup();
 
-  window_manager.DestroyWindow();
+  window_manager.DestroyWindow(window);
 
   application.Cleanup();
   window_manager.Cleanup();

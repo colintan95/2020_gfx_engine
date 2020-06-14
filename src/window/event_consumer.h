@@ -2,6 +2,7 @@
 #define WINDOW_EVENT_CONSUMER_H_
 
 #include <deque>
+#include <optional>
 #include "event/event.h"
 
 namespace window {
@@ -14,6 +15,8 @@ friend class Window;
 public:
   EventConsumer(Window* window);
   ~EventConsumer();
+
+  std::optional<event::Event> ConsumeEvent();
 
 private:
   void EnqueueEvent(const event::Event& event);

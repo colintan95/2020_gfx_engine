@@ -9,23 +9,24 @@ namespace event {
 class EventManager;
 
 // Override this
-class IEventHandler {
+class IEventHandlerImpl {
 public:
-  virtual ~IEventHandler() {}
+  virtual ~IEventHandlerImpl() {}
 
   virtual void Handle(const Event& event) = 0;
 };
 
-class HandlerRef {
+// TODO(colintan): Rename this
+class EventHandler {
 friend class EventManager;
 
 public:
   // TODO(colintan): Try to make this private if possible
-  HandlerRef(EventManager* manager);
-  ~HandlerRef();
+  EventHandler(EventManager* manager);
+  ~EventHandler();
 
 private:
-  std::unique_ptr<IEventHandler> handler_;
+  std::unique_ptr<IEventHandlerImpl> impl_;
   EventManager* manager_;
 };
 

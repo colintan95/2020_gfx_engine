@@ -13,10 +13,6 @@ void Window::SwapBuffers() {
   impl_->SwapBuffers();
 }
 
-std::optional<event::Event> Window::ConsumeEvent() {
-  return impl_->ConsumeEvent();
-}
-
 bool Window::ShouldClose() {
   return impl_->ShouldClose();
 }
@@ -31,14 +27,20 @@ void Window::DestroyWindow() {
 
 void Window::Tick() {
   impl_->Tick();
+
+  while (std::optional<event::Event> event_opt = impl_->ConsumeEvent()) {
+    for (EventConsumer* consumer : event_consumers_) {
+      consumer->EnqueueEvent(*event_opt);
+    }
+  }
 }
 
 void Window::AddEventConsumer(EventConsumer* consumer) {
-
+  event_consumers_.insert(consumer);
 }
 
 void Window::RemoveEventConsumer(EventConsumer* consumer) {
-
+  event_consumers_.erase(consumer);
 }
 
 } // namespace

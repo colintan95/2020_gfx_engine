@@ -32,8 +32,9 @@ public:
 
   bool ShouldClose();
 
+  // TODO(colintan): Support multiple windows
   Window* CreateWindow(int width, int height, const std::string& title);
-  void DestroyWindow();
+  void DestroyWindow(Window* window);
 
 private:
   std::unique_ptr<WindowManagerImpl> impl_;

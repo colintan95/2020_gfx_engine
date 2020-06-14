@@ -2,33 +2,43 @@
 
 #include <algorithm>
 #include <memory>
+#include <optional>
+#include "window/event_consumer.h"
 #include "window/window.h"
 
 namespace event {
 
 bool EventManager::Initialize(window::Window* window) {
   window_ = window;
+  event_consumer_ = std::make_unique<window::EventConsumer>(window);
   return true;
 }
 
 void EventManager::Cleanup() {
+  event_consumer_.release();
   window_ = nullptr;
 }
 
-void EventManager::SendEvent(const Event& event) {
-  for (HandlerRef* handler_ref : handler_refs_) {
-    handler_ref->handler_->Handle(event);
+void EventManager::Tick() {
+  while (std::optional<event::Event> event_opt = event_consumer_->ConsumeEvent()) {
+    SendEvent(*event_opt);
   }
 }
 
-void EventManager::AddEventHandler(HandlerRef* handler_ref) {
-  handler_refs_.push_back(handler_ref);
+void EventManager::SendEvent(const Event& event) {
+  for (EventHandler* handler : handlers_) {
+    handler->impl_->Handle(event);
+  }
 }
 
-void EventManager::RemoveEventHandler(HandlerRef* handler_ref) {
-  auto it = std::find(handler_refs_.begin(), handler_refs_.end(), handler_ref);
-  if (it != handler_refs_.end()) {
-    handler_refs_.erase(it);
+void EventManager::AddEventHandler(EventHandler* handler) {
+  handlers_.push_back(handler);
+}
+
+void EventManager::RemoveEventHandler(EventHandler* handler) {
+  auto it = std::find(handlers_.begin(), handlers_.end(), handler);
+  if (it != handlers_.end()) {
+    handlers_.erase(it);
   }
 }
 

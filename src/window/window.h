@@ -5,6 +5,7 @@
 #include <optional>
 #include <memory>
 #include <string>
+#include <unordered_set>
 #include "event/event.h"
 
 namespace window {
@@ -27,9 +28,6 @@ public:
 
   void SwapBuffers();
 
-  // TODO(colintan): Consider a more flexible event listener approach instead
-  std::optional<event::Event> ConsumeEvent();
-
   bool ShouldClose();
 
 private:
@@ -43,6 +41,8 @@ private:
 
 private:
   std::unique_ptr<internal::WindowImpl> impl_;
+
+  std::unordered_set<EventConsumer*> event_consumers_;
 };
 
 } // namespace

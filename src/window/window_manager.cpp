@@ -38,7 +38,7 @@ Window* WindowManager::CreateWindow(int width, int height, const std::string& ti
   return window_.get();
 }
 
-void WindowManager::DestroyWindow() {
+void WindowManager::DestroyWindow(Window* window) {
   window_->DestroyWindow();
   window_.release();
 }

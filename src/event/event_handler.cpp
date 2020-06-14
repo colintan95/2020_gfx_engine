@@ -5,18 +5,18 @@
 
 namespace event {
 
-HandlerRef::HandlerRef(EventManager* manager) {
+EventHandler::EventHandler(EventManager* manager) {
   assert(manager != nullptr);
 
   manager_ = manager;
   manager_->AddEventHandler(this);
 }
 
-HandlerRef::~HandlerRef() {
+EventHandler::~EventHandler() {
   assert(manager_ != nullptr);
-  assert(handler_ != nullptr);
+  assert(impl_ != nullptr);
   
-  handler_.release();
+  impl_.release();
   manager_->RemoveEventHandler(this);
   manager_ = nullptr;
 }

@@ -7,12 +7,13 @@
 
 namespace window {
 class Window;
+class EventConsumer;
 } // namespace
 
 namespace event {
 
 class EventManager {
-friend class HandlerRef;
+friend class EventHandler;
 
 public:
   bool Initialize(window::Window* window);
@@ -20,21 +21,25 @@ public:
 
   // T should be of type IEventHandler
   template<typename T>
-  std::unique_ptr<HandlerRef> CreateHandler() {
-    std::unique_ptr<HandlerRef> handler_ref = std::make_unique<HandlerRef>(this);
-    handler_ref->handler_ = std::make_unique<T>();
-    return handler_ref;
+  std::unique_ptr<EventHandler> CreateHandler() {
+    std::unique_ptr<EventHandler> handler = std::make_unique<EventHandler>(this);
+    handler->impl_ = std::make_unique<T>();
+    return handler;
   }
 
-  void SendEvent(const Event& event);
+  void Tick();
 
 private:
-  void AddEventHandler(HandlerRef* handler);
-  void RemoveEventHandler(HandlerRef* handler);
+  void SendEvent(const Event& event);
+
+  void AddEventHandler(EventHandler* handler);
+  void RemoveEventHandler(EventHandler* handler);
 
 private:
   window::Window* window_;
-  std::vector<HandlerRef*> handler_refs_;
+  std::unique_ptr<window::EventConsumer> event_consumer_;
+
+  std::vector<EventHandler*> handlers_;
 };
 
 } // namespace
