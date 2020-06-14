@@ -1,5 +1,5 @@
-#ifndef EVENT_EVENTS_H_
-#define EVENT_EVENTS_H_
+#ifndef EVENT_EVENT_H_
+#define EVENT_EVENT_H_
 
 #include <variant>
 
@@ -77,4 +77,4 @@ private:
 
 } // namespace
 
-#endif // EVENT_EVENTS_H_
+#endif // EVENT_EVENT_H_

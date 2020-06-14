@@ -1,6 +1,7 @@
 #include "application.h"
 
 #include <iostream>
+#include "event/event_manager.h"
 #include "window/window_manager.h"
 #include "window/window.h"
 
@@ -17,6 +18,8 @@ int main() {
     std::cerr << "Failed to create window." << std::endl;
     std::exit(EXIT_FAILURE);
   }
+
+  event::EventManager event_manager(&(*window_ref_opt));
 
   Application application;
   if (!application.Initialize(*window_ref_opt)) {

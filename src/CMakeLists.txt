@@ -4,6 +4,7 @@ add_executable(gfx_engine
     "main.cpp")
 
 # Internal modules
+target_link_libraries(gfx_engine PRIVATE event)
 target_link_libraries(gfx_engine PRIVATE gal)
 target_link_libraries(gfx_engine PRIVATE logging)
 target_link_libraries(gfx_engine PRIVATE resource)
