@@ -2,7 +2,11 @@ add_library(resource
     "image_loader.cpp"
     "image_loader.h"
     "model_loader.cpp"
-    "model_loader.h")
+    "model_loader.h"
+    "resource_manager.cpp"
+    "resource_manager.h"
+    "resource.cpp"
+    "resource.h")
 target_link_libraries(resource PUBLIC glm)
 target_link_libraries(resource PRIVATE tinyobjloader)
 target_link_libraries(resource PRIVATE stb)
