@@ -5,7 +5,6 @@
 
 namespace render {
 
-class ResourceManager;
 
 class Renderer {
 public:
@@ -13,7 +12,7 @@ public:
   ~Renderer();
 
 private:
-  std::unique_ptr<ResourceManager> resource_manager_;
+
 };
 
 } // namespace
