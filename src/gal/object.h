@@ -30,7 +30,16 @@ enum class BufferType {
   Uniform
 };
 
-// TODO(colintan): Make this an abstract base class
+enum class ObjectType {
+  Shader,
+  Pipeline,
+  VertexDesc,
+  Buffer,
+  Texture,
+  TextureSampler
+};
+
+// TODO(colintan): Make abstract base class
 class GALObject {
 public:
   GALObject(GALPlatform* platform);
@@ -52,12 +61,13 @@ private:
   GALPlatform* gal_platform_;
 };
 
-// TODO(colintan): Deal with destruction of graphics API objects
 class GALShader : public GALObject {
 public:
   GALShader(GALPlatform* platform) : GALObject(platform) {}
   GALShader() {}
   ~GALShader();
+
+  static ObjectType GetObjectType() { return ObjectType::Shader; }
 
   static std::optional<GALShader> Create(GALPlatform* platform, ShaderType type, 
                                          const std::string& source);
@@ -72,6 +82,8 @@ public:
   GALPipeline() {}
   ~GALPipeline();
 
+  static ObjectType GetObjectType() { return ObjectType::Pipeline; }
+
   static std::optional<GALPipeline> Create(GALPlatform* platform, GALShader vert_shader, 
                                            GALShader frag_shader);
 };
@@ -84,6 +96,8 @@ public:
   ~GALVertexDesc();
 
   void SetAttribute(uint8_t index, uint8_t size);
+
+  static ObjectType GetObjectType() { return ObjectType::VertexDesc; }
 
   static std::optional<GALVertexDesc> Create(GALPlatform* platform);
 
@@ -104,6 +118,8 @@ public:
   GALBuffer(GALPlatform* platform) : GALObject(platform) {}
   GALBuffer() {}
   ~GALBuffer();
+
+  static ObjectType GetObjectType() { return ObjectType::Buffer; }
 
   static std::optional<GALBuffer> Create(GALPlatform* platform, BufferType type, uint8_t* data, 
                                          size_t size);
@@ -135,10 +151,13 @@ public:
   GALTexture() {}
   ~GALTexture();
 
+  static ObjectType GetObjectType() { return ObjectType::Texture; }
+
   static std::optional<GALTexture> Create(GALPlatform* platform, TextureType type, 
                                           TextureFormat format, uint16_t width, uint16_t height, 
                                           uint8_t* data);
 
+  // TODO(colintan): Change this to GetType()
   TextureType GetType() const { return type_; }
 
 private:
@@ -153,6 +172,8 @@ public:
   GALTextureSampler(GALPlatform* platform) : GALObject(platform) {}
   GALTextureSampler() {}
   ~GALTextureSampler();
+
+  static ObjectType GetObjectType() { return ObjectType::TextureSampler; }
 
   static std::optional<GALTextureSampler> Create(GALPlatform* platform, const GALTexture& texture);
 

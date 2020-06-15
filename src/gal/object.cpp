@@ -23,7 +23,6 @@ GALObject::GALObject(GALPlatform* platform) {
   gal_id_ = GenerateGALId();
   gal_platform_ = platform;
   platform_details_ = platform->GetPlatformDetails();
-
 }
 
 } // namespace

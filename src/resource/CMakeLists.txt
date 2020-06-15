@@ -4,7 +4,6 @@ target_sources(gfx_engine
     "image_loader.h"
     "model_loader.cpp"
     "model_loader.h"
-    "resource_gal.cpp"
     "resource_gal.h"
     "resource_manager_gal.cpp"
     "resource_manager_gal.h"

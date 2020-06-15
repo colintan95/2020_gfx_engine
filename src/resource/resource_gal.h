@@ -13,78 +13,71 @@ class GALPlatform;
 
 namespace resource {
 
+template<typename T>
 class ResourceGAL : public ResourceBase {
 friend class ResourceManagerGAL;
 
 public:
-  enum class Type { Buffer, Texture };
-
-  struct BufferConfig {
-    gal::BufferType type;
-    uint8_t* data;
-    size_t size;
-  };
-
-  struct TextureConfig {
-    gal::TextureType type;
-    gal::TextureFormat format;
-    uint16_t width;
-    uint16_t height;
-    uint8_t* data;
-  };
-
-  using ConfigVariant = std::variant<BufferConfig, TextureConfig>;
-
-public:
-  ResourceGAL(Type type);
-  ~ResourceGAL();
+  ResourceGAL() {}
+  ~ResourceGAL() {}
 
   ResourceGAL(const ResourceGAL&) = delete;
   ResourceGAL& operator=(const ResourceGAL&) = delete;
 
-  ResourceGAL(ResourceGAL&& other);
-  ResourceGAL& operator=(ResourceGAL&& other);
+  ResourceGAL(ResourceGAL&& other)
+    : resource_(std::move(other.resource_)) {}
 
-  void Alloc() final;
-  void Dealloc() final;
-
-  template<typename T>
-  T& Get() {
-    assert(std::holds_alternative<T>(resource_));
-    return std::get<T>(resource_);
+  ResourceGAL& operator=(ResourceGAL&& other) {
+    resource_ = std::move(other.resource_);
+    return *this;
   }
 
-private:
-  using Variant = std::variant<gal::GALBuffer, gal::GALTexture>;
+  void Alloc() final {}
+  void Dealloc() final {}
+
+  const T& Get() const { return GetInternal(); }
+  T& Get() { return GetInternal(); }
 
 private:
-  Type type_;
-  Variant resource_;
+  T& GetInternal() { return resource_; }
+
+private:
+  T resource_;
 };
 
+template<typename T>
 class HandleGAL : public HandleBase {
 public:
-  HandleGAL();
-  HandleGAL(ResourceManagerBase* manager, ResourceBase* base);
-  ~HandleGAL();
+  HandleGAL() {}
+  HandleGAL(ResourceManagerBase* manager, ResourceBase* base)
+    : HandleBase(manager, base) {
+    resource_ = dynamic_cast<ResourceGAL<T>*>(base);
+  }
+  ~HandleGAL() {}
 
   HandleGAL(const HandleGAL&) = delete;
   HandleGAL& operator=(const HandleGAL&) = delete;
 
-  HandleGAL(HandleGAL&& other);
-  HandleGAL& operator=(HandleGAL&& other);
+  HandleGAL(HandleGAL&& other) 
+    :  HandleBase(std::move(other)),
+       resource_(std::exchange(other.resource_, nullptr)) {}
 
-  template<typename T>
-  T& Get() { return GetInternal<T>(); }
+  HandleGAL& operator=(HandleGAL&& other) {
+    HandleBase(std::move(other));
+    resource_ = std::exchange(other.resource_, nullptr);
+    return *this;
+  }
+
+  const T& Get() const { return GetInternal(); }
+  T& Get() { return GetInternal(); }
 
 private:
-  template<typename T>
   T& GetInternal() {
-    return resource_->Get<T>();
+    return resource_->Get();
   }
 
 private:
-  ResourceGAL* resource_;
+  ResourceGAL<T>* resource_;
 };
 
 

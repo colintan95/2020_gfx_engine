@@ -85,7 +85,7 @@ private:
 private:
   bool valid_ = false;
   HandleId id_ = 0;
-  ResourceManagerBase* manager_;
+  ResourceManagerBase* manager_ = nullptr;
 };
 
 template<typename T>
