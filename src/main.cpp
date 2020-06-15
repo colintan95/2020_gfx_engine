@@ -2,6 +2,7 @@
 #include <memory>
 #include "event/event_manager.h"
 #include "render/renderer.h"
+#include "scene/scene.h"
 #include "window/window.h"
 #include "window/window_manager.h"
 
@@ -30,6 +31,12 @@ int main() {
     std::exit(EXIT_FAILURE);
   }
 
+  std::unique_ptr<scene::Scene> scene = std::make_unique<scene::Scene>();
+  if (!scene->Initialize(renderer.get())) {
+    std::cerr << "Failed to initialize scene." << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+
   while (!window_manager.ShouldClose()) {
     window_manager.Tick();
     event_manager.Tick();
@@ -37,6 +44,9 @@ int main() {
 
     window->SwapBuffers();
   }
+
+  scene->Cleanup();
+  scene.release();
 
   renderer->Cleanup();
   renderer.release();
