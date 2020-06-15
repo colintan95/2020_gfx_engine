@@ -8,6 +8,7 @@
 #include "window/window.h"
 
 namespace resource {
+class ResourceSystem;
 class ResourceManagerGAL;
 } // namespace
 
@@ -18,13 +19,15 @@ public:
   Renderer();
   ~Renderer();
 
-  bool Initialize(window::Window* window);
+  bool Initialize(window::Window* window, resource::ResourceSystem* resource_system);
   void Cleanup();
 
   void Tick();
 
 private:  
   window::Window* window_ = nullptr;
+  resource::ResourceSystem* resource_system_ = nullptr;
+
   std::unique_ptr<resource::ResourceManagerGAL> resource_manager_;
   std::unique_ptr<gal::GALPlatform> gal_platform_;
   gal::GALCommandBuffer command_buffer_;

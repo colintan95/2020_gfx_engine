@@ -15,7 +15,7 @@
 #include "resource/resource_gal.h"
 #include "resource/resource_manager_gal.h"
 #include "resource/image_loader.h"
-#include "resource/model_loader.h"
+#include "resource/resource_system.h"
 #include "window/window.h"
 
 namespace render {
@@ -51,8 +51,9 @@ Renderer::Renderer() {}
 
 Renderer::~Renderer() {}
 
-bool Renderer::Initialize(window::Window* window) {
+bool Renderer::Initialize(window::Window* window, resource::ResourceSystem* resource_system) {
   window_ = window;
+  resource_system_ = resource_system;
 
   gal_platform_ = std::make_unique<gal::GALPlatform>();
   if (!gal_platform_->Initialize()) {
@@ -62,12 +63,13 @@ bool Renderer::Initialize(window::Window* window) {
 
   resource_manager_ = std::make_unique<resource::ResourceManagerGAL>(gal_platform_.get());
 
-  resource::ModelLoader model_loader;
-  std::shared_ptr<resource::Model> model = model_loader.LoadModel("assets/cube/cube.obj");
-  if (model == nullptr) {
+  resource::Handle<resource::Model> model_handle =
+      resource_system_->LoadModel("assets/cube/cube.obj");
+  if (!model_handle.IsValid()) {
     std::cerr << "Failed to load model." << std::endl;
     return false;
   }
+  resource::Model& model = model_handle.Get();
 
   resource::ImageLoader image_loader;
   std::shared_ptr<resource::Image> image = image_loader.LoadImage("assets/cube/default.png");
@@ -168,8 +170,8 @@ bool Renderer::Initialize(window::Window* window) {
 
   resource::HandleGALBuffer pos_buf_handle = 
       resource_manager_->CreateBuffer(gal::BufferType::Vertex, 
-                                      reinterpret_cast<uint8_t*>(model->positions.data()),
-                                      model->positions.size() * sizeof(glm::vec3));
+                                      reinterpret_cast<uint8_t*>(model.positions.data()),
+                                      model.positions.size() * sizeof(glm::vec3));
   if (!pos_buf_handle.IsValid()) {
     std::cerr << "Failed to create GAL vertex buffer for positions." << std::endl;
     return false;
@@ -182,8 +184,8 @@ bool Renderer::Initialize(window::Window* window) {
 
   resource::HandleGAL<gal::GALBuffer> texcoord_buf_handle = 
       resource_manager_->CreateBuffer(gal::BufferType::Vertex, 
-                                      reinterpret_cast<uint8_t*>(model->texcoords.data()),
-                                      model->texcoords.size() * sizeof(glm::vec2));
+                                      reinterpret_cast<uint8_t*>(model.texcoords.data()),
+                                      model.texcoords.size() * sizeof(glm::vec2));
   if (!texcoord_buf_handle.IsValid()) {
     std::cerr << "Failed to create GAL vertex buffer for texcoords." << std::endl;
     return false;
@@ -201,7 +203,7 @@ bool Renderer::Initialize(window::Window* window) {
   command_buffer_.Add(clear_screen);
 
   gal::command::DrawTriangles draw_triangles;
-  draw_triangles.num_triangles = model->faces;
+  draw_triangles.num_triangles = model.faces;
   command_buffer_.Add(draw_triangles);
 
   return true;
@@ -210,6 +212,8 @@ bool Renderer::Initialize(window::Window* window) {
 void Renderer::Cleanup() {
   resource_manager_.release();
   gal_platform_->Cleanup();
+
+  resource_system_ = nullptr;
   window_ = nullptr;
 }
 

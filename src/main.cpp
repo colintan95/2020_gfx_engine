@@ -14,14 +14,6 @@ int main() {
     std::exit(EXIT_FAILURE);
   }
 
-  // TEST
-  resource::Handle<resource::Model> model_handle = 
-      resource_system->LoadModel("assets/cube/cube.obj");
-  if (!model_handle.IsValid()) {
-    std::cout << "Handle not valid." << std::endl;
-  }
-  resource::Model& model = model_handle.Get();
-
   window::WindowManager window_manager;
   if (!window_manager.Initialize()) {
     std::cerr << "Failed to initialize window manager." << std::endl;
@@ -41,7 +33,7 @@ int main() {
   }
 
   std::unique_ptr<render::Renderer> renderer = std::make_unique<render::Renderer>();
-  if (!renderer->Initialize(window)) {
+  if (!renderer->Initialize(window, resource_system.get())) {
     std::cerr << "Failed to initialize renderer." << std::endl;
     std::exit(EXIT_FAILURE);
   }

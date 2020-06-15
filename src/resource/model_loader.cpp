@@ -12,11 +12,9 @@ namespace resource {
 
 std::shared_ptr<Model> ModelLoader::LoadModel(const std::string& path) {
   std::shared_ptr<Model> model = std::make_shared<Model>();
-
   if (!LoadModel(path, *model)) {
     return nullptr;
   }
-
   return model;
 }
 
