@@ -30,6 +30,10 @@ public:
 
   bool ShouldClose();
 
+  int GetWidth() const;
+  int GetHeight() const;
+  const std::string& GetTitle() const;
+
 private:
   bool CreateWindow(int width, int height, const std::string& title);
   void DestroyWindow();

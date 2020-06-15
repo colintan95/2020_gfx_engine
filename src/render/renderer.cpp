@@ -22,12 +22,6 @@ namespace render {
 
 namespace {
 
-constexpr int kScreenWidth = 1920;
-constexpr int kScreenHeight = 1080;
-
-constexpr float kAspectRatio = 
-    static_cast<float>(kScreenWidth) / static_cast<float>(kScreenHeight);
-
 const char kVertShaderSrc[] =
     "#version 430 core\n"
     "layout(location = 0) in vec3 vert_pos;\n"
@@ -87,8 +81,8 @@ bool Renderer::Initialize(window::Window* window) {
   gal::command::SetViewport set_viewport;
   set_viewport.x = 0;
   set_viewport.y = 0;
-  set_viewport.width = kScreenWidth;
-  set_viewport.height = kScreenHeight;
+  set_viewport.width = window_->GetWidth();
+  set_viewport.height = window_->GetHeight();
   command_buffer_.Add(set_viewport);
 
   auto vert_shader_opt = 
@@ -120,10 +114,12 @@ bool Renderer::Initialize(window::Window* window) {
     glm::mat4 proj_mat;
   } uniform_data;
 
+  float aspect_ratio = 
+    static_cast<float>(window_->GetWidth()) / static_cast<float>(window_->GetHeight());
   uniform_data.model_mat = glm::mat4{1.f};
   uniform_data.view_mat = glm::translate(glm::mat4{1.f}, glm::vec3{0.f, 0.f, -10.f}) *
       glm::rotate(glm::mat4{1.f}, glm::radians(-15.f), glm::vec3{0.f, 1.f, 0.f});
-  uniform_data.proj_mat = glm::perspective(glm::radians(30.f), kAspectRatio, 0.1f, 1000.f);
+  uniform_data.proj_mat = glm::perspective(glm::radians(30.f), aspect_ratio, 0.1f, 1000.f);
 
   resource::ResourceGAL::BufferConfig buffer_config;
   buffer_config.type = gal::BufferType::Uniform;

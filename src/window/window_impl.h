@@ -24,6 +24,10 @@ public:
 
   virtual std::optional<event::Event> ConsumeEvent() = 0;
 
+  virtual int GetWidth() const = 0;
+  virtual int GetHeight() const = 0;
+  virtual const std::string& GetTitle() const = 0;
+
 public:
   static std::unique_ptr<WindowImpl> Create();
 };

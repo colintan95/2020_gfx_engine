@@ -25,6 +25,10 @@ public:
 
   std::optional<event::Event> ConsumeEvent() final;
 
+  int GetWidth() const { return width_; }
+  int GetHeight() const { return height_; }
+  const std::string& GetTitle() const { return title_; }
+
 private:
   static EventStore event_store_;
   static void KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods);

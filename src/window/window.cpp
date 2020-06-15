@@ -17,6 +17,18 @@ bool Window::ShouldClose() {
   return impl_->ShouldClose();
 }
 
+int Window::GetWidth() const {
+  return impl_->GetWidth();
+}
+
+int Window::GetHeight() const {
+  return impl_->GetHeight();
+}
+
+const std::string& Window::GetTitle() const {
+  return impl_->GetTitle();
+}
+
 bool Window::CreateWindow(int width, int height, const std::string& title) {
   return impl_->CreateWindow(width, height, title);
 }
