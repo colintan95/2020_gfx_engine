@@ -23,9 +23,6 @@ class GALPlatformImplGL : public GALPlatformImpl {
 public:
   GALPlatformImplGL();
 
-  bool Initialize() final;
-  void Cleanup() final;
-
   PlatformDetails* GetPlatformDetails() final {
     return details_.get();
   }

@@ -42,9 +42,12 @@ int main() {
     std::exit(EXIT_FAILURE);
   }
 
-  std::unique_ptr<render::Renderer> renderer = std::make_unique<render::Renderer>();
-  if (!renderer->Initialize(window, resource_system.get())) {
-    std::cerr << "Failed to initialize renderer." << std::endl;
+  std::unique_ptr<render::Renderer> renderer;
+
+  try {
+    renderer = std::make_unique<render::Renderer>(window, resource_system.get());
+  } catch (render::Renderer::InitException& e) {
+    std::cerr << e.what() << std::endl;
     std::exit(EXIT_FAILURE);
   }
 
@@ -67,7 +70,6 @@ int main() {
   scene->Cleanup();
   scene.release();
 
-  renderer->Cleanup();
   renderer.release();
 
   event_manager.release();

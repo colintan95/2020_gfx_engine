@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <memory>
+#include <new>
 #include <utility>
 #include <vector>
 #include "gal/gal.h"
@@ -47,18 +48,17 @@ const char kFragShaderSrc[] =
 
 } // namespace
 
-Renderer::Renderer() {}
-
-Renderer::~Renderer() {}
-
-bool Renderer::Initialize(window::Window* window, resource::ResourceSystem* resource_system) {
+Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_system) {
   window_ = window;
   resource_system_ = resource_system;
 
-  gal_platform_ = std::make_unique<gal::GALPlatform>();
-  if (!gal_platform_->Initialize()) {
-    std::cerr << "Failed to initialize gal platform." << std::endl;
-    return false;
+  try {
+    gal_platform_ = std::make_unique<gal::GALPlatform>();
+  } catch (gal::GALPlatform::InitException& e) {
+    std::cerr << e.what() << std::endl;
+    throw InitException();
+  } catch (std::bad_alloc& ba) {
+    throw InitException();
   }
 
   resource_manager_ = std::make_unique<resource::ResourceManagerGAL>(gal_platform_.get());
@@ -67,7 +67,7 @@ bool Renderer::Initialize(window::Window* window, resource::ResourceSystem* reso
       resource_system_->LoadModel("assets/cube/cube.obj");
   if (!model_handle.IsValid()) {
     std::cerr << "Failed to load model." << std::endl;
-    return false;
+    throw InitException();
   }
   resource::Model& model = model_handle.Get();
 
@@ -75,7 +75,7 @@ bool Renderer::Initialize(window::Window* window, resource::ResourceSystem* reso
     resource_system_->LoadImage("assets/cube/default.png");
   if (!image_handle.IsValid()) {
     std::cerr << "Failed to load image." << std::endl;
-    return false;
+    throw InitException();
   }
   resource::Image& image = image_handle.Get();
 
@@ -92,19 +92,19 @@ bool Renderer::Initialize(window::Window* window, resource::ResourceSystem* reso
       gal_platform_->Create<gal::GALShader>(gal::ShaderType::Vertex, kVertShaderSrc);
   if (!vert_shader_opt) {
     std::cerr << "Failed to create GAL vertex shader." << std::endl;
-    return false;
+    throw InitException();
   }
   auto frag_shader_opt = 
       gal_platform_->Create<gal::GALShader>(gal::ShaderType::Fragment, kFragShaderSrc);
   if (!frag_shader_opt) {
     std::cerr << "Failed to create GAL fragment shader." << std::endl;
-    return false;
+    throw InitException();
   }
   auto pipeline_opt = 
       gal_platform_->Create<gal::GALPipeline>(*vert_shader_opt, *frag_shader_opt);
   if (!pipeline_opt) {
     std::cerr << "Failed to create GAL pipeline." << std::endl;
-    return false;
+    throw InitException();
   }          
 
   gal::command::SetPipeline set_pipeline;
@@ -130,7 +130,7 @@ bool Renderer::Initialize(window::Window* window, resource::ResourceSystem* reso
                                       sizeof(uniform_data));
   if (!uniform_buf_handle.IsValid()) {
     std::cerr << "Failed to create GAL buffer for uniforms." << std::endl;
-    return false;
+    throw InitException();
   }
 
   gal::command::SetUniformBuffer set_uniform_buf;
@@ -143,13 +143,13 @@ bool Renderer::Initialize(window::Window* window, resource::ResourceSystem* reso
                                        image.width, image.height, image.pixels.data());
   if (!texture_handle.IsValid()) {
     std::cerr << "Failed to create GAL texture." << std::endl;
-    return false;
+    throw InitException();
   }
 
   auto tex_sampler_opt = gal_platform_->Create<gal::GALTextureSampler>(texture_handle.Get());
   if (!tex_sampler_opt) {
     std::cerr << "Failed to create GAL texture sampler." << std::endl;
-    return false;
+    throw InitException();
   }
 
   gal::command::SetTextureSampler set_tex_sampler;
@@ -160,7 +160,7 @@ bool Renderer::Initialize(window::Window* window, resource::ResourceSystem* reso
   auto vert_desc_opt = gal_platform_->Create<gal::GALVertexDesc>();
   if (!vert_desc_opt) {
     std::cerr << "Failed to create GAL vertex description." << std::endl;
-    return false;
+    throw InitException();
   }
   vert_desc_opt->SetAttribute(0, 3);
   vert_desc_opt->SetAttribute(2, 2);
@@ -175,7 +175,7 @@ bool Renderer::Initialize(window::Window* window, resource::ResourceSystem* reso
                                       model.positions.size() * sizeof(glm::vec3));
   if (!pos_buf_handle.IsValid()) {
     std::cerr << "Failed to create GAL vertex buffer for positions." << std::endl;
-    return false;
+    throw InitException();
   }
 
   gal::command::SetVertexBuffer set_pos_vert_buf;
@@ -189,7 +189,7 @@ bool Renderer::Initialize(window::Window* window, resource::ResourceSystem* reso
                                       model.texcoords.size() * sizeof(glm::vec2));
   if (!texcoord_buf_handle.IsValid()) {
     std::cerr << "Failed to create GAL vertex buffer for texcoords." << std::endl;
-    return false;
+    throw InitException();
   }
 
   gal::command::SetVertexBuffer set_texcoord_vert_buf;
@@ -206,13 +206,11 @@ bool Renderer::Initialize(window::Window* window, resource::ResourceSystem* reso
   gal::command::DrawTriangles draw_triangles;
   draw_triangles.num_triangles = model.faces;
   command_buffer_.Add(draw_triangles);
-
-  return true;
 }
 
-void Renderer::Cleanup() {
+Renderer::~Renderer() {
   resource_manager_.release();
-  gal_platform_->Cleanup();
+  gal_platform_.release();
 
   resource_system_ = nullptr;
   window_ = nullptr;

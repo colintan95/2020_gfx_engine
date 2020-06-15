@@ -3,28 +3,30 @@
 #include <GL/glew.h>
 
 #include <memory>
+#include <new>
+#include "gal/platform.h"
 
 namespace gal {
 namespace internal {
 
 GALPlatformImplGL::GALPlatformImplGL() {
-  details_ = std::make_unique<PlatformDetails>();
-}
+  try {
+    details_ = std::make_unique<PlatformDetails>();
+  } catch (std::bad_alloc& ba) {
+    throw GALPlatform::InitException();
+  }
 
-bool GALPlatformImplGL::Initialize() {
   glEnable(GL_TEXTURE_2D);
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
-
-  return true;
-}
-
-void GALPlatformImplGL::Cleanup() {
-
 }
 
 std::unique_ptr<GALPlatformImpl> GALPlatformImpl::Create() {
-  return std::make_unique<GALPlatformImplGL>();
+  try {
+    return std::make_unique<GALPlatformImplGL>();
+  } catch (std::bad_alloc& ba) {
+    throw GALPlatform::InitException();
+  }
 }
 
 } // namespace

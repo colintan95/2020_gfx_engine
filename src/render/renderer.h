@@ -1,6 +1,7 @@
 #ifndef RENDER_RENDERER_H_
 #define RENDER_RENDERER_H_
 
+#include <exception>
 #include <memory>
 #include <unordered_map>
 #include "gal/platform.h"
@@ -16,11 +17,16 @@ namespace render {
 
 class Renderer {
 public:
-  Renderer();
-  ~Renderer();
+  class InitException : public std::exception {
+  public:
+    const char* what() const final {
+      return "Failed to initialize Renderer.";
+    }
+  };
 
-  bool Initialize(window::Window* window, resource::ResourceSystem* resource_system);
-  void Cleanup();
+public:
+  Renderer(window::Window* window, resource::ResourceSystem* resource_system);
+  ~Renderer();
 
   void Tick();
 

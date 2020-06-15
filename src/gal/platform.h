@@ -1,6 +1,7 @@
 #ifndef GAL_PLATFORM_H_
 #define GAL_PLATFORM_H_
 
+#include <exception>
 #include <memory>
 #include <optional>
 #include "gal/command.h"
@@ -19,9 +20,6 @@ class GALPlatformImpl {
 public:
   virtual ~GALPlatformImpl() {}
 
-  virtual bool Initialize() = 0;
-  virtual void Cleanup() = 0;
-
   virtual PlatformDetails* GetPlatformDetails() = 0;
 
 public:
@@ -31,14 +29,19 @@ public:
 } // namespace
 
 class GALPlatform {
-  friend class GALObject;
+friend class GALObject;
+
+public:
+  class InitException : public std::exception {
+  public:
+    const char* what() const final {
+      return "Failed to initialize GALPlatform.";
+    }
+  };
 
 public:
   GALPlatform();
   ~GALPlatform();
-
-  bool Initialize();
-  void Cleanup();
 
   template<typename T, typename... Args>
   std::optional<T> Create(Args... args) {
