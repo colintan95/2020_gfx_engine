@@ -19,7 +19,7 @@ public:
   ~ResourceManagerGAL();
 
   template<typename... Args>
-  HandleGAL<gal::GALBuffer> CreateBuffer(Args... args) {
+  HandleGALBuffer CreateBuffer(Args... args) {
     std::unique_ptr<ResourceGAL<gal::GALBuffer>> resource = 
         std::make_unique<ResourceGAL<gal::GALBuffer>>();
 
@@ -36,7 +36,7 @@ public:
   }
 
   template<typename... Args>
-  HandleGAL<gal::GALTexture> CreateTexture(Args... args) {
+  HandleGALTexture CreateTexture(Args... args) {
     std::unique_ptr<ResourceGAL<gal::GALTexture>> resource = 
         std::make_unique<ResourceGAL<gal::GALTexture>>();
 

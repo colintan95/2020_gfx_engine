@@ -121,7 +121,7 @@ bool Renderer::Initialize(window::Window* window) {
       glm::rotate(glm::mat4{1.f}, glm::radians(-15.f), glm::vec3{0.f, 1.f, 0.f});
   uniform_data.proj_mat = glm::perspective(glm::radians(30.f), aspect_ratio, 0.1f, 1000.f);
 
-  resource::HandleGAL<gal::GALBuffer> uniform_buf_handle = 
+  resource::HandleGALBuffer uniform_buf_handle = 
       resource_manager_->CreateBuffer(gal::BufferType::Uniform, 
                                       reinterpret_cast<uint8_t*>(&uniform_data),
                                       sizeof(uniform_data));
@@ -135,7 +135,7 @@ bool Renderer::Initialize(window::Window* window) {
   set_uniform_buf.idx = 0;
   command_buffer_.Add(set_uniform_buf);
   
-  resource::HandleGAL<gal::GALTexture> texture_handle =
+  resource::HandleGALTexture texture_handle =
       resource_manager_->CreateTexture(gal::TextureType::Texture2D, gal::TextureFormat::RGB,
                                        image->width, image->height, image->pixels.data());
   if (!texture_handle.IsValid()) {
@@ -166,7 +166,7 @@ bool Renderer::Initialize(window::Window* window) {
   set_vert_desc.vert_desc = *vert_desc_opt;
   command_buffer_.Add(set_vert_desc);
 
-  resource::HandleGAL<gal::GALBuffer> pos_buf_handle = 
+  resource::HandleGALBuffer pos_buf_handle = 
       resource_manager_->CreateBuffer(gal::BufferType::Vertex, 
                                       reinterpret_cast<uint8_t*>(model->positions.data()),
                                       model->positions.size() * sizeof(glm::vec3));

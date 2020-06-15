@@ -1,15 +1,17 @@
 #ifndef RENDER_MESH_H_
 #define RENDER_MESH_H_
 
-#include "gal/object.h"
+#include <cstdint>
+#include "resource/resource_gal.h"
 
 namespace render {
 
-class Mesh {
-public:
+using MeshId = uint32_t;
 
-private:
-
+struct Mesh {
+  resource::HandleGALBuffer pos_buf_;
+  resource::HandleGALBuffer normal_buf_;
+  resource::HandleGALBuffer texcoord_buf_;
 };
 
 } // namespace

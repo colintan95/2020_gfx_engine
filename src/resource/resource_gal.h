@@ -68,6 +68,16 @@ public:
     return *this;
   }
 
+  // Copy should be explicit - don't want accidental copies since they may be expensive
+  HandleGAL Clone(const HandleGAL& other) {
+    ResourceManagerBase* manager = other.GetManager();
+    ResourceBase* resource = manager->GetResource(other.GetId());
+
+    HandleGAL handle(manager, resource);
+    handle.resource_ = other.resource_;
+    return std::move(handle);
+  }
+
   const T& Get() const { return GetInternal(); }
   T& Get() { return GetInternal(); }
 
@@ -79,6 +89,9 @@ private:
 private:
   ResourceGAL<T>* resource_;
 };
+
+using HandleGALBuffer = resource::HandleGAL<gal::GALBuffer>;
+using HandleGALTexture = resource::HandleGAL<gal::GALTexture>;
 
 
 } // namespace
