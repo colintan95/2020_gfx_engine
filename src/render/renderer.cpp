@@ -183,7 +183,7 @@ bool Renderer::Initialize(window::Window* window, resource::ResourceSystem* reso
   set_pos_vert_buf.vert_idx = 0;
   command_buffer_.Add(set_pos_vert_buf);
 
-  resource::HandleGAL<gal::GALBuffer> texcoord_buf_handle = 
+  resource::HandleGALBuffer texcoord_buf_handle = 
       resource_manager_->CreateBuffer(gal::BufferType::Vertex, 
                                       reinterpret_cast<uint8_t*>(model.texcoords.data()),
                                       model.texcoords.size() * sizeof(glm::vec2));
