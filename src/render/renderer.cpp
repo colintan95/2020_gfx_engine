@@ -71,12 +71,13 @@ bool Renderer::Initialize(window::Window* window, resource::ResourceSystem* reso
   }
   resource::Model& model = model_handle.Get();
 
-  resource::ImageLoader image_loader;
-  std::shared_ptr<resource::Image> image = image_loader.LoadImage("assets/cube/default.png");
-  if (image == nullptr) {
+  resource::Handle<resource::Image> image_handle = 
+    resource_system_->LoadImage("assets/cube/default.png");
+  if (!image_handle.IsValid()) {
     std::cerr << "Failed to load image." << std::endl;
     return false;
   }
+  resource::Image& image = image_handle.Get();
 
   command_buffer_.SetPlatform(gal_platform_.get());
 
@@ -139,7 +140,7 @@ bool Renderer::Initialize(window::Window* window, resource::ResourceSystem* reso
   
   resource::HandleGALTexture texture_handle =
       resource_manager_->CreateTexture(gal::TextureType::Texture2D, gal::TextureFormat::RGB,
-                                       image->width, image->height, image->pixels.data());
+                                       image.width, image.height, image.pixels.data());
   if (!texture_handle.IsValid()) {
     std::cerr << "Failed to create GAL texture." << std::endl;
     return false;

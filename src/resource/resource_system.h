@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <string>
+#include "resource/image_loader.h"
 #include "resource/model_loader.h"
 #include "resource/resource.h"
 
@@ -20,10 +21,13 @@ public:
 
   Handle<Model> LoadModel(const std::string& file_path);
 
+  Handle<Image> LoadImage(const std::string& file_path);
+
 private:
   std::unique_ptr<ResourceManager> default_manager_;
 
   ModelLoader model_loader_;
+  ImageLoader image_loader_;
 };
 
 } // namespace

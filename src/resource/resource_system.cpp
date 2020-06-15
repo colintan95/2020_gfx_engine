@@ -31,4 +31,12 @@ Handle<Model> ResourceSystem::LoadModel(const std::string& file_path) {
   return resource_handle;
 }
 
+Handle<Image> ResourceSystem::LoadImage(const std::string& file_path) {
+  Handle<Image> resource_handle = default_manager_->CreateResource<Image>();
+  if (!image_loader_.LoadImage(file_path, resource_handle.Get())) {
+    return Handle<Image>();
+  }
+  return resource_handle;
+}
+
 } // namespace resource

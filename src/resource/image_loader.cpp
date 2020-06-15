@@ -6,7 +6,16 @@
 namespace resource {
 
 std::shared_ptr<Image> ImageLoader::LoadImage(const std::string& path) {
-  // TODO(colintan): Check if this is needed
+  std::shared_ptr<Image> image = std::make_shared<Image>();
+  if (!LoadImage(path, *image)) {
+    return nullptr;
+  }
+  return image;
+}
+
+bool ImageLoader::LoadImage(const std::string& path, Image& out_image) {
+  // TODO(colintan): Make sure that |out_image| is set back to default state first
+
   stbi_set_flip_vertically_on_load(true);
 
   int load_width = -1;
@@ -15,30 +24,28 @@ std::shared_ptr<Image> ImageLoader::LoadImage(const std::string& path) {
   stbi_uc *stb_pixels = stbi_load(path.c_str(), &load_width, &load_height, 
                               &load_channels, 0);
   if (stb_pixels == nullptr) {
-    return nullptr;
+    return false;
   }                 
 
-  std::shared_ptr<Image> image = std::make_shared<Image>();
-
-  image->width = static_cast<uint32_t>(load_width);
-  image->height  = static_cast<uint32_t>(load_height);
+  out_image.width = static_cast<uint32_t>(load_width);
+  out_image.height  = static_cast<uint32_t>(load_height);
 
   switch (load_channels) {
     case 4:
-      image->format = ImageFormat::RGBA;
+      out_image.format = ImageFormat::RGBA;
       break;
     case 3:
-      image->format = ImageFormat::RGB;
+      out_image.format = ImageFormat::RGB;
       break;
     default:
-      image->format = ImageFormat::Invalid;
+      out_image.format = ImageFormat::Invalid;
   }
 
   // TODO(colintan): Do checked arithmetic
-  uint32_t img_size = image->width * image->height * static_cast<uint32_t>(load_channels);
-  image->pixels = std::vector<uint8_t>(stb_pixels, stb_pixels + img_size);
+  uint32_t img_size = out_image.width * out_image.height * static_cast<uint32_t>(load_channels);
+  out_image.pixels = std::vector<uint8_t>(stb_pixels, stb_pixels + img_size);
 
-  return image;
+  return true;
 }
 
 } // namespace

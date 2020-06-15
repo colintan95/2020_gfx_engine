@@ -23,7 +23,10 @@ struct Image {
 
 class ImageLoader {
 public:
+  // TODO(colintan): Remove this function here and from the unittest
   std::shared_ptr<Image> LoadImage(const std::string& path);
+
+  bool LoadImage(const std::string& path, Image& out_image);
 };
 
 } // namespace
