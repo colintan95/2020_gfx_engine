@@ -1,4 +1,4 @@
-#include "resource/gal_resource_manager.h"
+#include "resource/resource_manager_gal.h"
 
 #include <utility>
 #include <memory>
@@ -7,24 +7,24 @@
 
 namespace resource {
 
-GALResourceManager::GALResourceManager(gal::GALPlatform* gal_platform) 
+ResourceManagerGAL::ResourceManagerGAL(gal::GALPlatform* gal_platform) 
   : gal_platform_(gal_platform) {
 
 }
 
-GALResourceManager::~GALResourceManager() {
+ResourceManagerGAL::~ResourceManagerGAL() {
 
 }
 
-GALHandle GALResourceManager::CreateResource(GALResource::Type type, 
-                                             GALResource::ConfigVariant config) {
-  std::unique_ptr<GALResource> resource = std::make_unique<GALResource>(type);
+HandleGAL ResourceManagerGAL::CreateResource(ResourceGAL::Type type, 
+                                             ResourceGAL::ConfigVariant config) {
+  std::unique_ptr<ResourceGAL> resource = std::make_unique<ResourceGAL>(type);
 
-  if (type == GALResource::Type::Buffer) {
+  if (type == ResourceGAL::Type::Buffer) {
 
-    GALResource::BufferConfig* buffer_config = std::get_if<GALResource::BufferConfig>(&config);
+    ResourceGAL::BufferConfig* buffer_config = std::get_if<ResourceGAL::BufferConfig>(&config);
     if (buffer_config == nullptr) {
-      return GALHandle();
+      return HandleGAL();
     }
 
     std::optional<gal::GALBuffer> opt = 
@@ -33,15 +33,15 @@ GALHandle GALResourceManager::CreateResource(GALResource::Type type,
                                buffer_config->data, 
                                buffer_config->size);
     if (!opt.has_value()) {
-      return GALHandle();
+      return HandleGAL();
     }
     resource->resource_ = std::move(*opt);
 
-  } else if (type == GALResource::Type::Texture) {
+  } else if (type == ResourceGAL::Type::Texture) {
 
-    GALResource::TextureConfig* texture_config = std::get_if<GALResource::TextureConfig>(&config);
+    ResourceGAL::TextureConfig* texture_config = std::get_if<ResourceGAL::TextureConfig>(&config);
     if (texture_config == nullptr) {
-      return GALHandle();
+      return HandleGAL();
     }
 
     std::optional<gal::GALTexture> opt = 
@@ -52,15 +52,15 @@ GALHandle GALResourceManager::CreateResource(GALResource::Type type,
                                 texture_config->height, 
                                 texture_config->data);
     if (!opt.has_value()) {
-      return GALHandle();
+      return HandleGAL();
     }
     resource->resource_ = std::move(*opt);
 
   } else {
-    return GALHandle();
+    return HandleGAL();
   }
 
-  GALHandle handle = CreateHandle<GALHandle>(resource.get());
+  HandleGAL handle = CreateHandle<HandleGAL>(resource.get());
   resources_.push_back(std::move(resource));
 
   return handle;

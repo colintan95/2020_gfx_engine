@@ -1,13 +1,13 @@
 target_sources(gfx_engine 
  PRIVATE 
-    "gal_resource_manager.cpp"
-    "gal_resource_manager.h"
-    "gal_resource.cpp"
-    "gal_resource.h"
     "image_loader.cpp"
     "image_loader.h"
     "model_loader.cpp"
     "model_loader.h"
+    "resource_gal.cpp"
+    "resource_gal.h"
+    "resource_manager_gal.cpp"
+    "resource_manager_gal.h"
     "resource_manager.cpp"
     "resource_manager.h"
     "resource.cpp"

@@ -1,5 +1,5 @@
-#ifndef RESOURCE_GAL_RESOURCE_H_
-#define RESOURCE_GAL_RESOURCE_H_
+#ifndef RESOURCE_RESOURCE_GAL_H_
+#define RESOURCE_RESOURCE_GAL_H_
 
 #include <cassert>
 #include <cstdint>
@@ -13,8 +13,8 @@ class GALPlatform;
 
 namespace resource {
 
-class GALResource : public ResourceBase {
-friend class GALResourceManager;
+class ResourceGAL : public ResourceBase {
+friend class ResourceManagerGAL;
 
 public:
   enum class Type { Buffer, Texture };
@@ -36,14 +36,14 @@ public:
   using ConfigVariant = std::variant<BufferConfig, TextureConfig>;
 
 public:
-  GALResource(Type type);
-  ~GALResource();
+  ResourceGAL(Type type);
+  ~ResourceGAL();
 
-  GALResource(const GALResource&) = delete;
-  GALResource& operator=(const GALResource&) = delete;
+  ResourceGAL(const ResourceGAL&) = delete;
+  ResourceGAL& operator=(const ResourceGAL&) = delete;
 
-  GALResource(GALResource&& other);
-  GALResource& operator=(GALResource&& other);
+  ResourceGAL(ResourceGAL&& other);
+  ResourceGAL& operator=(ResourceGAL&& other);
 
   void Alloc() final;
   void Dealloc() final;
@@ -62,17 +62,17 @@ private:
   Variant resource_;
 };
 
-class GALHandle : public HandleBase {
+class HandleGAL : public HandleBase {
 public:
-  GALHandle();
-  GALHandle(ResourceManagerBase* manager, ResourceBase* base);
-  ~GALHandle();
+  HandleGAL();
+  HandleGAL(ResourceManagerBase* manager, ResourceBase* base);
+  ~HandleGAL();
 
-  GALHandle(const GALHandle&) = delete;
-  GALHandle& operator=(const GALHandle&) = delete;
+  HandleGAL(const HandleGAL&) = delete;
+  HandleGAL& operator=(const HandleGAL&) = delete;
 
-  GALHandle(GALHandle&& other);
-  GALHandle& operator=(GALHandle&& other);
+  HandleGAL(HandleGAL&& other);
+  HandleGAL& operator=(HandleGAL&& other);
 
   template<typename T>
   T& Get() { return GetInternal<T>(); }
@@ -84,10 +84,10 @@ private:
   }
 
 private:
-  GALResource* resource_;
+  ResourceGAL* resource_;
 };
 
 
 } // namespace
 
-#endif // RESOURCE_GAL_RESOURCE_H_
+#endif // RESOURCE_RESOURCE_GAL_H_

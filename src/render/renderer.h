@@ -6,7 +6,7 @@
 #include "window/window.h"
 
 namespace resource {
-class GALResourceManager;
+class ResourceManagerGAL;
 } // namespace
 
 namespace render {
@@ -23,7 +23,7 @@ public:
 
 private:  
   window::Window* window_ = nullptr;
-  std::unique_ptr<resource::GALResourceManager> resource_manager_;
+  std::unique_ptr<resource::ResourceManagerGAL> resource_manager_;
   std::unique_ptr<gal::GALPlatform> gal_platform_;
   gal::GALCommandBuffer command_buffer_;
 };

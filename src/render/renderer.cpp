@@ -12,8 +12,8 @@
 #include <utility>
 #include <vector>
 #include "gal/gal.h"
-#include "resource/gal_resource.h"
-#include "resource/gal_resource_manager.h"
+#include "resource/resource_gal.h"
+#include "resource/resource_manager_gal.h"
 #include "resource/image_loader.h"
 #include "resource/model_loader.h"
 #include "window/window.h"
@@ -66,7 +66,7 @@ bool Renderer::Initialize(window::Window* window) {
     return false;
   }
 
-  resource_manager_ = std::make_unique<resource::GALResourceManager>(gal_platform_.get());
+  resource_manager_ = std::make_unique<resource::ResourceManagerGAL>(gal_platform_.get());
 
   resource::ModelLoader model_loader;
   std::shared_ptr<resource::Model> model = model_loader.LoadModel("assets/cube/cube.obj");
@@ -125,12 +125,12 @@ bool Renderer::Initialize(window::Window* window) {
       glm::rotate(glm::mat4{1.f}, glm::radians(-15.f), glm::vec3{0.f, 1.f, 0.f});
   uniform_data.proj_mat = glm::perspective(glm::radians(30.f), kAspectRatio, 0.1f, 1000.f);
 
-  resource::GALResource::BufferConfig buffer_config;
+  resource::ResourceGAL::BufferConfig buffer_config;
   buffer_config.type = gal::BufferType::Uniform;
   buffer_config.data = reinterpret_cast<uint8_t*>(&uniform_data);
   buffer_config.size = sizeof(uniform_data);
-  resource::GALHandle uniform_buf_handle = 
-      resource_manager_->CreateResource(resource::GALResource::Type::Buffer, buffer_config);
+  resource::HandleGAL uniform_buf_handle = 
+      resource_manager_->CreateResource(resource::ResourceGAL::Type::Buffer, buffer_config);
   if (!uniform_buf_handle.IsValid()) {
     std::cerr << "Failed to create GAL buffer for uniforms." << std::endl;
     return false;
@@ -141,14 +141,14 @@ bool Renderer::Initialize(window::Window* window) {
   set_uniform_buf.idx = 0;
   command_buffer_.Add(set_uniform_buf);
 
-  resource::GALResource::TextureConfig texture_config;
+  resource::ResourceGAL::TextureConfig texture_config;
   texture_config.type = gal::TextureType::Texture2D;
   texture_config.format = gal::TextureFormat::RGB;
   texture_config.width = image->width;
   texture_config.height = image->height;
   texture_config.data = image->pixels.data();
-  resource::GALHandle texture_handle =
-      resource_manager_->CreateResource(resource::GALResource::Type::Texture, texture_config);
+  resource::HandleGAL texture_handle =
+      resource_manager_->CreateResource(resource::ResourceGAL::Type::Texture, texture_config);
   if (!texture_handle.IsValid()) {
     std::cerr << "Failed to create GAL texture." << std::endl;
     return false;
@@ -178,12 +178,12 @@ bool Renderer::Initialize(window::Window* window) {
   set_vert_desc.vert_desc = *vert_desc_opt;
   command_buffer_.Add(set_vert_desc);
 
-  resource::GALResource::BufferConfig pos_buf_config;
+  resource::ResourceGAL::BufferConfig pos_buf_config;
   pos_buf_config.type = gal::BufferType::Vertex;
   pos_buf_config.data = reinterpret_cast<uint8_t*>(model->positions.data());
   pos_buf_config.size = model->positions.size() * sizeof(glm::vec3);
-  resource::GALHandle pos_buf_handle = 
-      resource_manager_->CreateResource(resource::GALResource::Type::Buffer, pos_buf_config);
+  resource::HandleGAL pos_buf_handle = 
+      resource_manager_->CreateResource(resource::ResourceGAL::Type::Buffer, pos_buf_config);
   if (!pos_buf_handle.IsValid()) {
     std::cerr << "Failed to create GAL vertex buffer for positions." << std::endl;
     return false;
@@ -194,12 +194,12 @@ bool Renderer::Initialize(window::Window* window) {
   set_pos_vert_buf.vert_idx = 0;
   command_buffer_.Add(set_pos_vert_buf);
 
-  resource::GALResource::BufferConfig texcoord_buf_config;
+  resource::ResourceGAL::BufferConfig texcoord_buf_config;
   texcoord_buf_config.type = gal::BufferType::Vertex;
   texcoord_buf_config.data = reinterpret_cast<uint8_t*>(model->texcoords.data());
   texcoord_buf_config.size = model->texcoords.size() * sizeof(glm::vec2);
-  resource::GALHandle texcoord_buf_handle = 
-      resource_manager_->CreateResource(resource::GALResource::Type::Buffer, texcoord_buf_config);
+  resource::HandleGAL texcoord_buf_handle = 
+      resource_manager_->CreateResource(resource::ResourceGAL::Type::Buffer, texcoord_buf_config);
   if (!texcoord_buf_handle.IsValid()) {
     std::cerr << "Failed to create GAL vertex buffer for texcoords." << std::endl;
     return false;
