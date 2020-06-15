@@ -1,20 +1,27 @@
 #include "event/event_manager.h"
 
 #include <algorithm>
+#include <cassert>
 #include <memory>
+#include <new>
 #include <optional>
 #include "window/event_consumer.h"
 #include "window/window.h"
 
 namespace event {
 
-bool EventManager::Initialize(window::Window* window) {
+EventManager::EventManager(window::Window* window) {
+  assert(window != nullptr);
   window_ = window;
-  event_consumer_ = std::make_unique<window::EventConsumer>(window);
-  return true;
+
+  try {
+    event_consumer_ = std::make_unique<window::EventConsumer>(window);
+  } catch (std::bad_alloc& ba) {
+    throw InitException();
+  }
 }
 
-void EventManager::Cleanup() {
+EventManager::~EventManager() {
   event_consumer_.release();
   window_ = nullptr;
 }

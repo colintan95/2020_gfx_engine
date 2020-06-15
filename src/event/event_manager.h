@@ -1,6 +1,7 @@
 #ifndef EVENT_EVENT_MANAGER_H_
 #define EVENT_EVENT_MANAGER_H_
 
+#include <exception>
 #include <memory>
 #include <vector>
 #include "event/event_handler.h"
@@ -17,8 +18,16 @@ class EventManager {
 friend class EventHandler;
 
 public:
-  bool Initialize(window::Window* window);
-  void Cleanup();
+  class InitException : std::exception {
+  public:
+    const char* what() const final {
+      return "Failed to initialize EventManger.";
+    }
+  };
+
+public:
+  EventManager(window::Window* window);
+  ~EventManager();
 
   // T should be of type IEventHandler
   template<typename T>

@@ -4,23 +4,24 @@
 
 #include <iostream>
 #include <memory>
+#include <new>
+#include "window/window_manager.h"
 
 namespace window {
 
-bool WindowManagerImplGLFW::Initialize() {
+WindowManagerImplGLFW::WindowManagerImplGLFW() {
   if (!glfwInit()) {
     std::cerr << "Failed glfwInit()" << std::endl;
-    return false;
+    throw WindowManager::InitException();
   }
-  return true;
-}
-
-void WindowManagerImplGLFW::Cleanup() {
-
 }
 
 std::unique_ptr<WindowManagerImpl> WindowManagerImpl::Create() {
-  return std::make_unique<WindowManagerImplGLFW>();
+  try {
+    return std::make_unique<WindowManagerImplGLFW>();
+  } catch (std::bad_alloc& ba) {
+    throw WindowManager::InitException();
+  }
 }
 
 } // namespace

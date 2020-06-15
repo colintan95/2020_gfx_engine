@@ -2,6 +2,7 @@
 #define WINDOW_WINDOW_MANAGER_H_
 
 #include <cstdint>
+#include <exception>
 #include <memory>
 #include <string>
 #include <optional>
@@ -13,21 +14,23 @@ class WindowManagerImpl {
 public:
   virtual ~WindowManagerImpl() {}
 
-  virtual bool Initialize() = 0;
-  virtual void Cleanup() = 0;
-
 public:
   static std::unique_ptr<WindowManagerImpl> Create();
 };
 
 class WindowManager {
 public:
+  class InitException : public std::exception {
+  public:
+    const char* what() const final {
+      return "Failed to initialize WindowManager.";
+    }
+  };
+
+public:
   WindowManager();
   ~WindowManager();
-
-  bool Initialize();
-  void Cleanup();
-
+  
   void Tick();
 
   bool ShouldClose();

@@ -10,18 +10,10 @@ WindowManager::WindowManager() {
 }
 
 WindowManager::~WindowManager() {
-  impl_.reset();
-}
-
-bool WindowManager::Initialize() {
-  return impl_->Initialize();
-}
-
-void WindowManager::Cleanup() {
   if (window_ != nullptr) {
     window_->DestroyWindow();
   }
-  impl_->Cleanup();
+  impl_.reset();
 }
 
 void WindowManager::Tick() {

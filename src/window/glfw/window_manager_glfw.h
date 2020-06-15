@@ -7,8 +7,7 @@ namespace window {
 
 class WindowManagerImplGLFW : public WindowManagerImpl {
 public:
-  bool Initialize() final;
-  void Cleanup() final;
+  WindowManagerImplGLFW();
 };
 
 } // namespace
