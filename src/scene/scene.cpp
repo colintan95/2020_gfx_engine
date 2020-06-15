@@ -2,13 +2,12 @@
 
 namespace scene {
 
-bool Scene::Initialize(render::Renderer* renderer) {
+Scene::Scene(render::Renderer* renderer) {
   renderer_ = renderer;
-  return true;
 }
 
-void Scene::Cleanup() {
-
+Scene::~Scene() {
+  renderer_ = nullptr;
 }
 
 void Scene::Tick() {

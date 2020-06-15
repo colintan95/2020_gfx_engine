@@ -51,11 +51,7 @@ int main() {
     std::exit(EXIT_FAILURE);
   }
 
-  std::unique_ptr<scene::Scene> scene = std::make_unique<scene::Scene>();
-  if (!scene->Initialize(renderer.get())) {
-    std::cerr << "Failed to initialize scene." << std::endl;
-    std::exit(EXIT_FAILURE);
-  }
+  std::unique_ptr<scene::Scene> scene = std::make_unique<scene::Scene>(renderer.get());
 
   while (!window_manager->ShouldClose()) {
     window_manager->Tick();
@@ -67,7 +63,6 @@ int main() {
     window->SwapBuffers();
   }
 
-  scene->Cleanup();
   scene.release();
 
   renderer.release();

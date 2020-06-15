@@ -12,8 +12,8 @@ namespace scene {
 
 class Scene {
 public:
-  bool Initialize(render::Renderer* renderer);
-  void Cleanup();
+  Scene(render::Renderer* renderer);
+  ~Scene();
 
   void Tick();
 
