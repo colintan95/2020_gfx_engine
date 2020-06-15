@@ -3,7 +3,7 @@
 #include <utility>
 #include <memory>
 #include <variant>
-#include "gal/platform.h"
+#include "gal/gal.h"
 
 namespace resource {
 

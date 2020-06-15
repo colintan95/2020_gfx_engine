@@ -1,18 +1,9 @@
-#include "application.h"
-
 #include <iostream>
 #include <memory>
 #include "event/event_manager.h"
-#include "window/event_consumer.h"
+#include "render/renderer.h"
 #include "window/window.h"
 #include "window/window_manager.h"
-
-class MyEventHandlerImpl : public event::IEventHandlerImpl {
-public:
-  void Handle(const event::Event& event) {
-    std::cout << "Event!" << std::endl;
-  }
-};
 
 int main() {
   window::WindowManager window_manager;
@@ -33,29 +24,27 @@ int main() {
     std::exit(EXIT_FAILURE);
   }
 
-  std::unique_ptr<event::EventHandler> event_handler = 
-      event_manager.CreateHandler<MyEventHandlerImpl>();
-
-  Application application;
-  if (!application.Initialize(window)) {
-    std::cerr << "Failed to initialize application." << std::endl;
+  std::unique_ptr<render::Renderer> renderer = std::make_unique<render::Renderer>();
+  if (!renderer->Initialize(window)) {
+    std::cerr << "Failed to initialize renderer." << std::endl;
     std::exit(EXIT_FAILURE);
   }
 
   while (!window_manager.ShouldClose()) {
     window_manager.Tick();
     event_manager.Tick();
-    application.Tick();
+    renderer->Tick();
 
     window->SwapBuffers();
   }
 
-  event_handler.release();
+  renderer->Cleanup();
+  renderer.release();
+
   event_manager.Cleanup();
 
   window_manager.DestroyWindow(window);
 
-  application.Cleanup();
   window_manager.Cleanup();
   
   return 0;

@@ -16,8 +16,6 @@ public:
 
 private:
   window::Window* window_;
-  gal::GALPlatform gal_platform_;
-  gal::GALCommandBuffer command_buffer_;
 
   std::unique_ptr<resource::GALResourceManager> resource_manager_;
 };

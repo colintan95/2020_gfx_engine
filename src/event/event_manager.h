@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include "event/event_handler.h"
+#include "window/event_consumer.h"
 
 namespace window {
 class Window;

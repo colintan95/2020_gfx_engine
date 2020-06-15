@@ -1,4 +1,4 @@
-add_library(scene
+target_sources(gfx_engine
+  PRIVATE
     "scene.cpp"
     "scene.h")
-target_include_directories(scene PRIVATE "${SRC_INCLUDE_DIR}")

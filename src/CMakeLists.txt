@@ -1,16 +1,5 @@
 add_executable(gfx_engine 
-    "application.cpp"
-    "application.h"
     "main.cpp")
-
-# Internal modules
-target_link_libraries(gfx_engine PRIVATE event)
-target_link_libraries(gfx_engine PRIVATE gal)
-target_link_libraries(gfx_engine PRIVATE logging)
-target_link_libraries(gfx_engine PRIVATE render)
-target_link_libraries(gfx_engine PRIVATE resource)
-target_link_libraries(gfx_engine PRIVATE scene)
-target_link_libraries(gfx_engine PRIVATE window)
 
 # External libs
 target_link_libraries(gfx_engine PRIVATE glm)
@@ -26,7 +15,6 @@ add_custom_command(TARGET gfx_engine POST_BUILD COMMAND ${CMAKE_COMMAND}
 
 add_subdirectory(event)
 add_subdirectory(gal)
-add_subdirectory(logging)
 add_subdirectory(render)
 add_subdirectory(resource)
 add_subdirectory(scene)

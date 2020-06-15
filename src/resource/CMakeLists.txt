@@ -1,4 +1,5 @@
-add_library(resource
+target_sources(gfx_engine 
+ PRIVATE 
     "gal_resource_manager.cpp"
     "gal_resource_manager.h"
     "gal_resource.cpp"
@@ -11,16 +12,17 @@ add_library(resource
     "resource_manager.h"
     "resource.cpp"
     "resource.h")
-target_link_libraries(resource PUBLIC glm)
-target_link_libraries(resource PRIVATE tinyobjloader)
-target_link_libraries(resource PRIVATE stb)
-target_include_directories(resource PRIVATE "${SRC_INCLUDE_DIR}")
+target_link_libraries(gfx_engine PRIVATE tinyobjloader)
+target_link_libraries(gfx_engine PRIVATE stb)
 
 add_executable(resource_tests
+    "model_loader.cpp"
+    "model_loader.h"
     "model_loader_unittest.cpp")
-target_link_libraries(resource_tests PRIVATE resource)
 target_link_libraries(resource_tests PRIVATE glm)
 target_link_libraries(resource_tests PRIVATE gtest_main)
+target_link_libraries(resource_tests PRIVATE tinyobjloader)
+target_link_libraries(resource_tests PRIVATE stb)
 target_include_directories(resource_tests PRIVATE "${SRC_INCLUDE_DIR}")
 
 add_custom_command(TARGET resource_tests POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different

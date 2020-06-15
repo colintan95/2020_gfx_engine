@@ -1,4 +1,5 @@
-add_library(window
+target_sources(gfx_engine
+  PRIVATE
     "event_consumer.cpp"
     "event_consumer.h"
     "window_impl.h"
@@ -6,6 +7,5 @@ add_library(window
     "window_manager.h"
     "window.cpp"
     "window.h")
-target_include_directories(window PRIVATE "${SRC_INCLUDE_DIR}")
 
 add_subdirectory(glfw)

@@ -1,4 +1,4 @@
-target_sources(gal
+target_sources(gfx_engine
   PRIVATE
     "command_gl.cpp"
     "id_converter.cpp"
@@ -6,6 +6,6 @@ target_sources(gal
     "object_gl.cpp"
     "platform_gl.cpp"
     "platform_gl.h")
-target_link_libraries(gal PRIVATE glew)
-target_link_libraries(gal PRIVATE OpenGL::GL)
-target_link_libraries(gal PRIVATE OpenGL::GLU)
+target_link_libraries(gfx_engine PRIVATE glew)
+target_link_libraries(gfx_engine PRIVATE OpenGL::GL)
+target_link_libraries(gfx_engine PRIVATE OpenGL::GLU)
