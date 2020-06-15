@@ -1,6 +1,9 @@
 #ifndef SCENE_SCENE_H_
 #define SCENE_SCENE_H_
 
+#include <vector>
+#include "scene/entity.h"
+
 namespace render {
 class Renderer;
 } // namespace
@@ -16,6 +19,9 @@ public:
 
 private:
   render::Renderer* renderer_;
+
+  // TODO(colintan): Turn this into a scene graph
+  std::vector<Entity> entities_;
 };
 
 } // namespace

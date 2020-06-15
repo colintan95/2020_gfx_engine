@@ -40,8 +40,10 @@ int main() {
   while (!window_manager.ShouldClose()) {
     window_manager.Tick();
     event_manager.Tick();
-    renderer->Tick();
 
+    scene->Tick();
+    renderer->Tick();
+    
     window->SwapBuffers();
   }
 
