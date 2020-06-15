@@ -20,6 +20,8 @@ struct Model {
 class ModelLoader {
 public:
   std::shared_ptr<Model> LoadModel(const std::string& path);
+
+  bool LoadModel(const std::string& path, Model& out_model);
 };
 
 } // namespace

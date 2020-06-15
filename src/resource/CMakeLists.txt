@@ -4,11 +4,17 @@ target_sources(gfx_engine
     "image_loader.h"
     "model_loader.cpp"
     "model_loader.h"
+    "resource_base.cpp"
+    "resource_base.h"
     "resource_gal.h"
+    "resource_manager_base.cpp"
+    "resource_manager_base.h"
     "resource_manager_gal.cpp"
     "resource_manager_gal.h"
     "resource_manager.cpp"
     "resource_manager.h"
+    "resource_system.cpp"
+    "resource_system.h"
     "resource.cpp"
     "resource.h")
 target_link_libraries(gfx_engine PRIVATE tinyobjloader)

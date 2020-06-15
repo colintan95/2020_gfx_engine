@@ -2,11 +2,26 @@
 #include <memory>
 #include "event/event_manager.h"
 #include "render/renderer.h"
+#include "resource/resource_system.h"
 #include "scene/scene.h"
 #include "window/window.h"
 #include "window/window_manager.h"
 
 int main() {
+  auto resource_system = std::make_unique<resource::ResourceSystem>();
+  if (!resource_system->Initialize()) {
+    std::cerr << "Failed to initialize resource system." << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+
+  // TEST
+  resource::Handle<resource::Model> model_handle = 
+      resource_system->LoadModel("assets/cube/cube.obj");
+  if (!model_handle.IsValid()) {
+    std::cout << "Handle not valid." << std::endl;
+  }
+  resource::Model& model = model_handle.Get();
+
   window::WindowManager window_manager;
   if (!window_manager.Initialize()) {
     std::cerr << "Failed to initialize window manager." << std::endl;
@@ -58,6 +73,9 @@ int main() {
   window_manager.DestroyWindow(window);
 
   window_manager.Cleanup();
+
+  resource_system->Cleanup();
+  resource_system.release();
   
   return 0;
 }

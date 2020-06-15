@@ -5,7 +5,8 @@
 #include <cstdint>
 #include <variant>
 #include "gal/object.h"
-#include "resource/resource.h"
+#include "resource/resource_base.h"
+#include "resource/resource_manager_base.h"
 
 namespace gal {
 class GALPlatform;

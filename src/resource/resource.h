@@ -4,22 +4,10 @@
 #include <iostream>
 #include <memory>
 #include <utility>
+#include "resource/resource_base.h"
+#include "resource/resource_manager_base.h"
 
 namespace resource {
-
-class ResourceManagerBase;
-class ResourceManager;
-
-using HandleId = uint32_t;
-
-// TODO(colintan): Add move constructor, then call it from the base classes
-class ResourceBase {
-public:
-  virtual ~ResourceBase() {}
-
-  virtual void Alloc() = 0;
-  virtual void Dealloc() = 0;
-};
 
 template<typename T>
 class Resource : public ResourceBase {
@@ -50,42 +38,6 @@ public:
 
 private:
   std::unique_ptr<T> resource_;
-};
-
-class HandleBase {
-
-public:
-  HandleBase();
-  HandleBase(ResourceManagerBase* manager, ResourceBase* resource);
-  virtual ~HandleBase();
-
-  HandleBase(const HandleBase&) = delete;
-  HandleBase& operator=(const HandleBase&) = delete;
-
-  HandleBase(HandleBase&& other);
-  HandleBase& operator=(HandleBase&& other);
-
-  void Invalidate() { valid_ = false; }
-  
-  bool IsValid() { return valid_; }
-
-  HandleId GetId() { return id_; }
-
-  ResourceManagerBase* GetManager() {
-    return manager_;
-  }
-
-private:
-  HandleId GenerateId() {
-    static int counter = 0;
-    ++counter;
-    return counter;
-  }
-
-private:
-  bool valid_ = false;
-  HandleId id_ = 0;
-  ResourceManagerBase* manager_ = nullptr;
 };
 
 template<typename T>

@@ -5,7 +5,7 @@
 #include <utility>
 #include <vector>
 #include "resource/resource_gal.h"
-#include "resource/resource_manager.h"
+#include "resource/resource_manager_base.h"
 
 namespace gal {
 class GALPlatform;
