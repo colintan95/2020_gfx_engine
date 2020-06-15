@@ -1,4 +1,5 @@
 #include <iostream>
+
 #include <memory>
 #include "event/event_manager.h"
 #include "render/renderer.h"
@@ -8,9 +9,12 @@
 #include "window/window_manager.h"
 
 int main() {
-  auto resource_system = std::make_unique<resource::ResourceSystem>();
-  if (!resource_system->Initialize()) {
-    std::cerr << "Failed to initialize resource system." << std::endl;
+  std::unique_ptr<resource::ResourceSystem> resource_system;
+  
+  try {
+    resource_system = std::make_unique<resource::ResourceSystem>();
+  } catch (resource::ResourceSystem::InitException& e) {
+    std::cerr << e.what() << std::endl;
     std::exit(EXIT_FAILURE);
   }
 
@@ -66,7 +70,6 @@ int main() {
 
   window_manager.Cleanup();
 
-  resource_system->Cleanup();
   resource_system.release();
   
   return 0;

@@ -1,6 +1,7 @@
 #ifndef RESOURCE_RESOURCE_SYSTEM_H_
 #define RESOURCE_RESOURCE_SYSTEM_H_
 
+#include <exception>
 #include <memory>
 #include <string>
 #include "resource/image_loader.h"
@@ -13,11 +14,16 @@ class ResourceManager;
 
 class ResourceSystem {
 public:
+  class InitException : public std::exception {
+  public:
+    const char* what() const final {
+      return "Failed to initialize ResourceSystem.";
+    }
+  };
+
+public:
   ResourceSystem();
   ~ResourceSystem();
-
-  bool Initialize();
-  void Cleanup();
 
   Handle<Model> LoadModel(const std::string& file_path);
 

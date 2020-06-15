@@ -1,5 +1,6 @@
 #include "resource/resource_system.h"
 
+#include <new> 
 #include <memory>
 #include "resource/resource_manager.h"
 #include "resource/model_loader.h"
@@ -7,19 +8,14 @@
 namespace resource {
 
 ResourceSystem::ResourceSystem() {
-
+  try {
+    default_manager_ = std::make_unique<ResourceManager>();
+  } catch (std::bad_alloc& ba) {
+    throw InitException();
+  }
 }
 
 ResourceSystem::~ResourceSystem() {
-  
-}
-
-bool ResourceSystem::Initialize() {
-  default_manager_ = std::make_unique<ResourceManager>();
-  return true;
-}
-
-void ResourceSystem::Cleanup() {
   default_manager_.release();
 }
 
