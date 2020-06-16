@@ -13,44 +13,44 @@
 
 namespace gal {
 
-class GALPlatform;
+// class GALPlatform;
 
-namespace internal {
-class PlatformDetails;
-} // namespace
+// namespace internal {
+// class PlatformDetails;
+// } // namespace
 
-using GALId = uint32_t;
+// using GALId = uint32_t;
 
-enum class ObjectType {
-  Shader,
-  Pipeline,
-  VertexDesc,
-  Buffer,
-  Texture,
-  TextureSampler
-};
+// enum class ObjectType {
+//   Shader,
+//   Pipeline,
+//   VertexDesc,
+//   Buffer,
+//   Texture,
+//   TextureSampler
+// };
 
-// TODO(colintan): Make abstract base class
-class GALObject {
-public:
-  GALObject(GALPlatform* platform);
-  GALObject() {}
-  virtual ~GALObject() {};
+// // TODO(colintan): Make abstract base class
+// class GALObject {
+// public:
+//   GALObject(GALPlatform* platform);
+//   GALObject() {}
+//   virtual ~GALObject() {};
 
-  GALId GetGALId() const { return *gal_id_; }
+//   GALId GetGALId() const { return *gal_id_; }
 
-  bool IsLastRef() const { return gal_id_.use_count() == 1; }
+//   bool IsLastRef() const { return gal_id_.use_count() == 1; }
 
-protected:
-  GALPlatform* GetPlatform() { return gal_platform_; }
+// protected:
+//   GALPlatform* GetPlatform() { return gal_platform_; }
 
-protected:
-  internal::PlatformDetails* platform_details_;
+// protected:
+//   internal::PlatformDetails* platform_details_;
 
-private:
-  std::shared_ptr<GALId> gal_id_;
-  GALPlatform* gal_platform_;
-};
+// private:
+//   std::shared_ptr<GALId> gal_id_;
+//   GALPlatform* gal_platform_;
+// };
 
 // // TODO(colintan): See if this is too big to be passed around by value
 // class GALVertexDesc : public GALObject {
@@ -77,19 +77,19 @@ private:
 //   std::vector<Entry> entries;
 // };
 
-class GALTextureSampler : public GALObject {
-public:
-  GALTextureSampler(GALPlatform* platform) : GALObject(platform) {}
-  GALTextureSampler() {}
-  ~GALTextureSampler();
+// class GALTextureSampler : public GALObject {
+// public:
+//   GALTextureSampler(GALPlatform* platform) : GALObject(platform) {}
+//   GALTextureSampler() {}
+//   ~GALTextureSampler();
 
-  static ObjectType GetObjectType() { return ObjectType::TextureSampler; }
+//   static ObjectType GetObjectType() { return ObjectType::TextureSampler; }
 
-  static std::optional<GALTextureSampler> Create(GALPlatform* platform, const GALTexture& texture);
+//   static std::optional<GALTextureSampler> Create(GALPlatform* platform, const GALTexture& texture);
 
-private:
-  GALTexture texture_;
-};
+// private:
+//   GALTexture texture_;
+// };
 
 } // namespace
 

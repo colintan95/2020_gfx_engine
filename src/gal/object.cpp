@@ -8,21 +8,21 @@
 
 namespace gal {
 
-namespace {
+// namespace {
 
-std::shared_ptr<GALId> GenerateGALId() {
-  static int counter = 0;
+// std::shared_ptr<GALId> GenerateGALId() {
+//   static int counter = 0;
 
-  ++counter;
-  return std::make_shared<GALId>(counter);
-}
+//   ++counter;
+//   return std::make_shared<GALId>(counter);
+// }
 
-} // namespace
+// } // namespace
 
-GALObject::GALObject(GALPlatform* platform) {
-  gal_id_ = GenerateGALId();
-  gal_platform_ = platform;
-  platform_details_ = platform->GetPlatformDetails();
-}
+// GALObject::GALObject(GALPlatform* platform) {
+//   gal_id_ = GenerateGALId();
+//   gal_platform_ = platform;
+//   platform_details_ = platform->GetPlatformDetails();
+// }
 
 } // namespace

@@ -16,6 +16,7 @@
 #include "gal/gal_buffer.h"
 #include "gal/gal_pipeline.h"
 #include "gal/gal_shader.h"
+#include "gal/texture_sampler.h"
 #include "resource/resource_gal.h"
 #include "resource/resource_manager_gal.h"
 #include "resource/image_loader.h"
@@ -154,28 +155,16 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
     throw InitException();
   }
 
-  auto tex_sampler_opt = gal_platform_->Create<gal::GALTextureSampler>(texture_handle.Get());
-  if (!tex_sampler_opt) {
+  gal::GALTextureSampler tex_sampler;
+  if (!tex_sampler.Create(gal_platform_.get(), texture_handle.Get())) {
     std::cerr << "Failed to create GAL texture sampler." << std::endl;
     throw InitException();
   }
 
   gal::command::SetTextureSampler set_tex_sampler;
-  set_tex_sampler.sampler = *tex_sampler_opt;
+  set_tex_sampler.sampler = tex_sampler;
   set_tex_sampler.idx = 1;
   command_buffer_.Add(set_tex_sampler);           
-
-  // auto vert_desc_opt = gal_platform_->Create<gal::GALVertexDesc>();
-  // if (!vert_desc_opt) {
-  //   std::cerr << "Failed to create GAL vertex description." << std::endl;
-  //   throw InitException();
-  // }
-  // vert_desc_opt->SetAttribute(0, 3);
-  // vert_desc_opt->SetAttribute(2, 2);
-  
-  // gal::command::SetVertexDesc set_vert_desc;
-  // set_vert_desc.vert_desc = *vert_desc_opt;
-  // command_buffer_.Add(set_vert_desc);
 
   gal::command::SetVertexBuffer set_pos_vert_buf;
   set_pos_vert_buf.buffer = cube_mesh.pos_buf_.Get();

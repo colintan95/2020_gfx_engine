@@ -35,28 +35,12 @@ public:
   }
 
   void SetTextureSampler(const command::SetTextureSampler& cmd) {
-    std::optional<GLuint> gl_sampler_opt = platform_details_->ConvertGALId(cmd.sampler.GetGALId());
-    if (!gl_sampler_opt) {
-      return;
-    }
-    glUniform1i(cmd.idx, *gl_sampler_opt);
+    glUniform1i(cmd.idx, cmd.sampler.GetImpl().GetTexUnit());
   }
 
   void SetUniformBuffer(const command::SetUniformBuffer& cmd) {
     glBindBufferBase(GL_UNIFORM_BUFFER, cmd.idx, cmd.buffer.GetImpl().GetGLId());
   }
-
-  // void SetVertexDesc(const command::SetVertexDesc& cmd) {
-  //   if (std::optional<GLuint> gl_id_opt = 
-  //           platform_details_->ConvertGALId(cmd.vert_desc.GetGALId())) {
-  //     GLuint vao = *gl_id_opt;
-  //     glBindVertexArray(vao);
-
-  //     for (const GALVertexDesc::Entry& entry : cmd.vert_desc.entries) {
-  //       temp_state_.vert_desc_map[entry.index] = entry;
-  //     }
-  //   }
-  // }
 
   void SetVertexBuffer(const command::SetVertexBuffer& cmd) {
     glBindBuffer(GL_ARRAY_BUFFER, cmd.buffer.GetImpl().GetGLId());

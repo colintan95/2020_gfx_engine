@@ -10,16 +10,16 @@
 namespace gal {
 namespace internal {
 
-class IdConverter {
-public:
-  void AddGALId(GALId gal_id, GLuint gl_id);
-  void RemoveGALId(GALId gal_id);
+// class IdConverter {
+// public:
+//   void AddGALId(GALId gal_id, GLuint gl_id);
+//   void RemoveGALId(GALId gal_id);
 
-  std::optional<GLuint> ConvertGALId(GALId gal_id);
+//   std::optional<GLuint> ConvertGALId(GALId gal_id);
 
-private:
-  std::unordered_map<GALId, GLuint> gal_to_gl_;
-};
+// private:
+//   std::unordered_map<GALId, GLuint> gal_to_gl_;
+// };
 
 } // namespace
 } // namespace

@@ -9,6 +9,7 @@
 #include <vector>
 #include "gal/gal_buffer.h"
 #include "gal/gal_pipeline.h"
+#include "gal/texture_sampler.h"
 #include "gal/object.h"
 
 namespace gal {
@@ -39,6 +40,7 @@ struct SetPipeline {
 
 struct SetTextureSampler {
   GALTextureSampler sampler;
+  // TODO(colintan): Rename to something clearer - e.g. uniform_idx? but without uniform in it
   uint8_t idx;
 };
 
