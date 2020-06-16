@@ -50,4 +50,8 @@ bool GALShaderImplGL::Create(ShaderType type, const std::string& source) {
   return true;
 }
 
+void GALShaderImplGL::Destroy() {
+  glDeleteShader(gl_shader_id_);
+}
+
 } // namespace

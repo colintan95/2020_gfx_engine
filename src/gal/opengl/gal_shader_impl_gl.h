@@ -9,7 +9,8 @@ namespace gal {
 
 class GALShaderImplGL : public IGALShaderImpl {
 public:
-  bool Create(ShaderType type, const std::string& source);
+  bool Create(ShaderType type, const std::string& source) final;
+  void Destroy() final;
 
   GLuint GetGLId() const { return gl_shader_id_; }
 

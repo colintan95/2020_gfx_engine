@@ -111,7 +111,10 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
   if (!pipeline_opt) {
     std::cerr << "Failed to create GAL pipeline." << std::endl;
     throw InitException();
-  }          
+  }
+
+  frag_shader.Destroy();
+  vert_shader.Destroy();
 
   gal::command::SetPipeline set_pipeline;
   set_pipeline.pipeline = *pipeline_opt;
