@@ -2,7 +2,7 @@
 #define GAL_GAL_TEXTURE_IMPL_H_
 
 #include <cstdint>
-#include "gal/gal_object.h"
+#include "gal/object_impl/gal_object.h"
 
 namespace gal {
 
