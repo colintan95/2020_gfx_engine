@@ -38,7 +38,6 @@ private:
   
   ImplType impl_;
 };
-
   
 } // namespace
 

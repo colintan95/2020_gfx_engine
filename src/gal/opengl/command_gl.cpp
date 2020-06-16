@@ -39,12 +39,6 @@ public:
     glUniform1i(cmd.idx, *gl_sampler_opt);
   }
 
-  // void SetUniformBuffer(const command::SetUniformBuffer& cmd) {
-  //   if (std::optional<GLuint> gl_buf_opt = platform_details_->ConvertGALId(cmd.buffer.GetGALId())) {
-  //     glBindBufferBase(GL_UNIFORM_BUFFER, cmd.idx, *gl_buf_opt);
-  //   }
-  // }
-
   void SetUniformBuffer(const command::SetUniformBuffer& cmd) {
     glBindBufferBase(GL_UNIFORM_BUFFER, cmd.idx, cmd.buffer.GetImpl().GetGLId());
   }
@@ -60,24 +54,6 @@ public:
       }
     }
   }
-
-  // void SetVertexBuffer(const command::SetVertexBuffer& cmd) {
-  //   if (std::optional<GLuint> gl_id_opt = platform_details_->ConvertGALId(cmd.buffer.GetGALId())) {
-  //     GLuint vbo = *gl_id_opt;
-  //     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-  //     auto desc_map_it = temp_state_.vert_desc_map.find(cmd.vert_idx);
-  //     if (desc_map_it == temp_state_.vert_desc_map.end()) {
-  //       // TODO(colintan): Log error
-  //       return;
-  //     }
-  //     const GALVertexDesc::Entry& entry = desc_map_it->second;
-
-  //     glVertexAttribPointer(entry.index, entry.size, GL_FLOAT, GL_FALSE, 
-  //                           entry.size * sizeof(float), nullptr);
-  //     glEnableVertexAttribArray(entry.index);
-  //   }  
-  // }
 
   void SetVertexBuffer(const command::SetVertexBuffer& cmd) {
     glBindBuffer(GL_ARRAY_BUFFER, cmd.buffer.GetImpl().GetGLId());

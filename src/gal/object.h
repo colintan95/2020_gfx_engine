@@ -8,6 +8,7 @@
 #include <optional>
 #include <string>
 #include <vector>
+#include "gal/gal_shader.h"
 #include "gal/gal_texture.h"
 
 namespace gal {
@@ -19,12 +20,6 @@ class PlatformDetails;
 } // namespace
 
 using GALId = uint32_t;
-
-enum class ShaderType {
-  Invalid,
-  Vertex,
-  Fragment
-};
 
 enum class ObjectType {
   Shader,
@@ -55,21 +50,6 @@ protected:
 private:
   std::shared_ptr<GALId> gal_id_;
   GALPlatform* gal_platform_;
-};
-
-class GALShader : public GALObject {
-public:
-  GALShader(GALPlatform* platform) : GALObject(platform) {}
-  GALShader() {}
-  ~GALShader();
-
-  static ObjectType GetObjectType() { return ObjectType::Shader; }
-
-  static std::optional<GALShader> Create(GALPlatform* platform, ShaderType type, 
-                                         const std::string& source);
-
-private:
-  ShaderType type;
 };
 
 class GALPipeline : public GALObject {
@@ -108,28 +88,6 @@ public:
   // friendly
   std::vector<Entry> entries;
 };
-
-// class GALTexture : public GALObject {
-// public:
-//   GALTexture(GALPlatform* platform) : GALObject(platform) {}
-//   GALTexture() {}
-//   ~GALTexture();
-
-//   static ObjectType GetObjectType() { return ObjectType::Texture; }
-
-//   static std::optional<GALTexture> Create(GALPlatform* platform, TextureType type, 
-//                                           TextureFormat format, uint16_t width, uint16_t height, 
-//                                           uint8_t* data);
-
-//   // TODO(colintan): Change this to GetType()
-//   TextureType GetType() const { return type_; }
-
-// private:
-//   TextureType type_;
-//   TextureFormat format_;
-//   uint16_t width_;
-//   uint16_t height_;
-// };
 
 class GALTextureSampler : public GALObject {
 public:
