@@ -6,6 +6,8 @@
 
 namespace gal {
 
+class GALPlatform;
+
 enum class BufferType {
   Vertex,
   Uniform
@@ -17,7 +19,7 @@ class IGALBufferImpl {
 public:
   virtual ~IGALBufferImpl() {}
 
-  virtual bool Create(BufferType type, uint8_t* data, size_t size) = 0;
+  virtual bool Create(GALPlatform* gal_platform, BufferType type, uint8_t* data, size_t size) = 0;
   virtual void Destroy() = 0;
 };
 
@@ -26,8 +28,8 @@ class GALBufferWrapper : public GALObjectBase {
 public:
   GALBufferWrapper() {}
 
-  bool Create(BufferType type, uint8_t* data, size_t size) {
-    if (impl_.Create(type, data, size)) {
+  bool Create(GALPlatform* gal_platform, BufferType type, uint8_t* data, size_t size) {
+    if (impl_.Create(gal_platform, type, data, size)) {
       SetValid(true);
       type_ = type;
       size_ = size;

@@ -24,7 +24,7 @@ public:
         std::make_unique<ResourceGAL<gal::GALBuffer>>();
 
     gal::GALBuffer buffer;
-    if (!buffer.Create(args...)) {
+    if (!buffer.Create(gal_platform_, args...)) {
       return HandleGAL<gal::GALBuffer>();
     }
     resource->resource_ = std::move(buffer);

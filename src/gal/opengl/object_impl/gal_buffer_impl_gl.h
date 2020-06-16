@@ -11,7 +11,7 @@ namespace internal {
 
 class GALBufferImplGL : public IGALBufferImpl {
 public:
-  bool Create(BufferType type, uint8_t* data, size_t size);
+  bool Create(GALPlatform* gal_platform, BufferType type, uint8_t* data, size_t size);
   void Destroy();
 
   GLuint GetGLId() const { return gl_buf_id_; }

@@ -2,10 +2,16 @@
 
 #include <GL/glew.h>
 
+#include <cassert>
+#include "gal/platform.h"
+
 namespace gal {
 namespace internal {
 
-bool GALBufferImplGL::Create(BufferType type, uint8_t* data, size_t size) {
+bool GALBufferImplGL::Create(GALPlatform* gal_platform, BufferType type, uint8_t* data, 
+                             size_t size) {
+  assert(gal_platform != nullptr);
+  
   glCreateBuffers(1, &gl_buf_id_);
   
   GLuint buf_target;
