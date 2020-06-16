@@ -7,6 +7,8 @@
 
 namespace gal {
 
+namespace internal {
+
 class GALBufferImplGL : public IGALBufferImpl {
 public:
   bool Create(BufferType type, uint8_t* data, size_t size);
@@ -18,7 +20,9 @@ private:
   GLuint gl_buf_id_;
 }; 
 
-using GALBuffer = GALBufferWrapper<GALBufferImplGL>;
+} // namespace
+
+using GALBuffer = internal::GALBufferWrapper<internal::GALBufferImplGL>;
 
 } // namespace
 

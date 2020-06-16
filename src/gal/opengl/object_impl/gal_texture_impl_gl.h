@@ -7,6 +7,8 @@
 
 namespace gal {
 
+namespace internal {
+
 class GALTextureImplGL : public IGALTextureImpl {
 public:
   bool Create(TextureType type, TextureFormat format, uint16_t width, uint16_t height, 
@@ -19,8 +21,10 @@ private:
   GLuint gl_tex_id_;      
 }; 
 
-using GALTexture = GALTextureWrapper<GALTextureImplGL>;
-  
+} // namespace
+
+using GALTexture = internal::GALTextureWrapper<internal::GALTextureImplGL>;
+
 } // namespace
 
 #endif // GAL_OPENGL_GAL_TEXTURE_IMPL_GL_H_

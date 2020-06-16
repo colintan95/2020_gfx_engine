@@ -11,6 +11,8 @@ enum class BufferType {
   Uniform
 };
 
+namespace internal {
+
 class IGALBufferImpl {
 public:
   virtual ~IGALBufferImpl() {}
@@ -49,6 +51,8 @@ private:
   
   ImplType impl_;
 };
+
+} // namespace
   
 } // namespace
 

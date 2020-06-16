@@ -1,6 +1,7 @@
 #include "gal/opengl/object_impl/gal_texture_impl_gl.h"
 
 namespace gal {
+namespace internal {
 
 bool GALTextureImplGL::Create(TextureType type, TextureFormat format, uint16_t width, 
                               uint16_t height, uint8_t* data) {
@@ -27,4 +28,5 @@ void GALTextureImplGL::Destroy() {
   glDeleteTextures(1, &gl_tex_id_);
 }
 
+} // namespace
 } // namespace

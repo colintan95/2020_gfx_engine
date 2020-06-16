@@ -4,8 +4,6 @@
 #include <string>
 #include "gal/gal_object.h"
 
-// TODO(colintan): Consider wrapping these classes in an internal namespace
-
 namespace gal {
 
 enum class ShaderType {
@@ -13,6 +11,8 @@ enum class ShaderType {
   Vertex,
   Fragment
 };
+
+namespace internal {
 
 class IGALShaderImpl {
 public:
@@ -49,6 +49,8 @@ private:
 
   ImplType impl_;
 };
+
+} // namespace
    
 } // namespace
 

@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 
 namespace gal {
+namespace internal {
 
 bool GALBufferImplGL::Create(BufferType type, uint8_t* data, size_t size) {
   glCreateBuffers(1, &gl_buf_id_);
@@ -30,4 +31,5 @@ void GALBufferImplGL::Destroy() {
   glDeleteBuffers(1, &gl_buf_id_);
 }
 
+} // namespace
 } // namespace

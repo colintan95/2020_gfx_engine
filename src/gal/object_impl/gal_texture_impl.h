@@ -17,6 +17,8 @@ enum class TextureFormat {
   RGBA
 };
 
+namespace internal {
+
 class IGALTextureImpl {
 public:
   virtual ~IGALTextureImpl() {}
@@ -60,6 +62,8 @@ private:
   
   ImplType impl_;
 };
+
+} // namespace
 
 } // namespace
 

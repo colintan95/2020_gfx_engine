@@ -7,6 +7,8 @@
 
 namespace gal {
 
+namespace internal {
+
 class GALShaderImplGL : public IGALShaderImpl {
 public:
   bool Create(ShaderType type, const std::string& source) final;
@@ -18,7 +20,9 @@ private:
   GLuint gl_shader_id_;
 };
 
-using GALShader = GALShaderWrapper<GALShaderImplGL>;
+} // namespace
+
+using GALShader = internal::GALShaderWrapper<internal::GALShaderImplGL>;
   
 } // namespace
 
