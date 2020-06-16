@@ -22,7 +22,7 @@ private:
 
 } // namespace
 
-using GALShader = internal::GALShaderWrapper<internal::GALShaderImplGL>;
+using GALShader = internal::GALShader<internal::GALShaderImplGL>;
   
 } // namespace
 

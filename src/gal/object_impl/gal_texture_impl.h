@@ -31,10 +31,8 @@ public:
 };
 
 template<typename ImplType>
-class GALTextureWrapper : public GALObjectBase {
+class GALTexture : public GALObjectBase {
 public:
-  GALTextureWrapper() {}
-
   bool Create(GALPlatform* gal_platform, TextureType type, TextureFormat format, uint16_t width, 
               uint16_t height, uint8_t* data) {
     if (impl_.Create(gal_platform, type, format, width, height, data)) {

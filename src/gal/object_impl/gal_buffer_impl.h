@@ -24,10 +24,8 @@ public:
 };
 
 template<typename ImplType>
-class GALBufferWrapper : public GALObjectBase {
+class GALBuffer : public GALObjectBase {
 public:
-  GALBufferWrapper() {}
-
   bool Create(GALPlatform* gal_platform, BufferType type, uint8_t* data, size_t size) {
     if (impl_.Create(gal_platform, type, data, size)) {
       SetValid(true);

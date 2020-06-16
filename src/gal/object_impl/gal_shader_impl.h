@@ -25,10 +25,8 @@ public:
 };
 
 template<typename ImplType>
-class GALShaderWrapper : public GALObjectBase {
+class GALShader : public GALObjectBase {
 public:
-  GALShaderWrapper() {}
-
   bool Create(GALPlatform* gal_platform, ShaderType type, const std::string& source) {
     if (impl_.Create(gal_platform, type, source)) {
       SetValid(true);

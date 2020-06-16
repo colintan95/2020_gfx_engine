@@ -22,7 +22,7 @@ private:
 
 } // namespace
 
-using GALBuffer = internal::GALBufferWrapper<internal::GALBufferImplGL>;
+using GALBuffer = internal::GALBuffer<internal::GALBufferImplGL>;
 
 } // namespace
 
