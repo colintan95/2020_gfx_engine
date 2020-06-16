@@ -40,11 +40,11 @@ public:
     std::unique_ptr<ResourceGAL<gal::GALTexture>> resource = 
         std::make_unique<ResourceGAL<gal::GALTexture>>();
 
-    std::optional<gal::GALTexture> opt = gal::GALTexture::Create(gal_platform_, args...);
-    if (!opt.has_value()) {
-      return HandleGAL<gal::GALTexture>();
-    }
-    resource->resource_ = std::move(*opt);
+    // std::optional<gal::GALTexture> opt = gal::GALTexture::Create(gal_platform_, args...);
+    // if (!opt.has_value()) {
+    //   return HandleGAL<gal::GALTexture>();
+    // }
+    resource->resource_ = gal::GALTexture(args...);
 
     HandleGAL<gal::GALTexture> handle = CreateHandle<HandleGAL<gal::GALTexture>>(resource.get());
      texture_resources_.push_back(std::move(resource));

@@ -2,10 +2,14 @@
 #define GAL_GAL_BUFFER_IMPL_H_
 
 #include <cstdint>
-#include "object.h"
 
 namespace gal {
-   
+
+enum class BufferType {
+  Vertex,
+  Uniform
+};
+
 class IGALBufferImpl {
 public:
   virtual ~IGALBufferImpl() {}
@@ -31,6 +35,7 @@ public:
 private:
   BufferType type_;
   size_t size_;
+  
   ImplType impl_;
 };
 

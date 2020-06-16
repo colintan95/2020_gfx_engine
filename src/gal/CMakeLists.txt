@@ -3,6 +3,8 @@ target_sources(gfx_engine
     "command.h"
     "gal_buffer_impl.h"
     "gal_buffer.h"
+    "gal_texture_impl.h"
+    "gal_texture.h"
     "gal.h"
     "object.cpp"
     "object.h"

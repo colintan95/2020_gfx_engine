@@ -193,61 +193,58 @@ void GALVertexDesc::SetAttribute(uint8_t index, uint8_t size) {
 //   // TODO(colintan): Implement
 // }
 
-std::optional<GALTexture> GALTexture::Create(GALPlatform* platform, TextureType type, 
-                                             TextureFormat format, uint16_t width, uint16_t height, 
-                                             uint8_t* data) {
-  GLuint gl_tex;
-  glGenTextures(1, &gl_tex);
+// std::optional<GALTexture> GALTexture::Create(GALPlatform* platform, TextureType type, 
+//                                              TextureFormat format, uint16_t width, uint16_t height, 
+//                                              uint8_t* data) {
+//   GLuint gl_tex;
+//   glGenTextures(1, &gl_tex);
 
-  if (type == TextureType::Texture2D && format == TextureFormat::RGB) {
-    glBindTexture(GL_TEXTURE_2D, gl_tex);
+//   if (type == TextureType::Texture2D && format == TextureFormat::RGB) {
+//     glBindTexture(GL_TEXTURE_2D, gl_tex);
 
-    // TODO(colintan): Expose these as parameters to user
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//     // TODO(colintan): Expose these as parameters to user
+//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-  } else {
-    return std::nullopt;
-  }
+//     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+//   } else {
+//     return std::nullopt;
+//   }
 
-  GALTexture result{platform};
-  platform->GetPlatformDetails()->AddGALId(result.GetGALId(), gl_tex);
-  result.type_ = type;
-  result.format_ = format;
-  result.width_ = width;
-  result.height_ = height;
+//   GALTexture result{platform};
+//   platform->GetPlatformDetails()->AddGALId(result.GetGALId(), gl_tex);
+//   result.type_ = type;
+//   result.format_ = format;
+//   result.width_ = width;
+//   result.height_ = height;
   
-  return result;
-}
+//   return result;
+// }
 
-GALTexture::~GALTexture() {
-  if (IsLastRef()) {
-    if (auto gl_tex_opt = platform_details_->ConvertGALId(GetGALId())) {
-      glDeleteTextures(1, &(*gl_tex_opt));
-      platform_details_->RemoveGALId(GetGALId());
-    }
-  }
-}
+// GALTexture::~GALTexture() {
+//   if (IsLastRef()) {
+//     if (auto gl_tex_opt = platform_details_->ConvertGALId(GetGALId())) {
+//       glDeleteTextures(1, &(*gl_tex_opt));
+//       platform_details_->RemoveGALId(GetGALId());
+//     }
+//   }
+// }
 
 std::optional<GALTextureSampler> GALTextureSampler::Create(GALPlatform* platform, 
                                                            const GALTexture& texture) {
   // TODO(colintan): Replace this with something better
   static GLuint unit_counter = 0;
 
-  std::optional<GLuint> gl_tex_opt = 
-      platform->GetPlatformDetails()->ConvertGALId(texture.GetGALId());
-  if (!gl_tex_opt) {
-    return std::nullopt;
-  }
+  // TODO(colintan): Check that GALTexture returns a valid GLuint
+  GLuint gl_tex = texture.GetImpl().GetGLId();
 
   ++unit_counter;
   GLuint gl_tex_unit = unit_counter;
   glActiveTexture(GL_TEXTURE0 + gl_tex_unit);
   if (texture.GetType() == TextureType::Texture2D) {
-    glBindTexture(GL_TEXTURE_2D, *gl_tex_opt);
+    glBindTexture(GL_TEXTURE_2D, gl_tex);
   } else {
     return std::nullopt;
   }

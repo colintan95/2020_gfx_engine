@@ -8,6 +8,7 @@
 #include <optional>
 #include <string>
 #include <vector>
+#include "gal/gal_texture.h"
 
 namespace gal {
 
@@ -23,11 +24,6 @@ enum class ShaderType {
   Invalid,
   Vertex,
   Fragment
-};
-
-enum class BufferType {
-  Vertex,
-  Uniform
 };
 
 enum class ObjectType {
@@ -113,59 +109,27 @@ public:
   std::vector<Entry> entries;
 };
 
-// class GALBuffer : public GALObject {
+// class GALTexture : public GALObject {
 // public:
-//   GALBuffer(GALPlatform* platform) : GALObject(platform) {}
-//   GALBuffer() {}
-//   ~GALBuffer();
+//   GALTexture(GALPlatform* platform) : GALObject(platform) {}
+//   GALTexture() {}
+//   ~GALTexture();
 
-//   static ObjectType GetObjectType() { return ObjectType::Buffer; }
+//   static ObjectType GetObjectType() { return ObjectType::Texture; }
 
-//   static std::optional<GALBuffer> Create(GALPlatform* platform, BufferType type, uint8_t* data, 
-//                                          size_t size);
+//   static std::optional<GALTexture> Create(GALPlatform* platform, TextureType type, 
+//                                           TextureFormat format, uint16_t width, uint16_t height, 
+//                                           uint8_t* data);
 
-//   // bool Update(uint8_t* data, size_t start_idx, size_t update_size);
-
-//   BufferType GetType() { return type_; }
-//   size_t GetSize() { return size_; }
+//   // TODO(colintan): Change this to GetType()
+//   TextureType GetType() const { return type_; }
 
 // private:
-//   BufferType type_;
-//   size_t size_;
+//   TextureType type_;
+//   TextureFormat format_;
+//   uint16_t width_;
+//   uint16_t height_;
 // };
-
-enum class TextureType {
-  Texture2D,
-  Texture3D
-};
-
-enum class TextureFormat {
-  Invalid,
-  RGB,
-  RGBA
-};
-
-class GALTexture : public GALObject {
-public:
-  GALTexture(GALPlatform* platform) : GALObject(platform) {}
-  GALTexture() {}
-  ~GALTexture();
-
-  static ObjectType GetObjectType() { return ObjectType::Texture; }
-
-  static std::optional<GALTexture> Create(GALPlatform* platform, TextureType type, 
-                                          TextureFormat format, uint16_t width, uint16_t height, 
-                                          uint8_t* data);
-
-  // TODO(colintan): Change this to GetType()
-  TextureType GetType() const { return type_; }
-
-private:
-  TextureType type_;
-  TextureFormat format_;
-  uint16_t width_;
-  uint16_t height_;
-};
 
 class GALTextureSampler : public GALObject {
 public:
