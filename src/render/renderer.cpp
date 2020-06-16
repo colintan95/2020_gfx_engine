@@ -72,6 +72,15 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
   }
   resource::Model& model = model_handle.Get();
 
+  MeshId mesh_id;
+  if (std::optional<MeshId> mesh_id_opt = CreateMesh("assets/cube/cube.obj")) {
+    mesh_id = *mesh_id_opt;
+  } else {
+    std::cerr << "Failed to create mesh." << std::endl;
+    throw InitException();
+  }
+  Mesh& cube_mesh = meshes_[mesh_id];
+
   resource::Handle<resource::Image> image_handle = 
     resource_system_->LoadImage("assets/cube/default.png");
   if (!image_handle.IsValid()) {
@@ -170,31 +179,13 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
   set_vert_desc.vert_desc = *vert_desc_opt;
   command_buffer_.Add(set_vert_desc);
 
-  resource::HandleGALBuffer pos_buf_handle = 
-      resource_manager_->CreateBuffer(gal::BufferType::Vertex, 
-                                      reinterpret_cast<uint8_t*>(model.positions.data()),
-                                      model.positions.size() * sizeof(glm::vec3));
-  if (!pos_buf_handle.IsValid()) {
-    std::cerr << "Failed to create GAL vertex buffer for positions." << std::endl;
-    throw InitException();
-  }
-
   gal::command::SetVertexBuffer set_pos_vert_buf;
-  set_pos_vert_buf.buffer = pos_buf_handle.Get();
+  set_pos_vert_buf.buffer = cube_mesh.pos_buf_.Get();
   set_pos_vert_buf.vert_idx = 0;
   command_buffer_.Add(set_pos_vert_buf);
 
-  resource::HandleGALBuffer texcoord_buf_handle = 
-      resource_manager_->CreateBuffer(gal::BufferType::Vertex, 
-                                      reinterpret_cast<uint8_t*>(model.texcoords.data()),
-                                      model.texcoords.size() * sizeof(glm::vec2));
-  if (!texcoord_buf_handle.IsValid()) {
-    std::cerr << "Failed to create GAL vertex buffer for texcoords." << std::endl;
-    throw InitException();
-  }
-
   gal::command::SetVertexBuffer set_texcoord_vert_buf;
-  set_texcoord_vert_buf.buffer = texcoord_buf_handle.Get();
+  set_texcoord_vert_buf.buffer = cube_mesh.texcoord_buf_.Get();
   set_texcoord_vert_buf.vert_idx = 2;
   command_buffer_.Add(set_texcoord_vert_buf);
   
@@ -207,8 +198,6 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
   gal::command::DrawTriangles draw_triangles;
   draw_triangles.num_triangles = model.faces;
   command_buffer_.Add(draw_triangles);
-
-  CreateMesh("assets/cube/cube.obj");
 }
 
 Renderer::~Renderer() {
