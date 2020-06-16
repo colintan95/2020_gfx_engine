@@ -13,7 +13,6 @@
 #include <optional>
 #include <utility>
 #include <vector>
-#include "gal/gal.h"
 #include "gal/gal_buffer.h"
 #include "gal/gal_shader.h"
 #include "resource/resource_gal.h"

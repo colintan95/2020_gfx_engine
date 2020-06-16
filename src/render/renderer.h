@@ -6,7 +6,7 @@
 #include <optional>
 #include <string>
 #include <unordered_map>
-#include "gal/platform.h"
+#include "gal/gal_platform.h"
 #include "render/mesh.h"
 #include "window/window.h"
 

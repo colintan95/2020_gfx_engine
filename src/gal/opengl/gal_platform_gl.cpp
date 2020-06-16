@@ -1,10 +1,10 @@
-#include "gal/opengl/platform_gl.h"
+#include "gal/opengl/gal_platform_gl.h"
 
 #include <GL/glew.h>
 
 #include <memory>
 #include <new>
-#include "gal/platform.h"
+#include "gal/gal_platform.h"
 
 namespace gal {
 namespace internal {

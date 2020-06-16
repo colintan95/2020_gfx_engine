@@ -1,4 +1,4 @@
-#include "gal/platform.h"
+#include "gal/gal_platform.h"
 
 namespace gal {
 

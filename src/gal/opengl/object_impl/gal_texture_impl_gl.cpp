@@ -3,7 +3,7 @@
 #include <GL/glew.h>
 
 #include <cassert>
-#include "gal/platform.h"
+#include "gal/gal_platform.h"
 
 namespace gal {
 namespace internal {

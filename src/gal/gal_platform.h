@@ -1,5 +1,5 @@
-#ifndef GAL_PLATFORM_H_
-#define GAL_PLATFORM_H_
+#ifndef GAL_GAL_PLATFORM_H_
+#define GAL_GAL_PLATFORM_H_
 
 #include <exception>
 #include <memory>
@@ -58,8 +58,6 @@ private:
   std::unique_ptr<internal::GALPlatformImpl> impl_;
 };
 
-
-
 } // namespace
 
-#endif // GAL_PLATFORM_H_
+#endif // GAL_GAL_PLATFORM_H_

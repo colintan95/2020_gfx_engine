@@ -4,7 +4,7 @@
 #include <memory>
 #include <optional>
 #include <string>
-#include "gal/platform.h"
+#include "gal/gal_platform.h"
 
 namespace gal {
 

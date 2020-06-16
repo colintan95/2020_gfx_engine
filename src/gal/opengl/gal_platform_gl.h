@@ -1,8 +1,8 @@
-#ifndef GAL_OPENGL_PLATFORM_GL_H_
-#define GAL_OPENGL_PLATFORM_GL_H_
+#ifndef GAL_OPENGL_GAL_PLATFORM_GL_H_
+#define GAL_OPENGL_GAL_PLATFORM_GL_H_
 
 #include <memory>
-#include "gal/platform.h"
+#include "gal/gal_platform.h"
 #include "gal/opengl/id_converter.h"
 
 namespace gal {
@@ -34,4 +34,4 @@ private:
 } // namespace
 } // namespace
 
-#endif // GAL_OPENGL_PLATFORM_GL_H_
+#endif // GAL_OPENGL_GAL_PLATFORM_GL_H_

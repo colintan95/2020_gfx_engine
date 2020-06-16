@@ -6,7 +6,7 @@
 #include <utility>
 #include "gal/opengl/id_converter.h"
 #include "gal/gal_shader.h"
-#include "gal/opengl/platform_gl.h"
+#include "gal/opengl/gal_platform_gl.h"
 
 namespace gal {
 
