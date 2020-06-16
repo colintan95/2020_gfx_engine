@@ -147,43 +147,43 @@ void GALVertexDesc::SetAttribute(uint8_t index, uint8_t size) {
   entries.push_back(std::move(entry));
 }
 
-std::optional<GALBuffer> GALBuffer::Create(GALPlatform* platform, BufferType type, uint8_t* data, 
-                                           size_t size) {
-  GLuint gl_buf;
-  glCreateBuffers(1, &gl_buf);
+// std::optional<GALBuffer> GALBuffer::Create(GALPlatform* platform, BufferType type, uint8_t* data, 
+//                                            size_t size) {
+//   GLuint gl_buf;
+//   glCreateBuffers(1, &gl_buf);
   
-  GLuint buf_target;
-  switch (type) {
-  case BufferType::Vertex:
-    buf_target = GL_ARRAY_BUFFER;
-    break;
-  case BufferType::Uniform:
-    buf_target = GL_UNIFORM_BUFFER;
-    break;
-  default:
-    return std::nullopt;
-  }
+//   GLuint buf_target;
+//   switch (type) {
+//   case BufferType::Vertex:
+//     buf_target = GL_ARRAY_BUFFER;
+//     break;
+//   case BufferType::Uniform:
+//     buf_target = GL_UNIFORM_BUFFER;
+//     break;
+//   default:
+//     return std::nullopt;
+//   }
 
-  glBindBuffer(buf_target, gl_buf);
-  glBufferData(buf_target, size, data, GL_STATIC_DRAW);
-  glBindBuffer(buf_target, 0);
+//   glBindBuffer(buf_target, gl_buf);
+//   glBufferData(buf_target, size, data, GL_STATIC_DRAW);
+//   glBindBuffer(buf_target, 0);
     
-  GALBuffer result{platform};
-  platform->GetPlatformDetails()->AddGALId(result.GetGALId(), gl_buf);
-  result.type_ = type;
-  result.size_ = size;
+//   GALBuffer result{platform};
+//   platform->GetPlatformDetails()->AddGALId(result.GetGALId(), gl_buf);
+//   result.type_ = type;
+//   result.size_ = size;
 
-  return result;
-}
+//   return result;
+// }
 
-GALBuffer::~GALBuffer() {
-  if (IsLastRef()) {
-    if (auto gl_buf_opt = platform_details_->ConvertGALId(GetGALId())) {
-      glDeleteBuffers(1, &(*gl_buf_opt));
-      platform_details_->RemoveGALId(GetGALId());
-    }
-  }
-}
+// GALBuffer::~GALBuffer() {
+//   if (IsLastRef()) {
+//     if (auto gl_buf_opt = platform_details_->ConvertGALId(GetGALId())) {
+//       glDeleteBuffers(1, &(*gl_buf_opt));
+//       platform_details_->RemoveGALId(GetGALId());
+//     }
+//   }
+// }
 
 // bool GALBuffer::Update(uint8_t* data, size_t start_idx, size_t update_size) {
 //   if ((start_idx + update_size) > size_) {

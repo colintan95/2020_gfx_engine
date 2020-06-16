@@ -14,6 +14,7 @@
 #include <utility>
 #include <vector>
 #include "gal/gal.h"
+#include "gal/gal_buffer.h"
 #include "resource/resource_gal.h"
 #include "resource/resource_manager_gal.h"
 #include "resource/image_loader.h"
@@ -193,10 +194,6 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
 
   resource::ModelLoader model_loader;
   std::shared_ptr<resource::Model> model = model_loader.LoadModel("assets/cube/cube.obj");
-
-  gal::GALBufferNew new_gl_buf(gal::BufferType::Vertex, 
-                               reinterpret_cast<uint8_t*>(model->positions.data()),
-                               model->positions.size() * sizeof(glm::vec3));
 }
 
 Renderer::~Renderer() {

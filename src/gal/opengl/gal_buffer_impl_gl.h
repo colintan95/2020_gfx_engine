@@ -3,7 +3,7 @@
 
 #include <GL/glew.h>
 
-#include "gal/gal_buffer.h"
+#include "gal/gal_buffer_impl.h"
 
 namespace gal {
 
@@ -11,11 +11,13 @@ class GALBufferImplGL : public IGALBufferImpl {
 public:
   bool Create(BufferType type, uint8_t* data, size_t size);
 
+  GLuint GetGLId() const { return gl_buf_id_; }
+
 private:
   GLuint gl_buf_id_;
 }; 
 
-using GALBufferNew = GALBufferWrapper<GALBufferImplGL>;
+using GALBuffer = GALBufferWrapper<GALBufferImplGL>;
 
 } // namespace
 

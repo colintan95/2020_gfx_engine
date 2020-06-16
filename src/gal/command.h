@@ -7,6 +7,7 @@
 #include <utility>
 #include <variant>
 #include <vector>
+#include "gal/gal_buffer.h"
 #include "gal/object.h"
 
 namespace gal {

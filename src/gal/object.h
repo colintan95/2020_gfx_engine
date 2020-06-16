@@ -113,26 +113,26 @@ public:
   std::vector<Entry> entries;
 };
 
-class GALBuffer : public GALObject {
-public:
-  GALBuffer(GALPlatform* platform) : GALObject(platform) {}
-  GALBuffer() {}
-  ~GALBuffer();
+// class GALBuffer : public GALObject {
+// public:
+//   GALBuffer(GALPlatform* platform) : GALObject(platform) {}
+//   GALBuffer() {}
+//   ~GALBuffer();
 
-  static ObjectType GetObjectType() { return ObjectType::Buffer; }
+//   static ObjectType GetObjectType() { return ObjectType::Buffer; }
 
-  static std::optional<GALBuffer> Create(GALPlatform* platform, BufferType type, uint8_t* data, 
-                                         size_t size);
+//   static std::optional<GALBuffer> Create(GALPlatform* platform, BufferType type, uint8_t* data, 
+//                                          size_t size);
 
-  // bool Update(uint8_t* data, size_t start_idx, size_t update_size);
+//   // bool Update(uint8_t* data, size_t start_idx, size_t update_size);
 
-  BufferType GetType() { return type_; }
-  size_t GetSize() { return size_; }
+//   BufferType GetType() { return type_; }
+//   size_t GetSize() { return size_; }
 
-private:
-  BufferType type_;
-  size_t size_;
-};
+// private:
+//   BufferType type_;
+//   size_t size_;
+// };
 
 enum class TextureType {
   Texture2D,

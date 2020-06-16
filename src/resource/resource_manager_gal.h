@@ -23,11 +23,11 @@ public:
     std::unique_ptr<ResourceGAL<gal::GALBuffer>> resource = 
         std::make_unique<ResourceGAL<gal::GALBuffer>>();
 
-    std::optional<gal::GALBuffer> opt = gal::GALBuffer::Create(gal_platform_, args...);
-    if (!opt.has_value()) {
-      return HandleGAL<gal::GALBuffer>();
-    }
-    resource->resource_ = std::move(*opt);
+    // std::optional<gal::GALBuffer> opt = gal::GALBuffer::Create(gal_platform_, args...);
+    // if (!opt.has_value()) {
+    //   return HandleGAL<gal::GALBuffer>();
+    // }
+    resource->resource_ = gal::GALBuffer(args...);
 
     HandleGAL<gal::GALBuffer> handle = CreateHandle<HandleGAL<gal::GALBuffer>>(resource.get());
     buffer_resources_.push_back(std::move(resource));
