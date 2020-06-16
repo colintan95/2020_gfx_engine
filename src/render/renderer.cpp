@@ -16,7 +16,7 @@
 #include "gal/gal_buffer.h"
 #include "gal/gal_pipeline.h"
 #include "gal/gal_shader.h"
-#include "gal/texture_sampler.h"
+#include "gal/gal_texture_sampler.h"
 #include "resource/resource_gal.h"
 #include "resource/resource_manager_gal.h"
 #include "resource/image_loader.h"

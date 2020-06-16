@@ -1,5 +1,5 @@
-#ifndef GAL_OPENGL_GAL_TEXTURE_IMPL_GL_H_
-#define GAL_OPENGL_GAL_TEXTURE_IMPL_GL_H_
+#ifndef GAL_OPENGL_OBJECT_IMPL_GAL_TEXTURE_IMPL_GL_H_
+#define GAL_OPENGL_OBJECT_IMPL_GAL_TEXTURE_IMPL_GL_H_
 
 #include <GL/glew.h>
 
@@ -23,4 +23,4 @@ using GALTexture = GALTextureBase<GALTextureImplGL>;
 
 } // namespace
 
-#endif // GAL_OPENGL_GAL_TEXTURE_IMPL_GL_H_
+#endif // GAL_OPENGL_OBJECT_IMPL_GAL_TEXTURE_IMPL_GL_H_

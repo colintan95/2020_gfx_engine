@@ -1,7 +1,7 @@
-#ifndef GAL_OPENGL_OBJECT_IMPL_TEXTURE_SAMPLER_IMPL_GL_H_
-#define GAL_OPENGL_OBJECT_IMPL_TEXTURE_SAMPLER_IMPL_GL_H_
+#ifndef GAL_OPENGL_OBJECT_IMPL_GAL_TEXTURE_SAMPLER_IMPL_GL_H_
+#define GAL_OPENGL_OBJECT_IMPL_GAL_TEXTURE_SAMPLER_IMPL_GL_H_
 
-#include "gal/object_impl/texture_sampler_impl.h"
+#include "gal/object_impl/gal_texture_sampler_impl.h"
 
 namespace gal {
 
@@ -20,4 +20,4 @@ using GALTextureSampler = GALTextureSamplerBase<GALTextureSamplerImplGL>;
 
 } // namespace
 
-#endif // GAL_OPENGL_OBJECT_IMPL_TEXTURE_SAMPLER_IMPL_GL_H_
+#endif // GAL_OPENGL_OBJECT_IMPL_GAL_TEXTURE_SAMPLER_IMPL_GL_H_

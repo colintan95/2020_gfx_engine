@@ -8,5 +8,5 @@ target_sources(gfx_engine
     "gal_shader_impl_gl.h"
     "gal_texture_impl_gl.cpp"
     "gal_texture_impl_gl.h"
-    "texture_sampler_impl_gl.cpp"
-    "texture_sampler_impl_gl.h")
+    "gal_texture_sampler_impl_gl.cpp"
+    "gal_texture_sampler_impl_gl.h")

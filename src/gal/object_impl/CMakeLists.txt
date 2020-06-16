@@ -4,4 +4,4 @@ target_sources(gfx_engine
     "gal_object.h"
     "gal_shader_impl.h"
     "gal_texture_impl.h"
-    "texture_sampler_impl.h")
+    "gal_texture_sampler_impl.h")

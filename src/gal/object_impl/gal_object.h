@@ -1,5 +1,5 @@
-#ifndef GAL_GAL_OBJECT_H_
-#define GAL_GAL_OBJECT_H_
+#ifndef GAL_OBJECT_IMPL_GAL_OBJECT_H_
+#define GAL_OBJECT_IMPL_GAL_OBJECT_H_
 
 namespace gal {
    
@@ -17,4 +17,4 @@ private:
 
 } // namespace
 
-#endif // GAL_GAL_OBJECT_H_
+#endif // GAL_OBJECT_IMPL_GAL_OBJECT_H_

@@ -1,5 +1,5 @@
-#ifndef GAL_OBJECT_IMPL_TEXTURE_SAMPLER_IMPL_H_
-#define GAL_OBJECT_IMPL_TEXTURE_SAMPLER_IMPL_H_
+#ifndef GAL_OBJECT_IMPL_GAL_TEXTURE_SAMPLER_IMPL_H_
+#define GAL_OBJECT_IMPL_GAL_TEXTURE_SAMPLER_IMPL_H_
 
 #include "gal/gal_texture.h"
 #include "gal/object_impl/gal_object.h"
@@ -44,4 +44,4 @@ private:
 
 } // namespace
 
-#endif // GAL_OBJECT_IMPL_TEXTURE_SAMPLER_IMPL_H_
+#endif // GAL_OBJECT_IMPL_GAL_TEXTURE_SAMPLER_IMPL_H_

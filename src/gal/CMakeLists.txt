@@ -7,7 +7,7 @@ target_sources(gfx_engine
     "gal_platform.h"
     "gal_shader.h"
     "gal_texture.h"
-    "texture_sampler.h")
+    "gal_texture_sampler.h")
 
 add_subdirectory(object_impl)
 add_subdirectory(opengl)
