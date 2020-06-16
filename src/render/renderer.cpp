@@ -92,20 +92,18 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
   set_viewport.height = window_->GetHeight();
   command_buffer_.Add(set_viewport);
 
-  // auto vert_shader_opt = 
-  //     gal_platform_->Create<gal::GALShader>(gal::ShaderType::Vertex, kVertShaderSrc);
-  // if (!vert_shader_opt) {
-  //   std::cerr << "Failed to create GAL vertex shader." << std::endl;
-  //   throw InitException();
-  // }
-  // auto frag_shader_opt = 
-  //     gal_platform_->Create<gal::GALShader>(gal::ShaderType::Fragment, kFragShaderSrc);
-  // if (!frag_shader_opt) {
-  //   std::cerr << "Failed to create GAL fragment shader." << std::endl;
-  //   throw InitException();
-  // }
-  gal::GALShader vert_shader(gal::ShaderType::Vertex, kVertShaderSrc);
-  gal::GALShader frag_shader(gal::ShaderType::Fragment, kFragShaderSrc);
+  gal::GALShader vert_shader;
+  if (!vert_shader.Create(gal::ShaderType::Vertex, kVertShaderSrc)) {
+    std::cerr << "Failed to create GAL vertex shader." << std::endl;
+    throw InitException();
+  }
+   
+  gal::GALShader frag_shader;
+  if (!frag_shader.Create(gal::ShaderType::Fragment, kFragShaderSrc)) {
+    std::cerr << "Failed to create GAL fragment shader." << std::endl;
+    throw InitException();
+  }
+  
   auto pipeline_opt = 
       gal_platform_->Create<gal::GALPipeline>(vert_shader, frag_shader);
   if (!pipeline_opt) {
