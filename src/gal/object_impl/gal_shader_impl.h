@@ -6,6 +6,8 @@
 
 namespace gal {
 
+class GALPlatform;
+
 enum class ShaderType {
   Invalid,
   Vertex,
@@ -18,7 +20,7 @@ class IGALShaderImpl {
 public:
   virtual ~IGALShaderImpl() {}
 
-  virtual bool Create(ShaderType type, const std::string& source) = 0;
+  virtual bool Create(GALPlatform* gal_platform, ShaderType type, const std::string& source) = 0;
   virtual void Destroy() = 0;
 };
 
@@ -27,8 +29,8 @@ class GALShaderWrapper : public GALObjectBase {
 public:
   GALShaderWrapper() {}
 
-  bool Create(ShaderType type, const std::string& source) {
-    if (impl_.Create(type, source)) {
+  bool Create(GALPlatform* gal_platform, ShaderType type, const std::string& source) {
+    if (impl_.Create(gal_platform, type, source)) {
       SetValid(true);
       type_ = type;
       return true;

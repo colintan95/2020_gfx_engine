@@ -2,7 +2,9 @@
 
 #include <GL/glew.h>
 
+#include <cassert>
 #include <iostream>
+#include "gal/platform.h"
 
 namespace gal {
 namespace internal {
@@ -29,7 +31,10 @@ bool CheckShaderSuccess(int shader) {
 
 } // namespace
    
-bool GALShaderImplGL::Create(ShaderType type, const std::string& source) {
+bool GALShaderImplGL::Create(GALPlatform* gal_platform, ShaderType type, 
+                             const std::string& source) {
+  assert(gal_platform != nullptr);
+  
   switch (type) {
   case ShaderType::Vertex:
     gl_shader_id_ = glCreateShader(GL_VERTEX_SHADER);

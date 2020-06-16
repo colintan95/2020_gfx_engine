@@ -93,13 +93,13 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
   command_buffer_.Add(set_viewport);
 
   gal::GALShader vert_shader;
-  if (!vert_shader.Create(gal::ShaderType::Vertex, kVertShaderSrc)) {
+  if (!vert_shader.Create(gal_platform_.get(), gal::ShaderType::Vertex, kVertShaderSrc)) {
     std::cerr << "Failed to create GAL vertex shader." << std::endl;
     throw InitException();
   }
    
   gal::GALShader frag_shader;
-  if (!frag_shader.Create(gal::ShaderType::Fragment, kFragShaderSrc)) {
+  if (!frag_shader.Create(gal_platform_.get(), gal::ShaderType::Fragment, kFragShaderSrc)) {
     std::cerr << "Failed to create GAL fragment shader." << std::endl;
     throw InitException();
   }

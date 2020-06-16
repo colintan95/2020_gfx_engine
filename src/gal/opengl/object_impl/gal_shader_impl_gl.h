@@ -11,7 +11,7 @@ namespace internal {
 
 class GALShaderImplGL : public IGALShaderImpl {
 public:
-  bool Create(ShaderType type, const std::string& source) final;
+  bool Create(GALPlatform* gal_platform, ShaderType type, const std::string& source) final;
   void Destroy() final;
 
   GLuint GetGLId() const { return gl_shader_id_; }
