@@ -25,11 +25,16 @@ template<typename ImplType>
 class GALBufferWrapper : public GALObjectBase {
 public:
   GALBufferWrapper() {}
-  GALBufferWrapper(BufferType type, uint8_t* data, size_t size) {
+
+  bool Create(BufferType type, uint8_t* data, size_t size) {
     if (impl_.Create(type, data, size)) {
       SetValid(true);
       type_ = type;
       size_ = size;
+      return true;
+    } else {
+      SetValid(false);
+      return false;
     }
   }
 

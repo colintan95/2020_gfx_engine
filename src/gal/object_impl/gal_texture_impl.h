@@ -32,14 +32,19 @@ template<typename ImplType>
 class GALTextureWrapper : public GALObjectBase {
 public:
   GALTextureWrapper() {}
-  GALTextureWrapper(TextureType type, TextureFormat format, uint16_t width, uint16_t height, 
-                    uint8_t* data) {
+
+  bool Create(TextureType type, TextureFormat format, uint16_t width, uint16_t height, 
+              uint8_t* data) {
     if (impl_.Create(type, format, width, height, data)) {
       SetValid(true);
       type_ = type;
       format_ = format;
       width_ = width;
       height_ = height;
+      return true;
+    } else {
+      SetValid(false);
+      return false;
     }
   }
 

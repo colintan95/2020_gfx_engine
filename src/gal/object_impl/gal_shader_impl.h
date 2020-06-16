@@ -31,6 +31,7 @@ public:
     if (impl_.Create(type, source)) {
       SetValid(true);
       type_ = type;
+      return true;
     } else {
       SetValid(false);
       return false;

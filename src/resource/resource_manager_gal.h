@@ -23,11 +23,11 @@ public:
     std::unique_ptr<ResourceGAL<gal::GALBuffer>> resource = 
         std::make_unique<ResourceGAL<gal::GALBuffer>>();
 
-    // std::optional<gal::GALBuffer> opt = gal::GALBuffer::Create(gal_platform_, args...);
-    // if (!opt.has_value()) {
-    //   return HandleGAL<gal::GALBuffer>();
-    // }
-    resource->resource_ = gal::GALBuffer(args...);
+    gal::GALBuffer buffer;
+    if (!buffer.Create(args...)) {
+      return HandleGAL<gal::GALBuffer>();
+    }
+    resource->resource_ = std::move(buffer);
 
     HandleGAL<gal::GALBuffer> handle = CreateHandle<HandleGAL<gal::GALBuffer>>(resource.get());
     buffer_resources_.push_back(std::move(resource));
@@ -40,11 +40,11 @@ public:
     std::unique_ptr<ResourceGAL<gal::GALTexture>> resource = 
         std::make_unique<ResourceGAL<gal::GALTexture>>();
 
-    // std::optional<gal::GALTexture> opt = gal::GALTexture::Create(gal_platform_, args...);
-    // if (!opt.has_value()) {
-    //   return HandleGAL<gal::GALTexture>();
-    // }
-    resource->resource_ = gal::GALTexture(args...);
+    gal::GALTexture texture;
+    if (!texture.Create(args...)) {
+      return HandleGAL<gal::GALTexture>();
+    }
+    resource->resource_ = std::move(texture);
 
     HandleGAL<gal::GALTexture> handle = CreateHandle<HandleGAL<gal::GALTexture>>(resource.get());
      texture_resources_.push_back(std::move(resource));
