@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <variant>
 #include "gal/gal_buffer.h"
-#include "gal/object.h"
+#include "gal/gal_texture.h"
 #include "resource/resource_base.h"
 #include "resource/resource_manager_base.h"
 

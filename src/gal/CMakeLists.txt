@@ -7,8 +7,6 @@ target_sources(gfx_engine
     "gal_platform.h"
     "gal_shader.h"
     "gal_texture.h"
-    "object.cpp"
-    "object.h"
     "texture_sampler.h")
 
 add_subdirectory(object_impl)

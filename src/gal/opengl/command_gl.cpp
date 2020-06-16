@@ -4,8 +4,6 @@
 
 #include <iostream>
 #include <unordered_map>
-#include "gal/object.h"
-#include "gal/opengl/id_converter.h"
 #include "gal/opengl/gal_platform_gl.h"
 
 namespace gal {
