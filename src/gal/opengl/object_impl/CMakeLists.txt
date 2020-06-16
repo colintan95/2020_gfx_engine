@@ -1,0 +1,8 @@
+target_sources(gfx_engine
+  PRIVATE
+    "gal_buffer_impl_gl.cpp"
+    "gal_buffer_impl_gl.h"
+    "gal_shader_impl_gl.cpp"
+    "gal_shader_impl_gl.h"
+    "gal_texture_impl_gl.cpp"
+    "gal_texture_impl_gl.h")

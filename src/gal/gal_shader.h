@@ -3,6 +3,6 @@
 
 #include "gal/object_impl/gal_shader_impl.h"
 
-#include "gal/opengl/gal_shader_impl_gl.h"
+#include "gal/opengl/object_impl/gal_shader_impl_gl.h"
 
 #endif //GAL_GAL_SHADER_H_

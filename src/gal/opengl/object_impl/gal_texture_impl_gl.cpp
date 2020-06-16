@@ -1,4 +1,4 @@
-#include "gal/opengl/gal_texture_impl_gl.h"
+#include "gal/opengl/object_impl/gal_texture_impl_gl.h"
 
 namespace gal {
 

@@ -4,6 +4,6 @@
 #include "gal/object_impl/gal_buffer_impl.h"
 
 // TODO(colintan): Wrap this in a preprocess #if block 
-#include "gal/opengl/gal_buffer_impl_gl.h"
+#include "gal/opengl/object_impl/gal_buffer_impl_gl.h"
 
 #endif // GAL_GAL_BUFFER_H_

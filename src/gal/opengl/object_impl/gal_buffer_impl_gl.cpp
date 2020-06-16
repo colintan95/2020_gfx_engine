@@ -1,4 +1,4 @@
-#include "gal/opengl/gal_buffer_impl_gl.h"
+#include "gal/opengl/object_impl/gal_buffer_impl_gl.h"
 
 #include <GL/glew.h>
 
