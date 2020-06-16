@@ -13,10 +13,12 @@ public:
               const GALShader& frag_shader) final;
   void Destroy() final;
 
-  GLuint GetGLId() const { return gl_program_id_; }
+  GLuint GetProgramGLId() const { return gl_program_id_; }
+  GLuint GetVaoGLId() const { return gl_vao_id_; }
 
 private:
   GLuint gl_program_id_;
+  GLuint gl_vao_id_;
 };
 
 using GALPipeline = GALPipelineBase<GALPipelineImplGL>;

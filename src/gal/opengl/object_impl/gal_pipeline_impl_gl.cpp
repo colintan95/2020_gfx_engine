@@ -45,10 +45,14 @@ bool GALPipelineImplGL::Create(GALPlatform* gal_platform, const GALShader& vert_
     return false;
   }
 
+  glCreateVertexArrays(1, &gl_vao_id_);
+
   return true;
 }
 
 void GALPipelineImplGL::Destroy() {
+  glDeleteVertexArrays(1, &gl_vao_id_);
+
   glDeleteProgram(gl_program_id_);
 }
 

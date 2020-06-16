@@ -75,31 +75,31 @@ namespace gal {
 //   }
 // }
 
-std::optional<GALVertexDesc> GALVertexDesc::Create(GALPlatform* platform) {
-  GLuint gl_vao;
-  glCreateVertexArrays(1, &gl_vao);
+// std::optional<GALVertexDesc> GALVertexDesc::Create(GALPlatform* platform) {
+//   GLuint gl_vao;
+//   glCreateVertexArrays(1, &gl_vao);
 
-  GALVertexDesc result{platform};
-  platform->GetPlatformDetails()->AddGALId(result.GetGALId(), gl_vao);
+//   GALVertexDesc result{platform};
+//   platform->GetPlatformDetails()->AddGALId(result.GetGALId(), gl_vao);
 
-  return result;
-}
+//   return result;
+// }
 
-GALVertexDesc::~GALVertexDesc() {
-  if (IsLastRef()) {
-    if (auto gl_vao_opt = platform_details_->ConvertGALId(GetGALId())) {
-      glDeleteBuffers(1, &(*gl_vao_opt));
-      platform_details_->RemoveGALId(GetGALId());
-    }
-  }
-}
+// GALVertexDesc::~GALVertexDesc() {
+//   if (IsLastRef()) {
+//     if (auto gl_vao_opt = platform_details_->ConvertGALId(GetGALId())) {
+//       glDeleteBuffers(1, &(*gl_vao_opt));
+//       platform_details_->RemoveGALId(GetGALId());
+//     }
+//   }
+// }
 
-void GALVertexDesc::SetAttribute(uint8_t index, uint8_t size) {
-  Entry entry;
-  entry.index = index;
-  entry.size = size;
-  entries.push_back(std::move(entry));
-}
+// void GALVertexDesc::SetAttribute(uint8_t index, uint8_t size) {
+//   Entry entry;
+//   entry.index = index;
+//   entry.size = size;
+//   entries.push_back(std::move(entry));
+// }
 
 std::optional<GALTextureSampler> GALTextureSampler::Create(GALPlatform* platform, 
                                                            const GALTexture& texture) {

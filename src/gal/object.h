@@ -52,30 +52,30 @@ private:
   GALPlatform* gal_platform_;
 };
 
-// TODO(colintan): See if this is too big to be passed around by value
-class GALVertexDesc : public GALObject {
-public:
-  GALVertexDesc(GALPlatform* platform) : GALObject(platform) {}
-  GALVertexDesc() {}
-  ~GALVertexDesc();
+// // TODO(colintan): See if this is too big to be passed around by value
+// class GALVertexDesc : public GALObject {
+// public:
+//   GALVertexDesc(GALPlatform* platform) : GALObject(platform) {}
+//   GALVertexDesc() {}
+//   ~GALVertexDesc();
 
-  void SetAttribute(uint8_t index, uint8_t size);
+//   void SetAttribute(uint8_t index, uint8_t size);
 
-  static ObjectType GetObjectType() { return ObjectType::VertexDesc; }
+//   static ObjectType GetObjectType() { return ObjectType::VertexDesc; }
 
-  static std::optional<GALVertexDesc> Create(GALPlatform* platform);
+//   static std::optional<GALVertexDesc> Create(GALPlatform* platform);
 
-  struct Entry {
-    uint8_t index;
-    uint8_t size;
-    // TODO(colintan): Add more fields
-  };
+//   struct Entry {
+//     uint8_t index;
+//     uint8_t size;
+//     // TODO(colintan): Add more fields
+//   };
 
-  // TODO(colintan): Make this private?
-  // TODO(colintan): May be expensive to copy. Change to something else that's more pass-by-value
-  // friendly
-  std::vector<Entry> entries;
-};
+//   // TODO(colintan): Make this private?
+//   // TODO(colintan): May be expensive to copy. Change to something else that's more pass-by-value
+//   // friendly
+//   std::vector<Entry> entries;
+// };
 
 class GALTextureSampler : public GALObject {
 public:

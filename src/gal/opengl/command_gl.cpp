@@ -15,7 +15,7 @@ namespace {
 // Temporary variables that lasts through the lifetime of the command buffer
 struct TempState {
   // Maps a vertex index to its vertex description information
-  std::unordered_map<uint8_t, GALVertexDesc::Entry> vert_desc_map;
+  std::unordered_map<uint8_t, GALPipeline::VertexDesc::Entry> vert_desc_map;
 };
 
 class CommandExecutor {
@@ -25,7 +25,13 @@ public:
   }
 
   void SetPipeline(const command::SetPipeline& cmd) {
-    glUseProgram(cmd.pipeline.GetImpl().GetGLId());
+    glUseProgram(cmd.pipeline.GetImpl().GetProgramGLId());
+
+    glBindVertexArray(cmd.pipeline.GetImpl().GetVaoGLId());
+
+    for (const auto& entry : cmd.pipeline.GetVertexDesc().GetEntries()) {
+      temp_state_.vert_desc_map[entry.index] = entry;
+    }
   }
 
   void SetTextureSampler(const command::SetTextureSampler& cmd) {
@@ -40,17 +46,17 @@ public:
     glBindBufferBase(GL_UNIFORM_BUFFER, cmd.idx, cmd.buffer.GetImpl().GetGLId());
   }
 
-  void SetVertexDesc(const command::SetVertexDesc& cmd) {
-    if (std::optional<GLuint> gl_id_opt = 
-            platform_details_->ConvertGALId(cmd.vert_desc.GetGALId())) {
-      GLuint vao = *gl_id_opt;
-      glBindVertexArray(vao);
+  // void SetVertexDesc(const command::SetVertexDesc& cmd) {
+  //   if (std::optional<GLuint> gl_id_opt = 
+  //           platform_details_->ConvertGALId(cmd.vert_desc.GetGALId())) {
+  //     GLuint vao = *gl_id_opt;
+  //     glBindVertexArray(vao);
 
-      for (const GALVertexDesc::Entry& entry : cmd.vert_desc.entries) {
-        temp_state_.vert_desc_map[entry.index] = entry;
-      }
-    }
-  }
+  //     for (const GALVertexDesc::Entry& entry : cmd.vert_desc.entries) {
+  //       temp_state_.vert_desc_map[entry.index] = entry;
+  //     }
+  //   }
+  // }
 
   void SetVertexBuffer(const command::SetVertexBuffer& cmd) {
     glBindBuffer(GL_ARRAY_BUFFER, cmd.buffer.GetImpl().GetGLId());
@@ -60,7 +66,7 @@ public:
       // TODO(colintan): Log error
       return;
     }
-    const GALVertexDesc::Entry& entry = desc_map_it->second;
+    const GALPipeline::VertexDesc::Entry& entry = desc_map_it->second;
 
     glVertexAttribPointer(entry.index, entry.size, GL_FLOAT, GL_FALSE, 
                           entry.size * sizeof(float), nullptr);
@@ -105,8 +111,8 @@ void GALCommandBuffer::Execute() const {
     } else if (entry.IsType<command::SetUniformBuffer>()) {
       executor.SetUniformBuffer(entry.AsType<command::SetUniformBuffer>());
 
-    } else if (entry.IsType<command::SetVertexDesc>()) {
-      executor.SetVertexDesc(entry.AsType<command::SetVertexDesc>());
+    // } else if (entry.IsType<command::SetVertexDesc>()) {
+    //   executor.SetVertexDesc(entry.AsType<command::SetVertexDesc>());
 
     } else if (entry.IsType<command::SetVertexBuffer>()) {
       executor.SetVertexBuffer(entry.AsType<command::SetVertexBuffer>());

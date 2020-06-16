@@ -33,9 +33,9 @@ struct SetPipeline {
   GALPipeline pipeline;
 };
 
-struct SetVertexDesc {
-  GALVertexDesc vert_desc;
-};
+// struct SetVertexDesc {
+//   GALVertexDesc vert_desc;
+// };
 
 struct SetTextureSampler {
   GALTextureSampler sampler;
@@ -61,7 +61,7 @@ using CommandUnion =
         SetViewport,
         ClearScreen,
         SetPipeline,
-        SetVertexDesc,
+//        SetVertexDesc,
         SetTextureSampler,
         SetUniformBuffer,
         SetVertexBuffer,
