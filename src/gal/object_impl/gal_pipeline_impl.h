@@ -8,8 +8,6 @@ namespace gal {
 
 class GALPlatform;
 
-namespace internal {
-
 class IGALPipelineImpl {
 public:
   virtual ~IGALPipelineImpl() {}
@@ -45,8 +43,6 @@ public:
 private:
   ImplType impl_;
 };
-
-} // namespace
 
 } // namespace
 

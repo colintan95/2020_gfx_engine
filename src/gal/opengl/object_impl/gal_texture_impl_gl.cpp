@@ -6,7 +6,6 @@
 #include "gal/gal_platform.h"
 
 namespace gal {
-namespace internal {
 
 bool GALTextureImplGL::Create(GALPlatform* gal_platform, TextureType type, TextureFormat format, 
                               uint16_t width, uint16_t height, uint8_t* data) {
@@ -35,5 +34,4 @@ void GALTextureImplGL::Destroy() {
   glDeleteTextures(1, &gl_tex_id_);
 }
 
-} // namespace
 } // namespace

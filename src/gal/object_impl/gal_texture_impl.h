@@ -1,5 +1,5 @@
-#ifndef GAL_GAL_TEXTURE_IMPL_H_
-#define GAL_GAL_TEXTURE_IMPL_H_
+#ifndef GAL_OBJECT_IMPL_GAL_TEXTURE_IMPL_H_
+#define GAL_OBJECT_IMPL_GAL_TEXTURE_IMPL_H_
 
 #include <cstdint>
 #include "gal/object_impl/gal_object.h"
@@ -18,8 +18,6 @@ enum class TextureFormat {
   RGB,
   RGBA
 };
-
-namespace internal {
 
 class IGALTextureImpl {
 public:
@@ -71,6 +69,4 @@ private:
 
 } // namespace
 
-} // namespace
-
-#endif // GAL_GAL_TEXTURE_IMPL_H_
+#endif // GAL_OBJECT_IMPL_GAL_TEXTURE_IMPL_H_

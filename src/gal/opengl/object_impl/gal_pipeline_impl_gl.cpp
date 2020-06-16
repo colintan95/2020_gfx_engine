@@ -7,7 +7,6 @@
 #include "gal/gal_platform.h"
 
 namespace gal {
-namespace internal {
 
 namespace {
 
@@ -53,5 +52,4 @@ void GALPipelineImplGL::Destroy() {
   glDeleteProgram(gl_program_id_);
 }
 
-} // namespace
 } // namespace

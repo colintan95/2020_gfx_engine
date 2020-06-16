@@ -1,5 +1,5 @@
-#ifndef GAL_GAL_BUFFER_IMPL_H_
-#define GAL_GAL_BUFFER_IMPL_H_
+#ifndef GAL_OBJECT_IMPL_GAL_BUFFER_IMPL_H_
+#define GAL_OBJECT_IMPL_GAL_BUFFER_IMPL_H_
 
 #include <cstdint>
 #include "gal/object_impl/gal_object.h"
@@ -12,8 +12,6 @@ enum class BufferType {
   Vertex,
   Uniform
 };
-
-namespace internal {
 
 class IGALBufferImpl {
 public:
@@ -57,9 +55,7 @@ private:
   
   ImplType impl_;
 };
-
-} // namespace
   
 } // namespace
 
-#endif // GAL_GAL_BUFFER_IMPL_H_
+#endif // GAL_OBJECT_IMPL_GAL_BUFFER_IMPL_H_

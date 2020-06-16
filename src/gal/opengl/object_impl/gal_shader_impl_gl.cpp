@@ -7,7 +7,6 @@
 #include "gal/gal_platform.h"
 
 namespace gal {
-namespace internal {
 
 namespace {
 
@@ -60,5 +59,4 @@ void GALShaderImplGL::Destroy() {
   glDeleteShader(gl_shader_id_);
 }
 
-} // namespace
 } // namespace

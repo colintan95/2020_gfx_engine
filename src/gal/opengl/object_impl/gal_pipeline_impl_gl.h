@@ -3,12 +3,9 @@
 
 #include <GL/glew.h>
 
-
 #include "gal/object_impl/gal_pipeline_impl.h"
 
 namespace gal {
-
-namespace internal {
 
 class GALPipelineImplGL : public IGALPipelineImpl {
 public:
@@ -22,9 +19,7 @@ private:
   GLuint gl_program_id_;
 };
 
-} // namespace
-
-using GALPipeline = internal::GALPipelineBase<internal::GALPipelineImplGL>;
+using GALPipeline = GALPipelineBase<GALPipelineImplGL>;
 
 } // namespace
 

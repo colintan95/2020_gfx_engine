@@ -6,7 +6,6 @@
 #include "gal/gal_platform.h"
 
 namespace gal {
-namespace internal {
 
 bool GALBufferImplGL::Create(GALPlatform* gal_platform, BufferType type, uint8_t* data, 
                              size_t size) {
@@ -37,5 +36,4 @@ void GALBufferImplGL::Destroy() {
   glDeleteBuffers(1, &gl_buf_id_);
 }
 
-} // namespace
 } // namespace

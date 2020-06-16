@@ -1,13 +1,11 @@
-#ifndef GAL_OPENGL_GAL_SHADER_IMPL_GL_H_
-#define GAL_OPENGL_GAL_SHADER_IMPL_GL_H_
+#ifndef GAL_OPENGL_OBJECT_IMPL_GAL_SHADER_IMPL_GL_H_
+#define GAL_OPENGL_OBJECT_IMPL_GAL_SHADER_IMPL_GL_H_
 
 #include <GL/glew.h>
 
 #include "gal/object_impl/gal_shader_impl.h"
 
 namespace gal {
-
-namespace internal {
 
 class GALShaderImplGL : public IGALShaderImpl {
 public:
@@ -20,10 +18,8 @@ private:
   GLuint gl_shader_id_;
 };
 
-} // namespace
-
-using GALShader = internal::GALShaderBase<internal::GALShaderImplGL>;
+using GALShader = GALShaderBase<GALShaderImplGL>;
   
 } // namespace
 
-#endif // GAL_OPENGL_GAL_SHADER_IMPL_GL_H_
+#endif // GAL_OPENGL_OBJECT_IMPL_GAL_SHADER_IMPL_GL_H_

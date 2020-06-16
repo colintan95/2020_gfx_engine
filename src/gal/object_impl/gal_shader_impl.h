@@ -1,5 +1,5 @@
-#ifndef GAL_GAL_SHADER_IMPL_H_
-#define GAL_GAL_SHADER_IMPL_H_
+#ifndef GAL_OBJECT_IMPL_GAL_SHADER_IMPL_H_
+#define GAL_OBJECT_IMPL_GAL_SHADER_IMPL_H_
 
 #include <string>
 #include "gal/object_impl/gal_object.h"
@@ -13,8 +13,6 @@ enum class ShaderType {
   Vertex,
   Fragment
 };
-
-namespace internal {
 
 class IGALShaderImpl {
 public:
@@ -57,7 +55,5 @@ private:
 };
 
 } // namespace
-   
-} // namespace
 
-#endif // GAL_GAL_SHADER_IMPL_H_
+#endif // GAL_OBJECT_IMPL_GAL_SHADER_IMPL_H_
