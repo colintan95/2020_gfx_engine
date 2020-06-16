@@ -52,17 +52,17 @@ private:
   GALPlatform* gal_platform_;
 };
 
-class GALPipeline : public GALObject {
-public:
-  GALPipeline(GALPlatform* platform) : GALObject(platform) {}
-  GALPipeline() {}
-  ~GALPipeline();
+// class GALPipeline : public GALObject {
+// public:
+//   GALPipeline(GALPlatform* platform) : GALObject(platform) {}
+//   GALPipeline() {}
+//   ~GALPipeline();
 
-  static ObjectType GetObjectType() { return ObjectType::Pipeline; }
+//   static ObjectType GetObjectType() { return ObjectType::Pipeline; }
 
-  static std::optional<GALPipeline> Create(GALPlatform* platform, GALShader vert_shader, 
-                                           GALShader frag_shader);
-};
+//   static std::optional<GALPipeline> Create(GALPlatform* platform, GALShader vert_shader, 
+//                                            GALShader frag_shader);
+// };
 
 // TODO(colintan): See if this is too big to be passed around by value
 class GALVertexDesc : public GALObject {

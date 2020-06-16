@@ -25,7 +25,7 @@ public:
 };
 
 template<typename ImplType>
-class GALShader : public GALObjectBase {
+class GALShaderBase : public GALObjectBase {
 public:
   bool Create(GALPlatform* gal_platform, ShaderType type, const std::string& source) {
     if (impl_.Create(gal_platform, type, source)) {
@@ -44,10 +44,11 @@ public:
     }
   }
 
-  ShaderType GetType() const { return type_; }
-
   const ImplType& GetImpl() const { return impl_; }
   ImplType& GetImpl() { return impl_; }
+
+public:
+  ShaderType GetType() const { return type_; }
 
 private:
   ShaderType type_;

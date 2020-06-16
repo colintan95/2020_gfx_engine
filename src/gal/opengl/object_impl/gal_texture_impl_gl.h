@@ -23,7 +23,7 @@ private:
 
 } // namespace
 
-using GALTexture = internal::GALTexture<internal::GALTextureImplGL>;
+using GALTexture = internal::GALTextureBase<internal::GALTextureImplGL>;
 
 } // namespace
 

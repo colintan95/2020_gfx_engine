@@ -2,6 +2,7 @@ target_sources(gfx_engine
   PRIVATE
     "command.h"
     "gal_buffer.h"
+    "gal_pipeline.h"
     "gal_platform.cpp"
     "gal_platform.h"
     "gal_shader.h"

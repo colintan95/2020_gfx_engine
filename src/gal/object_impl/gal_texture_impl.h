@@ -31,7 +31,7 @@ public:
 };
 
 template<typename ImplType>
-class GALTexture : public GALObjectBase {
+class GALTextureBase : public GALObjectBase {
 public:
   bool Create(GALPlatform* gal_platform, TextureType type, TextureFormat format, uint16_t width, 
               uint16_t height, uint8_t* data) {
@@ -54,10 +54,11 @@ public:
     }
   }
 
-  TextureType GetType() const { return type_; }
-
   const ImplType& GetImpl() const { return impl_; }
   ImplType& GetImpl() { return impl_; }
+
+public:
+  TextureType GetType() const { return type_; }
 
 private:
   TextureType type_;

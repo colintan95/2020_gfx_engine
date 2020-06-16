@@ -25,10 +25,7 @@ public:
   }
 
   void SetPipeline(const command::SetPipeline& cmd) {
-    if (std::optional<GLuint> gl_program_opt = 
-            platform_details_->ConvertGALId(cmd.pipeline.GetGALId())) {
-      glUseProgram(*gl_program_opt);
-    }
+    glUseProgram(cmd.pipeline.GetImpl().GetGLId());
   }
 
   void SetTextureSampler(const command::SetTextureSampler& cmd) {

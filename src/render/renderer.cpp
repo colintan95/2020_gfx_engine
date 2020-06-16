@@ -14,6 +14,7 @@
 #include <utility>
 #include <vector>
 #include "gal/gal_buffer.h"
+#include "gal/gal_pipeline.h"
 #include "gal/gal_shader.h"
 #include "resource/resource_gal.h"
 #include "resource/resource_manager_gal.h"
@@ -103,9 +104,8 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
     throw InitException();
   }
   
-  auto pipeline_opt = 
-      gal_platform_->Create<gal::GALPipeline>(vert_shader, frag_shader);
-  if (!pipeline_opt) {
+  gal::GALPipeline pipeline;
+  if (!pipeline.Create(gal_platform_.get(), vert_shader, frag_shader)) {
     std::cerr << "Failed to create GAL pipeline." << std::endl;
     throw InitException();
   }
@@ -114,7 +114,7 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
   vert_shader.Destroy();
 
   gal::command::SetPipeline set_pipeline;
-  set_pipeline.pipeline = *pipeline_opt;
+  set_pipeline.pipeline = pipeline;
   command_buffer_.Add(set_pipeline);
 
   struct {

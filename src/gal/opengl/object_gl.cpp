@@ -10,28 +10,6 @@
 
 namespace gal {
 
-namespace {
-
-bool CheckProgramSuccess(int program) {
-  int gl_success = GL_FALSE;
-  glGetProgramiv(program, GL_LINK_STATUS, &gl_success);
-
-  if (gl_success == GL_TRUE) {
-    return true;
-  } else {
-    char log[256];
-    glGetShaderInfoLog(program, 256, nullptr, log);
-
-    // TODO(colintan): Do better logging
-    std::cerr << "Failed to link program." << std::endl;
-    std::cerr << log << std::endl;
-
-    return false;
-  }
-}
-
-} // namespace
-
 // std::optional<GALShader> GALShader::Create(GALPlatform* platform, ShaderType type, 
 //                                            const std::string& source) {
 //   GLuint gl_shader;
@@ -69,33 +47,33 @@ bool CheckProgramSuccess(int program) {
 //   }
 // }
 
-std::optional<GALPipeline> GALPipeline::Create(GALPlatform* platform, GALShader vert_shader, 
-                                               GALShader frag_shader) {
-  GLuint gl_program = glCreateProgram();
+// std::optional<GALPipeline> GALPipeline::Create(GALPlatform* platform, GALShader vert_shader, 
+//                                                GALShader frag_shader) {
+//   GLuint gl_program = glCreateProgram();
 
-  // TODO(colintan): Check that shaders are valid
-  glAttachShader(gl_program, vert_shader.GetImpl().GetGLId());
-  glAttachShader(gl_program, frag_shader.GetImpl().GetGLId());
+//   // TODO(colintan): Check that shaders are valid
+//   glAttachShader(gl_program, vert_shader.GetImpl().GetGLId());
+//   glAttachShader(gl_program, frag_shader.GetImpl().GetGLId());
   
-  glLinkProgram(gl_program);
-  if (!CheckProgramSuccess(gl_program)) {
-    return std::nullopt;
-  }
+//   glLinkProgram(gl_program);
+//   if (!CheckProgramSuccess(gl_program)) {
+//     return std::nullopt;
+//   }
 
-  GALPipeline result{platform};
-  platform->GetPlatformDetails()->AddGALId(result.GetGALId(), gl_program);
+//   GALPipeline result{platform};
+//   platform->GetPlatformDetails()->AddGALId(result.GetGALId(), gl_program);
 
-  return result;
-}
+//   return result;
+// }
 
-GALPipeline::~GALPipeline() {
-  if (IsLastRef()) {
-    if (auto gl_program_opt = platform_details_->ConvertGALId(GetGALId())) {
-      glDeleteProgram(*gl_program_opt);
-      platform_details_->RemoveGALId(GetGALId());
-    }
-  }
-}
+// GALPipeline::~GALPipeline() {
+//   if (IsLastRef()) {
+//     if (auto gl_program_opt = platform_details_->ConvertGALId(GetGALId())) {
+//       glDeleteProgram(*gl_program_opt);
+//       platform_details_->RemoveGALId(GetGALId());
+//     }
+//   }
+// }
 
 std::optional<GALVertexDesc> GALVertexDesc::Create(GALPlatform* platform) {
   GLuint gl_vao;

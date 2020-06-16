@@ -1,5 +1,5 @@
-#ifndef GAL_OPENGL_GAL_BUFFER_IMPL_GL_H_
-#define GAL_OPENGL_GAL_BUFFER_IMPL_GL_H_
+#ifndef GAL_OPENGL_OBJECT_IMPL_GAL_BUFFER_IMPL_GL_H_
+#define GAL_OPENGL_OBJECT_IMPL_GAL_BUFFER_IMPL_GL_H_
 
 #include <GL/glew.h>
 
@@ -22,8 +22,8 @@ private:
 
 } // namespace
 
-using GALBuffer = internal::GALBuffer<internal::GALBufferImplGL>;
+using GALBuffer = internal::GALBufferBase<internal::GALBufferImplGL>;
 
 } // namespace
 
-#endif // GAL_OPENGL_GAL_BUFFER_IMPL_GL_H_
+#endif // GAL_OPENGL_OBJECT_IMPL_GAL_BUFFER_IMPL_GL_H_

@@ -24,7 +24,7 @@ public:
 };
 
 template<typename ImplType>
-class GALBuffer : public GALObjectBase {
+class GALBufferBase : public GALObjectBase {
 public:
   bool Create(GALPlatform* gal_platform, BufferType type, uint8_t* data, size_t size) {
     if (impl_.Create(gal_platform, type, data, size)) {
@@ -44,11 +44,12 @@ public:
     }
   }
 
-  BufferType GetType() const { return type_; }
-  size_t GetSize() const { return size_; }
-
   const ImplType& GetImpl() const { return impl_; }
   ImplType& GetImpl() { return impl_; }
+
+public:
+  BufferType GetType() const { return type_; }
+  size_t GetSize() const { return size_; }
 
 private:
   BufferType type_;
