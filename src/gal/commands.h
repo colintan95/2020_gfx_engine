@@ -33,10 +33,6 @@ struct SetPipeline {
   GALPipeline pipeline;
 };
 
-// struct SetVertexDesc {
-//   GALVertexDesc vert_desc;
-// };
-
 struct SetTextureSampler {
   GALTextureSampler sampler;
   // TODO(colintan): Rename to something clearer - e.g. uniform_idx? but without uniform in it
@@ -62,52 +58,11 @@ using CommandUnion =
         SetViewport,
         ClearScreen,
         SetPipeline,
-//        SetVertexDesc,
         SetTextureSampler,
         SetUniformBuffer,
         SetVertexBuffer,
         DrawTriangles>;
 } // namespace
-
-// TODO(colintan): Consider adding a Start() and End() function to be called before and after
-// adding commands - helps safeguard against the user accidentally adding more commands to a
-// command buffer that they have already considered finished
-class GALCommandBuffer {
-  friend class GALPlatform;
-  
-public:
-  // TODO(colintan): How to do this better
-  void SetPlatform(GALPlatform* platform) {
-    platform_ = platform;
-  }
-
-  template<typename T>
-  void Add(T command) {
-    Entry entry;
-    entry.cmd = command;
-    entries_.push_back(entry);
-  }
-
-public:
-  struct Entry {
-    command::CommandUnion cmd;
-
-    template<typename T>
-    bool IsType() const { return std::holds_alternative<T>(cmd); }
-
-    template<typename T>
-    const T& AsType() const { return std::get<T>(cmd); }
-  };
-
-private:
-  void Execute() const;
-
-private:
-  GALPlatform* platform_;
-  std::vector<Entry> entries_;
-};
-
-// void ExecuteCommandBuffer(const GALCommandBuffer& cmd_buf);
 
 } // namespace
 

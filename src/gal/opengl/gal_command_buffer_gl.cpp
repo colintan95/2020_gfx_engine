@@ -1,4 +1,4 @@
-#include "gal/command.h"
+#include "gal/gal_command_buffer.h"
 
 #include <GL/glew.h>
 

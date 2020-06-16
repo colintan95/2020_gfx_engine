@@ -1,6 +1,6 @@
 target_sources(gfx_engine
   PRIVATE
-    "command_gl.cpp"
+    "gal_command_buffer_gl.cpp"
     "gal_platform_gl.cpp"
     "gal_platform_gl.h")
 target_link_libraries(gfx_engine PRIVATE glew)

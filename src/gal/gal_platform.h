@@ -4,7 +4,7 @@
 #include <exception>
 #include <memory>
 #include <optional>
-#include "gal/command.h"
+#include "gal/gal_command_buffer.h"
 
 namespace gal {
 
