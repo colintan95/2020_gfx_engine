@@ -3,6 +3,8 @@
 
 #include <exception>
 #include <memory>
+#include <optional>
+#include <string>
 #include <unordered_map>
 #include "gal/platform.h"
 #include "render/mesh.h"
@@ -29,6 +31,8 @@ public:
   ~Renderer();
 
   void Tick();
+
+  std::optional<MeshId> CreateMesh(const std::string& file_path);
 
 private:  
   window::Window* window_ = nullptr;

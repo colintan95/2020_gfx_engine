@@ -10,6 +10,7 @@
 #include <iostream>
 #include <memory>
 #include <new>
+#include <optional>
 #include <utility>
 #include <vector>
 #include "gal/gal.h"
@@ -206,6 +207,8 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
   gal::command::DrawTriangles draw_triangles;
   draw_triangles.num_triangles = model.faces;
   command_buffer_.Add(draw_triangles);
+
+  CreateMesh("assets/cube/cube.obj");
 }
 
 Renderer::~Renderer() {
@@ -218,6 +221,48 @@ Renderer::~Renderer() {
 
 void Renderer::Tick() {
   gal_platform_->ExecuteCommandBuffer(command_buffer_);
+}
+
+std::optional<MeshId> Renderer::CreateMesh(const std::string& file_path) {
+  resource::Handle<resource::Model> model_handle = resource_system_->LoadModel(file_path);
+  if (!model_handle.IsValid()) {
+    return std::nullopt;
+  }
+  resource::Model& model = model_handle.Get();
+
+  static int counter = 0;
+  ++counter;
+
+  MeshId mesh_id = counter;
+  Mesh& mesh = meshes_[mesh_id];
+
+  if (!model.positions.empty()) {
+    resource::HandleGALBuffer pos_buf_handle = 
+        resource_manager_->CreateBuffer(gal::BufferType::Vertex, 
+                                        reinterpret_cast<uint8_t*>(model.positions.data()),
+                                        model.positions.size() * sizeof(glm::vec3));
+    if (!pos_buf_handle.IsValid()) {
+      return std::nullopt;
+    }
+    mesh.pos_buf_ = std::move(pos_buf_handle);
+  }
+
+  // TODO(colintan): Add for normals data
+
+  if (!model.texcoords.empty()) {
+    resource::HandleGALBuffer texcoord_buf_handle = 
+        resource_manager_->CreateBuffer(gal::BufferType::Vertex, 
+                                        reinterpret_cast<uint8_t*>(model.texcoords.data()),
+                                        model.texcoords.size() * sizeof(glm::vec2));
+    if (!texcoord_buf_handle.IsValid()) {
+      return std::nullopt;
+    }
+    mesh.texcoord_buf_ = std::move(texcoord_buf_handle);
+  }
+
+  // TODO(colintan): Release the resource - automatically or via a call to ResourceManager
+
+  return mesh_id;
 }
 
 } // namespace

@@ -64,7 +64,7 @@ int main() {
   }
 
   scene.release();
-
+  
   renderer.release();
 
   event_manager.release();
