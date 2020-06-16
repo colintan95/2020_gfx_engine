@@ -12,6 +12,8 @@ struct Mesh {
   resource::HandleGALBuffer pos_buf_;
   resource::HandleGALBuffer normal_buf_;
   resource::HandleGALBuffer texcoord_buf_;
+
+  int faces;
 };
 
 } // namespace

@@ -64,14 +64,6 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
 
   resource_manager_ = std::make_unique<resource::ResourceManagerGAL>(gal_platform_.get());
 
-  resource::Handle<resource::Model> model_handle =
-      resource_system_->LoadModel("assets/cube/cube.obj");
-  if (!model_handle.IsValid()) {
-    std::cerr << "Failed to load model." << std::endl;
-    throw InitException();
-  }
-  resource::Model& model = model_handle.Get();
-
   MeshId mesh_id;
   if (std::optional<MeshId> mesh_id_opt = CreateMesh("assets/cube/cube.obj")) {
     mesh_id = *mesh_id_opt;
@@ -196,7 +188,7 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
   command_buffer_.Add(clear_screen);
 
   gal::command::DrawTriangles draw_triangles;
-  draw_triangles.num_triangles = model.faces;
+  draw_triangles.num_triangles = cube_mesh.faces;
   command_buffer_.Add(draw_triangles);
 }
 
@@ -248,6 +240,8 @@ std::optional<MeshId> Renderer::CreateMesh(const std::string& file_path) {
     }
     mesh.texcoord_buf_ = std::move(texcoord_buf_handle);
   }
+
+  mesh.faces = model.faces;
 
   // TODO(colintan): Release the resource - automatically or via a call to ResourceManager
 
