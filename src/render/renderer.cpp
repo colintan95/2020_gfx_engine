@@ -190,6 +190,13 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
   gal::command::DrawTriangles draw_triangles;
   draw_triangles.num_triangles = cube_mesh.faces;
   command_buffer_.Add(draw_triangles);
+
+  resource::ModelLoader model_loader;
+  std::shared_ptr<resource::Model> model = model_loader.LoadModel("assets/cube/cube.obj");
+
+  gal::GALBufferNew new_gl_buf(gal::BufferType::Vertex, 
+                               reinterpret_cast<uint8_t*>(model->positions.data()),
+                               model->positions.size() * sizeof(glm::vec3));
 }
 
 Renderer::~Renderer() {

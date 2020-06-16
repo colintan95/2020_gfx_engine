@@ -1,6 +1,9 @@
 target_sources(gfx_engine
   PRIVATE
     "command_gl.cpp"
+    "gal_buffer_impl_gl.cpp"
+    "gal_buffer_impl_gl.h"
+    "gal_gl.h"
     "id_converter.cpp"
     "id_converter.h"
     "object_gl.cpp"
