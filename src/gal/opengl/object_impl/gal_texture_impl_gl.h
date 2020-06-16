@@ -11,8 +11,8 @@ namespace internal {
 
 class GALTextureImplGL : public IGALTextureImpl {
 public:
-  bool Create(TextureType type, TextureFormat format, uint16_t width, uint16_t height, 
-              uint8_t* data) final;
+  bool Create(GALPlatform* gal_platform, TextureType type, TextureFormat format, uint16_t width, 
+              uint16_t height, uint8_t* data) final;
   void Destroy() final;
 
   GLuint GetGLId() const { return gl_tex_id_; } 

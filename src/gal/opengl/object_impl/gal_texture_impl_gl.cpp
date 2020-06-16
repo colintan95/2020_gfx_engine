@@ -1,10 +1,17 @@
 #include "gal/opengl/object_impl/gal_texture_impl_gl.h"
 
+#include <GL/glew.h>
+
+#include <cassert>
+#include "gal/platform.h"
+
 namespace gal {
 namespace internal {
 
-bool GALTextureImplGL::Create(TextureType type, TextureFormat format, uint16_t width, 
-                              uint16_t height, uint8_t* data) {
+bool GALTextureImplGL::Create(GALPlatform* gal_platform, TextureType type, TextureFormat format, 
+                              uint16_t width, uint16_t height, uint8_t* data) {
+  assert(gal_platform != nullptr);
+  
   glGenTextures(1, &gl_tex_id_);
 
   if (type == TextureType::Texture2D && format == TextureFormat::RGB) {

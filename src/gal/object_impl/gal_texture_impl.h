@@ -6,6 +6,8 @@
 
 namespace gal {
 
+class GALPlatform;
+
 enum class TextureType {
   Texture2D,
   Texture3D
@@ -23,8 +25,8 @@ class IGALTextureImpl {
 public:
   virtual ~IGALTextureImpl() {}
 
-  virtual bool Create(TextureType type, TextureFormat format, uint16_t width, uint16_t height, 
-                      uint8_t* data) = 0;
+  virtual bool Create(GALPlatform* gal_platform, TextureType type, TextureFormat format, 
+                      uint16_t width, uint16_t height, uint8_t* data) = 0;
   virtual void Destroy() = 0;
 };
 
@@ -33,9 +35,9 @@ class GALTextureWrapper : public GALObjectBase {
 public:
   GALTextureWrapper() {}
 
-  bool Create(TextureType type, TextureFormat format, uint16_t width, uint16_t height, 
-              uint8_t* data) {
-    if (impl_.Create(type, format, width, height, data)) {
+  bool Create(GALPlatform* gal_platform, TextureType type, TextureFormat format, uint16_t width, 
+              uint16_t height, uint8_t* data) {
+    if (impl_.Create(gal_platform, type, format, width, height, data)) {
       SetValid(true);
       type_ = type;
       format_ = format;

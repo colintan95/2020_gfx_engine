@@ -41,7 +41,7 @@ public:
         std::make_unique<ResourceGAL<gal::GALTexture>>();
 
     gal::GALTexture texture;
-    if (!texture.Create(args...)) {
+    if (!texture.Create(gal_platform_, args...)) {
       return HandleGAL<gal::GALTexture>();
     }
     resource->resource_ = std::move(texture);
