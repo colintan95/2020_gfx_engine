@@ -2,6 +2,9 @@
 #define GAL_GAL_SHADER_IMPL_H_
 
 #include <string>
+#include "gal/gal_object.h"
+
+// TODO(colintan): Consider wrapping these classes in an internal namespace
 
 namespace gal {
 
@@ -20,18 +23,18 @@ public:
 };
 
 template<typename ImplType>
-class GALShaderWrapper {
+class GALShaderWrapper : public GALObjectBase {
 public:
   GALShaderWrapper() {}
   GALShaderWrapper(ShaderType type, const std::string& source)  {
     if (impl_.Create(type, source)) {
-      valid_ = true;
+      SetValid(true);
       type_ = type;
     }
   }
 
   void Destroy() {
-    if (valid_) {
+    if (IsValid()) {
       impl_.Destroy();
     }
   }
@@ -42,7 +45,6 @@ public:
   ImplType& GetImpl() { return impl_; }
 
 private:
-  bool valid_ = false;
   ShaderType type_;
 
   ImplType impl_;

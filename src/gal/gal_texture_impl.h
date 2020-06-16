@@ -2,6 +2,7 @@
 #define GAL_GAL_TEXTURE_IMPL_H_
 
 #include <cstdint>
+#include "gal/gal_object.h"
 
 namespace gal {
 
@@ -22,16 +23,28 @@ public:
 
   virtual bool Create(TextureType type, TextureFormat format, uint16_t width, uint16_t height, 
                       uint8_t* data) = 0;
+  virtual void Destroy() = 0;
 };
 
 template<typename ImplType>
-class GALTextureWrapper {
+class GALTextureWrapper : public GALObjectBase {
 public:
   GALTextureWrapper() {}
   GALTextureWrapper(TextureType type, TextureFormat format, uint16_t width, uint16_t height, 
-                    uint8_t* data)
-    : type_(type), format_(format), width_(width), height_(height) {
-    impl_.Create(type, format, width, height, data);
+                    uint8_t* data) {
+    if (impl_.Create(type, format, width, height, data)) {
+      SetValid(true);
+      type_ = type;
+      format_ = format;
+      width_ = width;
+      height_ = height;
+    }
+  }
+
+  void Destroy() {
+    if (IsValid()) {
+      impl_.Destroy();
+    }
   }
 
   TextureType GetType() const { return type_; }

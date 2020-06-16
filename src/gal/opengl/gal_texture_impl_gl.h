@@ -9,8 +9,9 @@ namespace gal {
 
 class GALTextureImplGL : public IGALTextureImpl {
 public:
-  virtual bool Create(TextureType type, TextureFormat format, uint16_t width, uint16_t height, 
-                      uint8_t* data);
+  bool Create(TextureType type, TextureFormat format, uint16_t width, uint16_t height, 
+              uint8_t* data) final;
+  void Destroy() final;
 
   GLuint GetGLId() const { return gl_tex_id_; } 
 

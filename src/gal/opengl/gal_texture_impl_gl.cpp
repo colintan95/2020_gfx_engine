@@ -23,4 +23,8 @@ bool GALTextureImplGL::Create(TextureType type, TextureFormat format, uint16_t w
   return true;
 }
 
+void GALTextureImplGL::Destroy() {
+  glDeleteTextures(1, &gl_tex_id_);
+}
+
 } // namespace

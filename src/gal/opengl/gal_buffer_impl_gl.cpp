@@ -26,4 +26,8 @@ bool GALBufferImplGL::Create(BufferType type, uint8_t* data, size_t size) {
   return true;
 }
 
+void GALBufferImplGL::Destroy() {
+  glDeleteBuffers(1, &gl_buf_id_);
+}
+
 } // namespace

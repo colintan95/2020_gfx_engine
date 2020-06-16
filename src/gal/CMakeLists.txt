@@ -3,6 +3,7 @@ target_sources(gfx_engine
     "command.h"
     "gal_buffer_impl.h"
     "gal_buffer.h"
+    "gal_object.h"
     "gal_shader_impl.h"
     "gal_shader.h"
     "gal_texture_impl.h"

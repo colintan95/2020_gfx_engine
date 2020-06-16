@@ -2,6 +2,7 @@
 #define GAL_GAL_BUFFER_IMPL_H_
 
 #include <cstdint>
+#include "gal/gal_object.h"
 
 namespace gal {
 
@@ -15,15 +16,25 @@ public:
   virtual ~IGALBufferImpl() {}
 
   virtual bool Create(BufferType type, uint8_t* data, size_t size) = 0;
+  virtual void Destroy() = 0;
 };
 
 template<typename ImplType>
-class GALBufferWrapper {
+class GALBufferWrapper : public GALObjectBase {
 public:
   GALBufferWrapper() {}
-  GALBufferWrapper(BufferType type, uint8_t* data, size_t size)
-    : type_(type), size_(size) {
-    impl_.Create(type, data, size);
+  GALBufferWrapper(BufferType type, uint8_t* data, size_t size) {
+    if (impl_.Create(type, data, size)) {
+      SetValid(true);
+      type_ = type;
+      size_ = size;
+    }
+  }
+
+  void Destroy() {
+    if (IsValid()) {
+      impl_.Destroy();
+    }
   }
 
   BufferType GetType() const { return type_; }
