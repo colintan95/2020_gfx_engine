@@ -3,7 +3,7 @@
 
 #include <GL/glew.h>
 
-#include "gal/gal_texture_impl.h"
+#include "gal/object_impl/gal_texture_impl.h"
 
 namespace gal {
 

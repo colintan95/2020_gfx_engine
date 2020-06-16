@@ -1,7 +1,7 @@
 #ifndef GAL_GAL_TEXTURE_H_
 #define GAL_GAL_TEXTURE_H_
 
-#include "gal/gal_texture.h"
+#include "gal/object_impl/gal_texture_impl.h"
 
 #include "gal/opengl/gal_texture_impl_gl.h"
 
