@@ -8,7 +8,7 @@
 #include <unordered_set>
 #include "event/event.h"
 
-namespace window {
+namespace window { 
 
 namespace internal {
 class WindowImpl;

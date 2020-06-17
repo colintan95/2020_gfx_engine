@@ -15,13 +15,23 @@ bool WindowImplGLFW::CreateWindow(int width, int height, const std::string& titl
   height_ = height;
   title_ = title;
 
+#if defined(GFXAPI_GL)
   glfwMakeContextCurrent(glfw_window_);
+
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
   glewExperimental = true;
   if (glewInit() != GLEW_OK) {
     std::cerr << "Failed to initialize GLEW." << std::endl;
     return false;
   }
+#endif
+
+#if defined(GFXAPI_VK)
+  glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+#endif
 
   glfwSetKeyCallback(glfw_window_, KeyboardCallback);
 
@@ -32,10 +42,6 @@ void WindowImplGLFW::DestroyWindow() {
   if (glfw_window_ != nullptr) {
     glfwDestroyWindow(glfw_window_);
   }
-
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 }
 
 void WindowImplGLFW::Tick() {

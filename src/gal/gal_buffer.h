@@ -3,7 +3,8 @@
 
 #include "gal/object_impl/gal_buffer_impl.h"
 
-// TODO(colintan): Wrap this in a preprocess #if block 
+#if defined(GFXAPI_GL)
 #include "gal/opengl/object_impl/gal_buffer_impl_gl.h"
+#endif
 
 #endif // GAL_GAL_BUFFER_H_

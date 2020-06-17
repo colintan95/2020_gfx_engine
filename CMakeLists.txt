@@ -3,6 +3,21 @@ project(gfx_engine)
 
 set(CMAKE_CXX_STANDARD 17)
 
+message(${CMAKE_SYSTEM_NAME})
+
+set(PLATFORM_GFXAPI "OpenGL")
+set(PLATFORM_WINDOW "GLFW")
+
+if ("${PLATFORM_GFXAPI}" STREQUAL "OpenGL")
+    add_compile_definitions(GFXAPI_GL)
+elseif ("${PLATFORM_GFXAPI}" STREQUAL "Vulkan")
+    add_compile_definitions(GFXAPI_VK)
+endif()
+
+if ("${PLATFORM_WINDOW}" STREQUAL "GLFW")
+    add_compile_definitions(WINDOW_GLFW)
+endif()
+
 # OpenGL
 find_package(OpenGL)
 if(OPENGL_FOUND)
