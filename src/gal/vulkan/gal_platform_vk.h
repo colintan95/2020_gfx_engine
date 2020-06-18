@@ -26,6 +26,7 @@ private:
   std::unique_ptr<PlatformDetails> details_;
 
   VkInstance vk_instance_;
+  VkDebugUtilsMessengerEXT vk_debug_messenger_;
 };
 
 } // namespace

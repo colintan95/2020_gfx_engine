@@ -68,9 +68,27 @@ GALPlatformImplVk::GALPlatformImplVk() {
   if (vkCreateInstance(&create_info, nullptr, &vk_instance_) != VK_SUCCESS) {
     throw GALPlatform::InitException();
   }
+
+  auto create_debug_utils_messenger_func = 
+      (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(
+            vk_instance_, "vkCreateDebugUtilsMessengerEXT");
+  if (create_debug_utils_messenger_func == nullptr) {
+    throw GALPlatform::InitException();
+  }
+  if (create_debug_utils_messenger_func(
+        vk_instance_, &debug_create_info, nullptr, &vk_debug_messenger_) != VK_SUCCESS) {
+    throw GALPlatform::InitException();
+  }
 }
 
 GALPlatformImplVk::~GALPlatformImplVk() {
+  auto destroy_debug_utils_messenger_func = 
+      (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(vk_instance_, 
+          "vkDestroyDebugUtilsMessengerEXT");
+  if (destroy_debug_utils_messenger_func != nullptr) {
+    destroy_debug_utils_messenger_func(vk_instance_, vk_debug_messenger_, nullptr);
+  }
+
   vkDestroyInstance(vk_instance_, nullptr);
 }
 
