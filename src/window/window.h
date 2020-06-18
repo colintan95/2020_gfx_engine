@@ -7,6 +7,7 @@
 #include <string>
 #include <unordered_set>
 #include "event/event.h"
+#include "window/window_surface.h"
 
 namespace window { 
 
@@ -29,6 +30,10 @@ public:
   void SwapBuffers();
 
   bool ShouldClose();
+
+  bool CreateWindowSurface(const WindowSurface::CreateInfo& create_info);
+
+  WindowSurface* GetWindowSurface();
 
   int GetWidth() const;
   int GetHeight() const;

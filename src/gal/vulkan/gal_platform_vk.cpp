@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <iostream>
 #include <vector>
+#include "window/window.h"
 
 namespace gal {
 namespace internal {
@@ -23,7 +24,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 
 } // namespace
 
-GALPlatformImplVk::GALPlatformImplVk() {
+GALPlatformImplVk::GALPlatformImplVk(window::Window* window) {
   try {
     details_ = std::make_unique<PlatformDetails>();
   } catch (std::bad_alloc& ba) {
@@ -79,6 +80,14 @@ GALPlatformImplVk::GALPlatformImplVk() {
         vk_instance_, &debug_create_info, nullptr, &vk_debug_messenger_) != VK_SUCCESS) {
     throw GALPlatform::InitException();
   }
+
+  window::WindowSurface::CreateInfo window_surface_create_info;
+  window_surface_create_info.vk_instance = vk_instance_;
+  if (!window->CreateWindowSurface(window_surface_create_info)) {
+    throw GALPlatform::InitException();
+  }
+
+  vk_surface_ = window->GetWindowSurface()->GetVkSurface();
 }
 
 GALPlatformImplVk::~GALPlatformImplVk() {
@@ -92,9 +101,9 @@ GALPlatformImplVk::~GALPlatformImplVk() {
   vkDestroyInstance(vk_instance_, nullptr);
 }
 
-std::unique_ptr<GALPlatformImpl> GALPlatformImpl::Create() {
+std::unique_ptr<GALPlatformImpl> GALPlatformImpl::Create(window::Window* window) {
   try {
-    return std::make_unique<GALPlatformImplVk>();
+    return std::make_unique<GALPlatformImplVk>(window);
   } catch (std::bad_alloc& ba) {
     throw GALPlatform::InitException();
   }

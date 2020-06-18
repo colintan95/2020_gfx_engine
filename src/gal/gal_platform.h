@@ -6,6 +6,10 @@
 #include <optional>
 // #include "gal/gal_command_buffer.h"
 
+namespace window {
+class Window;
+} // namespace
+
 namespace gal {
 
 class GALObject;
@@ -23,7 +27,7 @@ public:
   virtual PlatformDetails* GetPlatformDetails() = 0;
 
 public:
-  static std::unique_ptr<GALPlatformImpl> Create();
+  static std::unique_ptr<GALPlatformImpl> Create(window::Window* window);
 };
 
 } // namespace
@@ -40,7 +44,7 @@ public:
   };
 
 public:
-  GALPlatform();
+  GALPlatform(window::Window* window);
   ~GALPlatform();
 
   template<typename T, typename... Args>

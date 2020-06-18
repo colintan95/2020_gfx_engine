@@ -57,7 +57,7 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
   resource_system_ = resource_system;
 
   try {
-    gal_platform_ = std::make_unique<gal::GALPlatform>();
+    gal_platform_ = std::make_unique<gal::GALPlatform>(window_);
   } catch (gal::GALPlatform::InitException& e) {
     std::cerr << e.what() << std::endl;
     throw InitException();

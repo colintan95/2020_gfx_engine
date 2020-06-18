@@ -6,6 +6,7 @@
 #endif 
 #include <GLFW/glfw3.h>
 
+#include <memory>
 #include <string>
 #include <vector>
 #include "window/glfw/event_store.h"
@@ -25,6 +26,10 @@ public:
 
   bool ShouldClose() final;
 
+  bool CreateWindowSurface(const WindowSurface::CreateInfo& create_info) final;
+
+  WindowSurface* GetWindowSurface() final;
+
   std::optional<event::Event> ConsumeEvent() final;
 
   int GetWidth() const { return width_; }
@@ -37,6 +42,8 @@ private:
 
 private:
   GLFWwindow* glfw_window_;
+  std::unique_ptr<WindowSurface> window_surface_;
+
   int width_;
   int height_;
   std::string title_;

@@ -15,7 +15,7 @@ class PlatformDetails {
 
 class GALPlatformImplVk : public GALPlatformImpl {
 public:
-  GALPlatformImplVk();
+  GALPlatformImplVk(window::Window* window);
   ~GALPlatformImplVk();
 
   PlatformDetails* GetPlatformDetails() final {
@@ -27,6 +27,7 @@ private:
 
   VkInstance vk_instance_;
   VkDebugUtilsMessengerEXT vk_debug_messenger_;
+  VkSurfaceKHR vk_surface_;
 };
 
 } // namespace

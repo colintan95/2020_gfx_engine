@@ -5,7 +5,9 @@ target_sources(gfx_engine
     "window_impl.h"
     "window_manager.cpp"
     "window_manager.h"
+    "window_surface.h"
     "window.cpp"
     "window.h")
 
 add_subdirectory(glfw)
+add_subdirectory(vulkan)

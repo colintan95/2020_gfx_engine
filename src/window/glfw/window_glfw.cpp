@@ -2,11 +2,23 @@
 
 #include <iostream>
 #include <memory>
+#include "window/window_surface.h"
 
 namespace window {
 namespace internal {
 
 bool WindowImplGLFW::CreateWindow(int width, int height, const std::string& title) {
+
+#if defined(GFXAPI_GL)
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#endif
+
+#if defined(GFXAPI_VK)
+  glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+#endif
+
   glfw_window_ = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
   if (glfw_window_ == nullptr) {
     return false;
@@ -18,19 +30,11 @@ bool WindowImplGLFW::CreateWindow(int width, int height, const std::string& titl
 #if defined(GFXAPI_GL)
   glfwMakeContextCurrent(glfw_window_);
 
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
   glewExperimental = true;
   if (glewInit() != GLEW_OK) {
     std::cerr << "Failed to initialize GLEW." << std::endl;
     return false;
   }
-#endif
-
-#if defined(GFXAPI_VK)
-  glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 #endif
 
   glfwSetKeyCallback(glfw_window_, KeyboardCallback);
@@ -39,6 +43,8 @@ bool WindowImplGLFW::CreateWindow(int width, int height, const std::string& titl
 }
 
 void WindowImplGLFW::DestroyWindow() {
+  window_surface_.release();
+
   if (glfw_window_ != nullptr) {
     glfwDestroyWindow(glfw_window_);
   }
@@ -50,6 +56,20 @@ void WindowImplGLFW::Tick() {
    
 void WindowImplGLFW::SwapBuffers() {
   glfwSwapBuffers(glfw_window_);
+}
+
+bool WindowImplGLFW::CreateWindowSurface(const WindowSurface::CreateInfo& create_info) {
+  try {
+    window_surface_ = std::make_unique<WindowSurface>(create_info, glfw_window_);
+  } catch (WindowSurface::InitException& e) {
+    std::cerr << e.what() << std::endl;
+    return false;
+  }
+  return true;
+}
+
+WindowSurface* WindowImplGLFW::GetWindowSurface() {
+  return window_surface_.get();
 }
 
 std::optional<event::Event> WindowImplGLFW::ConsumeEvent() {

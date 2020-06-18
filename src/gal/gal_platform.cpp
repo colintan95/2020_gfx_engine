@@ -2,8 +2,8 @@
 
 namespace gal {
 
-GALPlatform::GALPlatform() {
-  impl_ = internal::GALPlatformImpl::Create();
+GALPlatform::GALPlatform(window::Window* window) {
+  impl_ = internal::GALPlatformImpl::Create(window);
 }
 
 GALPlatform::~GALPlatform() {

@@ -5,6 +5,7 @@
 #include <string>
 #include <optional>
 #include "event/event.h"
+#include "window/window_surface.h"
 
 namespace window {
 namespace internal {
@@ -21,6 +22,10 @@ public:
   virtual void SwapBuffers() = 0;
 
   virtual bool ShouldClose() = 0;
+
+  virtual bool CreateWindowSurface(const WindowSurface::CreateInfo& create_info) = 0;
+
+  virtual WindowSurface* GetWindowSurface() = 0;
 
   virtual std::optional<event::Event> ConsumeEvent() = 0;
 
