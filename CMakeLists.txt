@@ -21,12 +21,25 @@ if ("${PLATFORM_WINDOW}" STREQUAL "GLFW")
 endif()
 
 # OpenGL
-find_package(OpenGL)
-if(OPENGL_FOUND)
-  message(STATUS "Found OpenGL")
-else()
-  message(FATAL_ERROR "Unable to find OpenGL")
+if (GFXAPI_GL)
+    find_package(OpenGL)
+    if(OPENGL_FOUND)
+        message(STATUS "Found OpenGL")
+    else()
+        message(FATAL_ERROR "Unable to find OpenGL")
+    endif()
 endif()
+
+# Vulkan
+if(GFXAPI_VK)
+    find_package(Vulkan)
+    if(Vulkan_FOUND)
+        message(STATUS "Found Vulkan")
+    else()
+        message(FATAL_ERROR "Unable to find Vulkan")
+    endif()
+endif()
+
 
 # GLEW
 add_library(glew STATIC 

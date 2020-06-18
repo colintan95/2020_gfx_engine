@@ -1,7 +1,7 @@
 #ifndef GAL_VULKAN_GAL_PLATFORM_VK_H_
 #define GAL_VULKAN_GAL_PLATFORM_VK_H_
 
-// #include <vulkan/vulkan.h>
+#include <vulkan/vulkan.h>
 
 #include <memory>
 #include "gal/gal_platform.h"
@@ -16,6 +16,7 @@ class PlatformDetails {
 class GALPlatformImplVk : public GALPlatformImpl {
 public:
   GALPlatformImplVk();
+  ~GALPlatformImplVk();
 
   PlatformDetails* GetPlatformDetails() final {
     return details_.get();
@@ -24,7 +25,7 @@ public:
 private:
   std::unique_ptr<PlatformDetails> details_;
 
-  // VkInstance vk_instance_;
+  VkInstance vk_instance_;
 };
 
 } // namespace
