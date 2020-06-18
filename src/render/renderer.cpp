@@ -13,12 +13,12 @@
 #include <optional>
 #include <utility>
 #include <vector>
-#include "gal/gal_buffer.h"
-#include "gal/gal_pipeline.h"
-#include "gal/gal_shader.h"
-#include "gal/gal_texture_sampler.h"
-#include "resource/resource_gal.h"
-#include "resource/resource_manager_gal.h"
+// #include "gal/gal_buffer.h"
+// #include "gal/gal_pipeline.h"
+// #include "gal/gal_shader.h"
+// #include "gal/gal_texture_sampler.h"
+// #include "resource/resource_gal.h"
+// #include "resource/resource_manager_gal.h"
 #include "resource/image_loader.h"
 #include "resource/resource_system.h"
 #include "window/window.h"
@@ -53,17 +53,17 @@ const char kFragShaderSrc[] =
 } // namespace
 
 Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_system) {
-  // window_ = window;
-  // resource_system_ = resource_system;
+  window_ = window;
+  resource_system_ = resource_system;
 
-  // try {
-  //   gal_platform_ = std::make_unique<gal::GALPlatform>();
-  // } catch (gal::GALPlatform::InitException& e) {
-  //   std::cerr << e.what() << std::endl;
-  //   throw InitException();
-  // } catch (std::bad_alloc& ba) {
-  //   throw InitException();
-  // }
+  try {
+    gal_platform_ = std::make_unique<gal::GALPlatform>();
+  } catch (gal::GALPlatform::InitException& e) {
+    std::cerr << e.what() << std::endl;
+    throw InitException();
+  } catch (std::bad_alloc& ba) {
+    throw InitException();
+  }
 
   // resource_manager_ = std::make_unique<resource::ResourceManagerGAL>(gal_platform_.get());
 
@@ -192,58 +192,58 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
 
 Renderer::~Renderer() {
   // resource_manager_.release();
-  // gal_platform_.release();
+  gal_platform_.release();
 
-  // resource_system_ = nullptr;
-  // window_ = nullptr;
+  resource_system_ = nullptr;
+  window_ = nullptr;
 }
 
 void Renderer::Tick() {
   // gal_platform_->ExecuteCommandBuffer(command_buffer_);
 }
 
-std::optional<MeshId> Renderer::CreateMesh(const std::string& file_path) {
-  resource::Handle<resource::Model> model_handle = resource_system_->LoadModel(file_path);
-  if (!model_handle.IsValid()) {
-    return std::nullopt;
-  }
-  resource::Model& model = model_handle.Get();
+// std::optional<MeshId> Renderer::CreateMesh(const std::string& file_path) {
+//   resource::Handle<resource::Model> model_handle = resource_system_->LoadModel(file_path);
+//   if (!model_handle.IsValid()) {
+//     return std::nullopt;
+//   }
+//   resource::Model& model = model_handle.Get();
 
-  static int counter = 0;
-  ++counter;
+//   static int counter = 0;
+//   ++counter;
 
-  MeshId mesh_id = counter;
-  Mesh& mesh = meshes_[mesh_id];
+//   MeshId mesh_id = counter;
+//   Mesh& mesh = meshes_[mesh_id];
 
-  if (!model.positions.empty()) {
-    resource::HandleGALBuffer pos_buf_handle = 
-        resource_manager_->CreateBuffer(gal::BufferType::Vertex, 
-                                        reinterpret_cast<uint8_t*>(model.positions.data()),
-                                        model.positions.size() * sizeof(glm::vec3));
-    if (!pos_buf_handle.IsValid()) {
-      return std::nullopt;
-    }
-    mesh.pos_buf_ = std::move(pos_buf_handle);
-  }
+//   if (!model.positions.empty()) {
+//     resource::HandleGALBuffer pos_buf_handle = 
+//         resource_manager_->CreateBuffer(gal::BufferType::Vertex, 
+//                                         reinterpret_cast<uint8_t*>(model.positions.data()),
+//                                         model.positions.size() * sizeof(glm::vec3));
+//     if (!pos_buf_handle.IsValid()) {
+//       return std::nullopt;
+//     }
+//     mesh.pos_buf_ = std::move(pos_buf_handle);
+//   }
 
-  // TODO(colintan): Add for normals data
+//   // TODO(colintan): Add for normals data
 
-  if (!model.texcoords.empty()) {
-    resource::HandleGALBuffer texcoord_buf_handle = 
-        resource_manager_->CreateBuffer(gal::BufferType::Vertex, 
-                                        reinterpret_cast<uint8_t*>(model.texcoords.data()),
-                                        model.texcoords.size() * sizeof(glm::vec2));
-    if (!texcoord_buf_handle.IsValid()) {
-      return std::nullopt;
-    }
-    mesh.texcoord_buf_ = std::move(texcoord_buf_handle);
-  }
+//   if (!model.texcoords.empty()) {
+//     resource::HandleGALBuffer texcoord_buf_handle = 
+//         resource_manager_->CreateBuffer(gal::BufferType::Vertex, 
+//                                         reinterpret_cast<uint8_t*>(model.texcoords.data()),
+//                                         model.texcoords.size() * sizeof(glm::vec2));
+//     if (!texcoord_buf_handle.IsValid()) {
+//       return std::nullopt;
+//     }
+//     mesh.texcoord_buf_ = std::move(texcoord_buf_handle);
+//   }
 
-  mesh.faces = model.faces;
+//   mesh.faces = model.faces;
 
-  // TODO(colintan): Release the resource - automatically or via a call to ResourceManager
+//   // TODO(colintan): Release the resource - automatically or via a call to ResourceManager
 
-  return mesh_id;
-}
+//   return mesh_id;
+// }
 
 } // namespace

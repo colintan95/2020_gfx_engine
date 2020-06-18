@@ -1,7 +1,9 @@
 #ifndef WINDOW_GLFW_WINDOW_GLFW_H_
 #define WINDOW_GLFW_WINDOW_GLFW_H_
 
+#if defined(GFXAPI_GL)
 #include <GL/glew.h>
+#endif 
 #include <GLFW/glfw3.h>
 
 #include <string>

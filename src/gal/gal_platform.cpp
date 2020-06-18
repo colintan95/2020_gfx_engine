@@ -10,8 +10,8 @@ GALPlatform::~GALPlatform() {
   impl_.reset();
 }
 
-void GALPlatform::ExecuteCommandBuffer(const GALCommandBuffer& cmd_buf) {
-  cmd_buf.Execute();
-}
+// void GALPlatform::ExecuteCommandBuffer(const GALCommandBuffer& cmd_buf) {
+//   cmd_buf.Execute();
+// }
 
 } // namespace

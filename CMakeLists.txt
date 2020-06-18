@@ -5,12 +5,14 @@ set(CMAKE_CXX_STANDARD 17)
 
 message(${CMAKE_SYSTEM_NAME})
 
-set(PLATFORM_GFXAPI "OpenGL")
+set(PLATFORM_GFXAPI "Vulkan")
 set(PLATFORM_WINDOW "GLFW")
 
-if ("${PLATFORM_GFXAPI}" STREQUAL "OpenGL")
+if("${PLATFORM_GFXAPI}" STREQUAL "OpenGL")
+    set(GFXAPI_GL true)
     add_compile_definitions(GFXAPI_GL)
-elseif ("${PLATFORM_GFXAPI}" STREQUAL "Vulkan")
+elseif("${PLATFORM_GFXAPI}" STREQUAL "Vulkan")
+    set(GFXAPI_VK true)
     add_compile_definitions(GFXAPI_VK)
 endif()
 

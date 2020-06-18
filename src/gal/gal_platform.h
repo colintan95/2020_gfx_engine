@@ -4,7 +4,7 @@
 #include <exception>
 #include <memory>
 #include <optional>
-#include "gal/gal_command_buffer.h"
+// #include "gal/gal_command_buffer.h"
 
 namespace gal {
 
@@ -48,7 +48,7 @@ public:
     return T::Create(this, args...);
   }
 
-  void ExecuteCommandBuffer(const GALCommandBuffer& cmd_buf);
+  // void ExecuteCommandBuffer(const GALCommandBuffer& cmd_buf);
 
   internal::PlatformDetails* GetPlatformDetails() {
     return impl_->GetPlatformDetails();
