@@ -1,7 +1,27 @@
 #include "gal/vulkan/gal_platform_vk.h"
 
+#include <GLFW/glfw3.h>
+
+#include <cstdint>
+#include <iostream>
+#include <vector>
+
 namespace gal {
 namespace internal {
+
+namespace {
+
+VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
+    VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, 
+    VkDebugUtilsMessageTypeFlagsEXT messageType, 
+    const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, 
+    void* pUserData) {
+  std::cerr << "Vulkan: " << pCallbackData->pMessage << std::endl;
+
+  return VK_FALSE;
+}
+
+} // namespace
 
 GALPlatformImplVk::GALPlatformImplVk() {
   try {
@@ -11,25 +31,40 @@ GALPlatformImplVk::GALPlatformImplVk() {
   }
 
   // TODO(colintan): Enable validation layers
-  VkApplicationInfo app_info;
+  VkApplicationInfo app_info = {};
   app_info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-  app_info.pApplicationName = nullptr; // TODO(colintan): Set it to the proper name
-  app_info.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-  app_info.pEngineName = nullptr;
-  app_info.engineVersion = VK_MAKE_VERSION(1, 0, 0);
   app_info.apiVersion = VK_MAKE_VERSION(1, 0, 0);
 
-  VkInstanceCreateInfo create_info;
+  VkDebugUtilsMessengerCreateInfoEXT debug_create_info= {};
+  debug_create_info.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+  debug_create_info.messageSeverity = 
+      VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | 
+      VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | 
+      VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+  debug_create_info.messageType =
+      VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+      VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+      VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+  debug_create_info.pfnUserCallback = debugCallback;
+
+  uint32_t glfw_extension_count = 0;
+  const char** glfw_extensions = glfwGetRequiredInstanceExtensions(&glfw_extension_count);
+
+  std::vector<const char*> extensions(glfw_extensions, glfw_extensions + glfw_extension_count);
+  extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+
+  std::vector<const char*> layers;
+  layers.push_back("VK_LAYER_KHRONOS_validation");
+
+  VkInstanceCreateInfo create_info = {};
   create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-  create_info.pNext = nullptr;
+  create_info.pNext = &debug_create_info;
   create_info.pApplicationInfo = &app_info;
-  create_info.enabledLayerCount = 0;
-  create_info.ppEnabledLayerNames = nullptr;
-  create_info.enabledExtensionCount = 0;
-  create_info.ppEnabledExtensionNames = nullptr;
-
-  // TODO(colintan): Load extensions
-
+  create_info.enabledLayerCount = layers.size();
+  create_info.ppEnabledLayerNames = layers.data();
+  create_info.enabledExtensionCount = extensions.size();
+  create_info.ppEnabledExtensionNames = extensions.data();
+  
   if (vkCreateInstance(&create_info, nullptr, &vk_instance_) != VK_SUCCESS) {
     throw GALPlatform::InitException();
   }
