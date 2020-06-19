@@ -16,8 +16,11 @@ public:
 
   void Destroy() final;
 
+  VkShaderModule GetShaderModule() const { return vk_shader_; }
+
 private:
   VkShaderModule vk_shader_;
+  VkDevice vk_device_;
 };
 
 using GALShader = GALShaderBase<GALShaderImplVk>;

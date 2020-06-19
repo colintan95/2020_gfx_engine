@@ -16,7 +16,7 @@
 #include <utility>
 #include <vector>
 // #include "gal/gal_buffer.h"
-// #include "gal/gal_pipeline.h"
+#include "gal/gal_pipeline.h"
 #include "gal/gal_shader.h"
 // #include "gal/gal_texture_sampler.h"
 // #include "resource/resource_gal.h"
@@ -105,13 +105,15 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
     std::cerr << "Failed to create GAL fragment shader." << std::endl;
     throw InitException();
   }
-   
-  // gal::GALShader frag_shader;
-  // if (!frag_shader.Create(gal_platform_.get(), gal::ShaderType::Fragment, kFragShaderSrc)) {
-  //   std::cerr << "Failed to create GAL fragment shader." << std::endl;
-  //   throw InitException();
-  // }
 
+  gal::GALPipeline pipeline;
+  if (!pipeline.Create(gal_platform_.get(), vert_shader, frag_shader)) {
+    std::cerr << "Failed to create GAL pipeline." << std::endl;
+    throw InitException();
+  }
+
+  frag_shader.Destroy();
+  vert_shader.Destroy();
 
   // resource_manager_ = std::make_unique<resource::ResourceManagerGAL>(gal_platform_.get());
 

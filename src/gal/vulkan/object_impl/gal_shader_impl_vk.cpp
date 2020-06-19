@@ -18,8 +18,8 @@ bool GALShaderImplVk::CreateFromBinary(GALPlatform* gal_platform, ShaderType typ
   create_info.codeSize = shader_binary.size();
   create_info.pCode = reinterpret_cast<const uint32_t*>(shader_binary.data());
 
-  VkDevice vk_device = gal_platform->GetPlatformDetails()->vk_device;
-  if (vkCreateShaderModule(vk_device, &create_info, nullptr, &vk_shader_) != VK_SUCCESS) {
+  vk_device_ = gal_platform->GetPlatformDetails()->vk_device;
+  if (vkCreateShaderModule(vk_device_, &create_info, nullptr, &vk_shader_) != VK_SUCCESS) {
     return false;
   }
 
@@ -27,7 +27,7 @@ bool GALShaderImplVk::CreateFromBinary(GALPlatform* gal_platform, ShaderType typ
 }
 
 void GALShaderImplVk::Destroy() {
-  
+  vkDestroyShaderModule(vk_device_, vk_shader_, nullptr);
 }
 
 } // namespace
