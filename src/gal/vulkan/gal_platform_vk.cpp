@@ -200,14 +200,43 @@ GALPlatformImplVk::GALPlatformImplVk(window::Window* window) {
   uint32_t image_count = 0;
   vkGetSwapchainImagesKHR(vk_device_, vk_swapchain_, &image_count, nullptr);
 
-  vk_images_.resize(image_count);
-  vkGetSwapchainImagesKHR(vk_device_, vk_swapchain_, &image_count, vk_images_.data());
+  vk_swapchain_images_.resize(image_count);
+  vkGetSwapchainImagesKHR(vk_device_, vk_swapchain_, &image_count, vk_swapchain_images_.data());
 
-  vk_image_format_ = surface_format.format;
-  vk_extent_ = extent;
+  vk_swapchain_image_format_ = surface_format.format;
+  vk_swapchain_extent_ = extent;
+
+  vk_swapchain_image_views_.resize(image_count);
+
+  for (size_t i = 0; i < vk_swapchain_images_.size(); ++i) {
+    VkImageViewCreateInfo image_view_create_info{};
+    image_view_create_info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+    image_view_create_info.image = vk_swapchain_images_[i];
+    image_view_create_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
+    image_view_create_info.format = vk_swapchain_image_format_;
+    image_view_create_info.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+    image_view_create_info.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+    image_view_create_info.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+    image_view_create_info.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+    image_view_create_info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    image_view_create_info.subresourceRange.baseMipLevel = 0;
+    image_view_create_info.subresourceRange.levelCount = 1;
+    image_view_create_info.subresourceRange.baseArrayLayer = 0;
+    image_view_create_info.subresourceRange.layerCount = 1;
+
+    if (vkCreateImageView(vk_device_, &image_view_create_info, nullptr, 
+            &vk_swapchain_image_views_[i]) != VK_SUCCESS) {
+      std::cerr << "Could not create image view for a swapchain image." << std::endl;
+      throw GALPlatform::InitException();
+    }
+  }
 }
 
 GALPlatformImplVk::~GALPlatformImplVk() {
+  for (VkImageView image_view : vk_swapchain_image_views_) {
+    vkDestroyImageView(vk_device_, image_view, nullptr);
+  }
+
   vkDestroySwapchainKHR(vk_device_, vk_swapchain_, nullptr);
 
   vkDestroyDevice(vk_device_, nullptr);
@@ -235,11 +264,11 @@ std::optional<GALPlatformImplVk::PhysicalDeviceInfo> GALPlatformImplVk::ChoosePh
   PhysicalDeviceInfo result;
 
   for (const VkPhysicalDevice& device : physical_devices) {
+
+    // Discrete GPU
+
     VkPhysicalDeviceProperties device_props;
     vkGetPhysicalDeviceProperties(device, &device_props);
-    
-    VkPhysicalDeviceFeatures device_features;
-    vkGetPhysicalDeviceFeatures(device, &device_features);
 
     if (device_props.deviceType != VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
       continue;
@@ -250,6 +279,8 @@ std::optional<GALPlatformImplVk::PhysicalDeviceInfo> GALPlatformImplVk::ChoosePh
 
     std::vector<VkQueueFamilyProperties> queue_families(queue_families_count);
     vkGetPhysicalDeviceQueueFamilyProperties(device, &queue_families_count, queue_families.data());
+
+    // Graphics queue
 
     bool found_graphics_queue = false;
 
@@ -262,10 +293,11 @@ std::optional<GALPlatformImplVk::PhysicalDeviceInfo> GALPlatformImplVk::ChoosePh
       }
       ++index;
     }
-
     if (!found_graphics_queue) {
       continue;
     }
+
+    // Present queue
 
     bool found_present_queue = false;
 
@@ -281,10 +313,11 @@ std::optional<GALPlatformImplVk::PhysicalDeviceInfo> GALPlatformImplVk::ChoosePh
       }
       ++index;
     }
-
     if (!found_present_queue) {
       continue;
     }
+
+    // Extensions
 
     uint32_t extensions_count = 0;
     vkEnumerateDeviceExtensionProperties(device, nullptr, &extensions_count, nullptr);
@@ -301,6 +334,8 @@ std::optional<GALPlatformImplVk::PhysicalDeviceInfo> GALPlatformImplVk::ChoosePh
             }) == extensions.end()) {
       continue;
     }
+
+    // Surface formats and present modes - whether they are nonempty
 
     uint32_t surface_formats_count = 0;
     vkGetPhysicalDeviceSurfaceFormatsKHR(device, vk_surface_, &surface_formats_count, nullptr);

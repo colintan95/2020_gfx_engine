@@ -50,10 +50,11 @@ private:
   VkQueue vk_present_queue_;
 
   VkSwapchainKHR vk_swapchain_;
-  VkFormat vk_image_format_;
-  VkExtent2D vk_extent_;
+  VkFormat vk_swapchain_image_format_;
+  VkExtent2D vk_swapchain_extent_;
 
-  std::vector<VkImage> vk_images_;
+  std::vector<VkImage> vk_swapchain_images_;
+  std::vector<VkImageView> vk_swapchain_image_views_;
 };
 
 } // namespace
