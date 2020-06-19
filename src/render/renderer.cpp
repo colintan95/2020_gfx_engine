@@ -107,8 +107,13 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
   }
 
   gal::GALPipeline pipeline;
-  if (!pipeline.Create(gal_platform_.get(), vert_shader, frag_shader)) {
-    std::cerr << "Failed to create GAL pipeline." << std::endl;
+  try {
+    pipeline = gal::GALPipeline::BeginBuild(gal_platform_.get())
+        .SetShader(gal::ShaderType::Vertex, vert_shader)
+        .SetShader(gal::ShaderType::Fragment, frag_shader)
+        .Create();
+  } catch (gal::GALPipeline::InitException& e) {
+    std::cerr << e.what() << std::endl;
     throw InitException();
   }
 

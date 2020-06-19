@@ -2,6 +2,7 @@
 #define GAL_OBJECT_IMPL_GAL_PIPELINE_IMPL_H_
 
 #include <cstdint>
+#include <exception>
 #include <utility>
 #include <vector>
 #include "gal/gal_shader.h"
@@ -20,8 +21,16 @@ public:
   virtual void Destroy() = 0;
 };
 
-template<typename ImplType>
+template<typename ImplType, typename BuilderType>
 class GALPipelineBase : public GALObjectBase {
+public:
+  class InitException : public std::exception {
+  public:
+    const char* what() const final {
+      return "Failed to initialize GALPipeline";
+    }
+  };
+
 public:
   class VertexDesc {
   public:
@@ -63,6 +72,10 @@ public:
     if (IsValid()) {
       impl_.Destroy();
     }
+  }
+
+  static BuilderType BeginBuild(GALPlatform* gal_platform) {
+    return BuilderType(gal_platform);
   }
 
   const ImplType& GetImpl() const { return impl_; }
