@@ -31,8 +31,14 @@ private:
 
   std::optional<PhysicalDeviceInfo> ChoosePhysicalDevice();
 
+  VkSurfaceFormatKHR ChooseSurfaceFormat();
+  VkPresentModeKHR ChoosePresentMode();
+  VkExtent2D ChooseSwapExtent();
+
 private:
   std::unique_ptr<PlatformDetails> details_;
+
+  window::Window* window_;
 
   VkInstance vk_instance_;
   VkDebugUtilsMessengerEXT vk_debug_messenger_;
@@ -41,6 +47,7 @@ private:
   VkDevice vk_device_;
   VkQueue vk_graphics_queue_;
   VkQueue vk_present_queue_;
+  VkSwapchainKHR vk_swapchain_;
 };
 
 } // namespace

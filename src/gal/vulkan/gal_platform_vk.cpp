@@ -31,6 +31,8 @@ VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 } // namespace
 
 GALPlatformImplVk::GALPlatformImplVk(window::Window* window) {
+  window_ = window;
+
   try {
     details_ = std::make_unique<PlatformDetails>();
   } catch (std::bad_alloc& ba) {
@@ -111,10 +113,10 @@ GALPlatformImplVk::GALPlatformImplVk(window::Window* window) {
 
   std::vector<VkDeviceQueueCreateInfo> queue_create_infos;
 
-  std::unordered_set<uint32_t> queue_family_indices = { graphics_queue_family_index, 
-                                                        present_queue_family_index };
+  std::unordered_set<uint32_t> queue_family_indices_set = { graphics_queue_family_index, 
+                                                            present_queue_family_index };
 
-  for (uint32_t queue_family_index : queue_family_indices) {
+  for (uint32_t queue_family_index : queue_family_indices_set) {
     float queue_properties[] = { 1.f };
 
     VkDeviceQueueCreateInfo queue_create_info{};
@@ -148,9 +150,57 @@ GALPlatformImplVk::GALPlatformImplVk(window::Window* window) {
 
   vkGetDeviceQueue(vk_device_, graphics_queue_family_index, 0, &vk_graphics_queue_);
   vkGetDeviceQueue(vk_device_, present_queue_family_index, 0, &vk_present_queue_);
+
+  VkSurfaceFormatKHR surface_format = ChooseSurfaceFormat();
+  VkPresentModeKHR present_mode = ChoosePresentMode();
+  VkExtent2D extent = ChooseSwapExtent();
+
+  VkSurfaceCapabilitiesKHR surface_capabilities;
+  vkGetPhysicalDeviceSurfaceCapabilitiesKHR(vk_physical_device_, vk_surface_, 
+                                            &surface_capabilities);
+
+  uint32_t image_count = surface_capabilities.minImageCount + 1;
+  if (surface_capabilities.maxImageCount != 0) {
+    image_count = std::min(image_count, surface_capabilities.maxImageCount);
+  }
+
+  VkSwapchainCreateInfoKHR swapchain_create_info{};
+  swapchain_create_info.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+  swapchain_create_info.surface = vk_surface_;
+  swapchain_create_info.minImageCount = image_count;
+  swapchain_create_info.imageFormat = surface_format.format;
+  swapchain_create_info.imageColorSpace = surface_format.colorSpace;
+  swapchain_create_info.imageExtent = extent;
+  swapchain_create_info.imageArrayLayers = 1;
+  swapchain_create_info.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+
+  if (graphics_queue_family_index != present_queue_family_index) {
+    uint32_t queue_family_indices[] = { graphics_queue_family_index, present_queue_family_index };
+    swapchain_create_info.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+    swapchain_create_info.queueFamilyIndexCount = 2;
+    swapchain_create_info.pQueueFamilyIndices = queue_family_indices;
+  } else {
+    swapchain_create_info.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+    swapchain_create_info.queueFamilyIndexCount = 0;
+    swapchain_create_info.pQueueFamilyIndices = nullptr;
+  }
+
+  swapchain_create_info.preTransform = surface_capabilities.currentTransform;
+  swapchain_create_info.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+  swapchain_create_info.presentMode = present_mode;
+  swapchain_create_info.clipped = VK_TRUE;
+  swapchain_create_info.oldSwapchain = VK_NULL_HANDLE;
+
+  if (vkCreateSwapchainKHR(vk_device_, &swapchain_create_info, nullptr, &vk_swapchain_) 
+          != VK_SUCCESS) {
+    std::cerr << "Could not create VkSwapchain." << std::endl;
+    throw GALPlatform::InitException();
+  }
 }
 
 GALPlatformImplVk::~GALPlatformImplVk() {
+  vkDestroySwapchainKHR(vk_device_, vk_swapchain_, nullptr);
+
   vkDestroyDevice(vk_device_, nullptr);
 
   vkDestroySurfaceKHR(vk_instance_, vk_surface_, nullptr);
@@ -173,8 +223,7 @@ std::optional<GALPlatformImplVk::PhysicalDeviceInfo> GALPlatformImplVk::ChoosePh
   vkEnumeratePhysicalDevices(vk_instance_, &physical_devices_count, physical_devices.data());
 
   bool found_physical_device = false;
-  std::optional<uint32_t> graphics_queue_family_index;
-  std::optional<uint32_t> present_queue_family_index;
+  PhysicalDeviceInfo result;
 
   for (const VkPhysicalDevice& device : physical_devices) {
     VkPhysicalDeviceProperties device_props;
@@ -193,28 +242,38 @@ std::optional<GALPlatformImplVk::PhysicalDeviceInfo> GALPlatformImplVk::ChoosePh
     std::vector<VkQueueFamilyProperties> queue_families(queue_families_count);
     vkGetPhysicalDeviceQueueFamilyProperties(device, &queue_families_count, queue_families.data());
 
-    bool found_queues = false;
+    bool found_graphics_queue = false;
+
     int index = 0;
     for (const VkQueueFamilyProperties& queue_family : queue_families) {
       if (queue_family.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
-        graphics_queue_family_index = index;
-      }
-
-      VkBool32 supports_present = false;
-      vkGetPhysicalDeviceSurfaceSupportKHR(device, index, vk_surface_, 
-                                           &supports_present);
-      if (supports_present) {
-        present_queue_family_index = index;
-      }
-
-      if (graphics_queue_family_index.has_value() && present_queue_family_index.has_value()) {
-        found_queues = true;
+        result.graphics_queue_family_index = index;
+        found_graphics_queue = true;
         break;
       }
-        
       ++index;
     }
-    if (!found_queues) {
+
+    if (!found_graphics_queue) {
+      continue;
+    }
+
+    bool found_present_queue = false;
+
+    index = 0;
+    for (const VkQueueFamilyProperties& queue_family : queue_families) {
+      VkBool32 supports_present = false;
+      vkGetPhysicalDeviceSurfaceSupportKHR(device, index, vk_surface_, 
+                                            &supports_present);
+      if (supports_present) {
+        result.present_queue_family_index = index;
+        found_present_queue = true;
+        break;
+      }
+      ++index;
+    }
+
+    if (!found_present_queue) {
       continue;
     }
 
@@ -234,6 +293,18 @@ std::optional<GALPlatformImplVk::PhysicalDeviceInfo> GALPlatformImplVk::ChoosePh
       continue;
     }
 
+    uint32_t surface_formats_count = 0;
+    vkGetPhysicalDeviceSurfaceFormatsKHR(device, vk_surface_, &surface_formats_count, nullptr);
+    if (surface_formats_count == 0) {
+      continue;
+    }
+
+    uint32_t present_modes_count = 0;
+    vkGetPhysicalDeviceSurfacePresentModesKHR(device, vk_surface_, &present_modes_count, nullptr);
+    if (present_modes_count == 0) {
+      continue;
+    }
+
     found_physical_device = true;
     vk_physical_device_ = device;
   }
@@ -242,14 +313,69 @@ std::optional<GALPlatformImplVk::PhysicalDeviceInfo> GALPlatformImplVk::ChoosePh
     return std::nullopt;
   }
 
-  assert(present_queue_family_index.has_value());
-  assert(present_queue_family_index.has_value());
-
-  PhysicalDeviceInfo result;
-  result.graphics_queue_family_index = graphics_queue_family_index.value();
-  result.present_queue_family_index = present_queue_family_index.value();
-
   return result;
+}
+
+VkSurfaceFormatKHR GALPlatformImplVk::ChooseSurfaceFormat() {
+  uint32_t surface_formats_count = 0;
+  vkGetPhysicalDeviceSurfaceFormatsKHR(vk_physical_device_, vk_surface_, &surface_formats_count, 
+                                       nullptr);
+  
+  std::vector<VkSurfaceFormatKHR> surface_formats(surface_formats_count);
+  vkGetPhysicalDeviceSurfaceFormatsKHR(vk_physical_device_, vk_surface_, &surface_formats_count,
+                                       surface_formats.data());
+
+  for (const VkSurfaceFormatKHR& surface_format : surface_formats) {
+    if (surface_format.format == VK_FORMAT_B8G8R8A8_SRGB && 
+        surface_format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
+      return surface_format;
+    }
+  }
+
+  return surface_formats[0];
+}
+
+VkPresentModeKHR GALPlatformImplVk::ChoosePresentMode() {
+  uint32_t present_modes_count = 0;
+  vkGetPhysicalDeviceSurfacePresentModesKHR(vk_physical_device_, vk_surface_, &present_modes_count, 
+                                            nullptr);
+
+  std::vector<VkPresentModeKHR> present_modes(present_modes_count);
+  vkGetPhysicalDeviceSurfacePresentModesKHR(vk_physical_device_, vk_surface_, &present_modes_count,
+                                            present_modes.data());
+
+  for (const VkPresentModeKHR& present_mode : present_modes) {
+    if (present_mode == VK_PRESENT_MODE_MAILBOX_KHR) {
+      return present_mode;
+    }
+  }
+    
+  return VK_PRESENT_MODE_FIFO_KHR;
+}
+
+VkExtent2D GALPlatformImplVk::ChooseSwapExtent() {
+  VkSurfaceCapabilitiesKHR surface_capabilities;
+  vkGetPhysicalDeviceSurfaceCapabilitiesKHR(vk_physical_device_, vk_surface_, 
+                                            &surface_capabilities);
+
+  if (surface_capabilities.currentExtent.width == UINT32_MAX) {
+    VkExtent2D extent{};
+
+    uint32_t min_width = surface_capabilities.minImageExtent.width;
+    uint32_t max_width = surface_capabilities.maxImageExtent.width;
+    uint32_t window_width = window_->GetWidth();
+
+    uint32_t min_height = surface_capabilities.minImageExtent.height;
+    uint32_t max_height = surface_capabilities.maxImageExtent.height;
+    uint32_t window_height = window_->GetHeight();
+
+    extent.width = std::max(min_width, std::min(window_height, max_height));
+    extent.height = std::max(min_height, std::min(window_height, max_height));
+
+    return extent;
+  } else {
+    return surface_capabilities.currentExtent;
+  }
 }
 
 std::unique_ptr<GALPlatformImpl> GALPlatformImpl::Create(window::Window* window) {
