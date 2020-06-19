@@ -23,11 +23,18 @@ public:
   }
 
 private:
+  bool IsPhysicalDeviceSuitable(VkPhysicalDevice physical_device);
+
+private:
   std::unique_ptr<PlatformDetails> details_;
 
   VkInstance vk_instance_;
   VkDebugUtilsMessengerEXT vk_debug_messenger_;
   VkSurfaceKHR vk_surface_;
+  VkPhysicalDevice vk_physical_device_;
+  VkDevice vk_device_;
+  VkQueue vk_graphics_queue_;
+  VkQueue vk_present_queue_;
 };
 
 } // namespace
