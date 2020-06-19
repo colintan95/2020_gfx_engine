@@ -1,6 +1,6 @@
 set(SHADER_SRC_FILES
-    "triangle.frag"
-    "triangle.vert"
+    "triangle_frag.frag"
+    "triangle_vert.vert"
 )
 
 set(GLSL_COMPILER_PATH "D:\\VulkanSDK\\1.2.141.0\\Bin\\glslc.exe")
@@ -8,7 +8,7 @@ set(GLSL_COMPILER_PATH "D:\\VulkanSDK\\1.2.141.0\\Bin\\glslc.exe")
 set(SHADER_BUILD_FILES)
 
 foreach(file ${SHADER_SRC_FILES})
-  string(REGEX REPLACE "(.*).(frag|vert)" "\\1_\\2" new_name ${file})
+  string(REGEX REPLACE "(.*).(vert|frag)" "\\1" new_name ${file})
 
   string(CONCAT new_path ${new_name} ".spv")
 

@@ -16,6 +16,9 @@ endif()
 add_custom_command(TARGET gfx_engine POST_BUILD COMMAND ${CMAKE_COMMAND}
     -E create_symlink "${CMAKE_SOURCE_DIR}/assets" 
     "$<TARGET_FILE_DIR:gfx_engine>/assets")
+add_custom_command(TARGET gfx_engine POST_BUILD COMMAND ${CMAKE_COMMAND}
+    -E create_symlink "${CMAKE_BINARY_DIR}/shaders" 
+    "$<TARGET_FILE_DIR:gfx_engine>/shaders")
 
 add_subdirectory(event)
 add_subdirectory(gal)

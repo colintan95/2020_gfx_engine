@@ -10,7 +10,14 @@ namespace gal {
 class GALShaderImplVk : public IGALShaderImpl {
 public:
   bool Create(GALPlatform* gal_platform, ShaderType type, const std::string& source) final;
+
+  bool CreateFromBinary(GALPlatform* gal_platform, ShaderType type, 
+                        const std::vector<std::byte>& shader_binary) final;
+
   void Destroy() final;
+
+private:
+  VkShaderModule vk_shader_;
 };
 
 using GALShader = GALShaderBase<GALShaderImplVk>;

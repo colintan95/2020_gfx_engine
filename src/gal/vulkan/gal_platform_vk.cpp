@@ -230,9 +230,14 @@ GALPlatformImplVk::GALPlatformImplVk(window::Window* window) {
       throw GALPlatform::InitException();
     }
   }
+
+  details_ = std::make_unique<PlatformDetails>();
+  details_->vk_device = vk_device_;
 }
 
 GALPlatformImplVk::~GALPlatformImplVk() {
+  details_.release();
+
   for (VkImageView image_view : vk_swapchain_image_views_) {
     vkDestroyImageView(vk_device_, image_view, nullptr);
   }

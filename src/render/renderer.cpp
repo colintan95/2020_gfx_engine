@@ -6,7 +6,9 @@
 #include <glm/gtx/transform.hpp>
 
 #include <cassert>
+#include <cstddef>
 #include <cstdlib>
+#include <fstream>
 #include <iostream>
 #include <memory>
 #include <new>
@@ -15,7 +17,7 @@
 #include <vector>
 // #include "gal/gal_buffer.h"
 // #include "gal/gal_pipeline.h"
-// #include "gal/gal_shader.h"
+#include "gal/gal_shader.h"
 // #include "gal/gal_texture_sampler.h"
 // #include "resource/resource_gal.h"
 // #include "resource/resource_manager_gal.h"
@@ -64,6 +66,52 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
   } catch (std::bad_alloc& ba) {
     throw InitException();
   }
+
+  // TODO(colintan): Make this into a separate class
+  std::ifstream vert_shader_file("shaders/triangle_vert.spv", std::ios::ate | std::ios::binary);
+  if (!vert_shader_file.is_open()) {
+    std::cerr << "Could not open vertex shader file." << std::endl;
+    throw InitException();
+  }
+
+  size_t vert_shader_file_size = static_cast<size_t>(vert_shader_file.tellg());
+  vert_shader_file.seekg(0);
+
+  std::vector<std::byte> vert_shader_binary(vert_shader_file_size);
+  vert_shader_file.read(reinterpret_cast<char*>(vert_shader_binary.data()), vert_shader_file_size);
+
+  std::ifstream frag_shader_file("shaders/triangle_frag.spv", std::ios::ate | std::ios::binary);
+  if (!frag_shader_file.is_open()) {
+    std::cerr << "Could not open fragment shader file." << std::endl;
+    throw InitException();
+  }
+
+  size_t frag_shader_file_size = static_cast<size_t>(frag_shader_file.tellg());
+  frag_shader_file.seekg(0);
+
+  std::vector<std::byte> frag_shader_binary(frag_shader_file_size);
+  frag_shader_file.read(reinterpret_cast<char*>(frag_shader_binary.data()), frag_shader_file_size);
+
+  gal::GALShader vert_shader;
+  if (!vert_shader.CreateFromBinary(gal_platform_.get(), gal::ShaderType::Vertex, 
+                                    vert_shader_binary)) {
+    std::cerr << "Failed to create GAL vertex shader." << std::endl;
+    throw InitException();
+  }
+
+  gal::GALShader frag_shader;
+  if (!frag_shader.CreateFromBinary(gal_platform_.get(), gal::ShaderType::Fragment, 
+                                    frag_shader_binary)) {
+    std::cerr << "Failed to create GAL fragment shader." << std::endl;
+    throw InitException();
+  }
+   
+  // gal::GALShader frag_shader;
+  // if (!frag_shader.Create(gal_platform_.get(), gal::ShaderType::Fragment, kFragShaderSrc)) {
+  //   std::cerr << "Failed to create GAL fragment shader." << std::endl;
+  //   throw InitException();
+  // }
+
 
   // resource_manager_ = std::make_unique<resource::ResourceManagerGAL>(gal_platform_.get());
 

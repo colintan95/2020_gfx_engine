@@ -11,8 +11,8 @@
 namespace gal {
 namespace internal {
 
-class PlatformDetails {
-
+struct PlatformDetails {
+  VkDevice vk_device;
 };
 
 class GALPlatformImplVk : public GALPlatformImpl {

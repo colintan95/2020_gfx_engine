@@ -55,6 +55,11 @@ bool GALShaderImplGL::Create(GALPlatform* gal_platform, ShaderType type,
   return true;
 }
 
+bool GALShaderImplGL::CreateFromBinary(GALPlatform* gal_platform, ShaderType type, 
+                                       const std::vector<std::byte>& shader_binary) {
+  return false;
+}
+
 void GALShaderImplGL::Destroy() {
   glDeleteShader(gl_shader_id_);
 }

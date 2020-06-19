@@ -1,7 +1,9 @@
 #ifndef GAL_OBJECT_IMPL_GAL_SHADER_IMPL_H_
 #define GAL_OBJECT_IMPL_GAL_SHADER_IMPL_H_
 
+#include <cstddef>
 #include <string>
+#include <vector>
 #include "gal/object_impl/gal_object.h"
 
 namespace gal {
@@ -19,6 +21,10 @@ public:
   virtual ~IGALShaderImpl() {}
 
   virtual bool Create(GALPlatform* gal_platform, ShaderType type, const std::string& source) = 0;
+
+  virtual bool CreateFromBinary(GALPlatform* gal_platform, ShaderType type, 
+                                const std::vector<std::byte>& shader_binary) = 0;
+
   virtual void Destroy() = 0;
 };
 
@@ -27,6 +33,18 @@ class GALShaderBase : public GALObjectBase {
 public:
   bool Create(GALPlatform* gal_platform, ShaderType type, const std::string& source) {
     if (impl_.Create(gal_platform, type, source)) {
+      SetValid(true);
+      type_ = type;
+      return true;
+    } else {
+      SetValid(false);
+      return false;
+    }
+  }
+
+  bool CreateFromBinary(GALPlatform* gal_platform, ShaderType type, 
+                        const std::vector<std::byte>& shader_binary) {
+    if (impl_.CreateFromBinary(gal_platform, type, shader_binary)) {
       SetValid(true);
       type_ = type;
       return true;
