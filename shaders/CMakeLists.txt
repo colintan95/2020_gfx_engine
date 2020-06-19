@@ -3,6 +3,8 @@ set(SHADER_SRC_FILES
     "triangle.vert"
 )
 
+set(GLSL_COMPILER_PATH "D:\\VulkanSDK\\1.2.141.0\\Bin\\glslc.exe")
+
 set(SHADER_BUILD_FILES)
 
 foreach(file ${SHADER_SRC_FILES})
@@ -11,23 +13,14 @@ foreach(file ${SHADER_SRC_FILES})
   string(CONCAT new_path ${new_name} ".spv")
 
   add_custom_command(OUTPUT ${new_path}
-    COMMAND ${CMAKE_COMMAND} -E touch ${new_path}
+    COMMAND cmd /c "${GLSL_COMPILER_PATH}" "${file}" -o "${CMAKE_CURRENT_BINARY_DIR}/${new_path}"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
     MAIN_DEPENDENCY ${file}
     COMMENT "Creating ${new_path}")
 
   list(APPEND SHADER_BUILD_FILES ${new_path})
-
-  # add_custom_target(${new_name} ALL
-  #     COMMAND echo ${new_name}
-  #     DEPENDS ${new_path})
 endforeach(file)
 
 add_custom_target(shaders ALL
     COMMAND echo "Add targets for ${SHADER_BUILD_FILES}"
     DEPENDS ${SHADER_BUILD_FILES})
-
-# add_custom_target(shaders ALL
-#     COMMAND ${CMAKE_COMMAND} -P "${CMAKE_CURRENT_SOURCE_DIR}/compile.cmake" "${SHADER_SRC_FILES}"
-#         "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}" "${GLSL_COMPILER_PATH}"
-#     DEPENDS "${SHADER_SRCE_FILES}"
-# )

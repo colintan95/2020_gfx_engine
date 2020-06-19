@@ -3,8 +3,6 @@ project(gfx_engine)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(GLSL_COMPILER_PATH "D:\\VulkanSDK\\1.2.141.0\\Bin\\glslc.exe")
-
 set(PLATFORM_GFXAPI "Vulkan")
 set(PLATFORM_WINDOW "GLFW")
 
