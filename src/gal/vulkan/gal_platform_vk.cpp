@@ -99,6 +99,73 @@ GALPlatformImplVk::GALPlatformImplVk(window::Window* window) {
 
   vk_surface_ = window->GetWindowSurface()->GetVkSurface();
 
+  std::optional<PhysicalDeviceInfo> physical_device_info = ChoosePhysicalDevice();
+
+  if (!physical_device_info.has_value()) {
+    std::cerr << "Could not find a suitable physical device." << std::endl;
+    throw GALPlatform::InitException();
+  }
+
+  uint32_t graphics_queue_family_index = physical_device_info.value().graphics_queue_family_index;
+  uint32_t present_queue_family_index = physical_device_info.value().present_queue_family_index;
+
+  std::vector<VkDeviceQueueCreateInfo> queue_create_infos;
+
+  std::unordered_set<uint32_t> queue_family_indices = { graphics_queue_family_index, 
+                                                        present_queue_family_index };
+
+  for (uint32_t queue_family_index : queue_family_indices) {
+    float queue_properties[] = { 1.f };
+
+    VkDeviceQueueCreateInfo queue_create_info{};
+    queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+    queue_create_info.queueFamilyIndex = queue_family_index;
+    queue_create_info.queueCount = 1;
+    queue_create_info.pQueuePriorities = queue_properties;
+
+    queue_create_infos.push_back(std::move(queue_create_info));
+  }
+  
+  VkPhysicalDeviceFeatures device_enabled_features{};
+
+  std::vector<const char*> device_extensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+
+  VkDeviceCreateInfo device_create_info{};
+  device_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+  device_create_info.queueCreateInfoCount = queue_create_infos.size();
+  device_create_info.pQueueCreateInfos = queue_create_infos.data();
+  device_create_info.enabledLayerCount = static_cast<uint32_t>(validation_layers.size());
+  device_create_info.ppEnabledLayerNames = validation_layers.data();
+  device_create_info.enabledExtensionCount = device_extensions.size();
+  device_create_info.ppEnabledExtensionNames = device_extensions.data();
+  device_create_info.pEnabledFeatures = &device_enabled_features;
+  
+  if (vkCreateDevice(vk_physical_device_, &device_create_info, nullptr, 
+                     &vk_device_) != VK_SUCCESS) {
+    std::cerr << "Could not create VkDevice." << std::endl;
+    throw GALPlatform::InitException();
+  }
+
+  vkGetDeviceQueue(vk_device_, graphics_queue_family_index, 0, &vk_graphics_queue_);
+  vkGetDeviceQueue(vk_device_, present_queue_family_index, 0, &vk_present_queue_);
+}
+
+GALPlatformImplVk::~GALPlatformImplVk() {
+  vkDestroyDevice(vk_device_, nullptr);
+
+  vkDestroySurfaceKHR(vk_instance_, vk_surface_, nullptr);
+
+  auto destroy_debug_utils_messenger_func = 
+      (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(vk_instance_, 
+          "vkDestroyDebugUtilsMessengerEXT");
+  if (destroy_debug_utils_messenger_func != nullptr) {
+    destroy_debug_utils_messenger_func(vk_instance_, vk_debug_messenger_, nullptr);
+  }
+
+  vkDestroyInstance(vk_instance_, nullptr);
+}
+
+std::optional<GALPlatformImplVk::PhysicalDeviceInfo> GALPlatformImplVk::ChoosePhysicalDevice() {
   uint32_t physical_devices_count = 0;
   vkEnumeratePhysicalDevices(vk_instance_, &physical_devices_count, nullptr);
 
@@ -170,73 +237,19 @@ GALPlatformImplVk::GALPlatformImplVk(window::Window* window) {
     found_physical_device = true;
     vk_physical_device_ = device;
   }
-
+  
   if (!found_physical_device) {
-    std::cerr << "Could not find a suitable physical device." << std::endl;
-    throw GALPlatform::InitException();
+    return std::nullopt;
   }
 
   assert(present_queue_family_index.has_value());
   assert(present_queue_family_index.has_value());
 
-  std::vector<VkDeviceQueueCreateInfo> queue_create_infos;
+  PhysicalDeviceInfo result;
+  result.graphics_queue_family_index = graphics_queue_family_index.value();
+  result.present_queue_family_index = present_queue_family_index.value();
 
-  std::unordered_set<uint32_t> queue_family_indices = { present_queue_family_index.value(), 
-                                                        present_queue_family_index.value() };
-
-  for (uint32_t queue_family_index : queue_family_indices) {
-    float queue_properties[] = { 1.f };
-
-    VkDeviceQueueCreateInfo queue_create_info{};
-    queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-    queue_create_info.queueFamilyIndex = queue_family_index;
-    queue_create_info.queueCount = 1;
-    queue_create_info.pQueuePriorities = queue_properties;
-
-    queue_create_infos.push_back(std::move(queue_create_info));
-  }
-  
-  VkPhysicalDeviceFeatures device_enabled_features{};
-
-  std::vector<const char*> device_extensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
-
-  VkDeviceCreateInfo device_create_info{};
-  device_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-  device_create_info.queueCreateInfoCount = queue_create_infos.size();
-  device_create_info.pQueueCreateInfos = queue_create_infos.data();
-  device_create_info.enabledLayerCount = static_cast<uint32_t>(validation_layers.size());
-  device_create_info.ppEnabledLayerNames = validation_layers.data();
-  device_create_info.enabledExtensionCount = device_extensions.size();
-  device_create_info.ppEnabledExtensionNames = device_extensions.data();
-  device_create_info.pEnabledFeatures = &device_enabled_features;
-  
-  if (vkCreateDevice(vk_physical_device_, &device_create_info, nullptr, 
-                     &vk_device_) != VK_SUCCESS) {
-    std::cerr << "Could not create VkDevice." << std::endl;
-    throw GALPlatform::InitException();
-  }
-
-  vkGetDeviceQueue(vk_device_, graphics_queue_family_index.value(), 0, &vk_graphics_queue_);
-  vkGetDeviceQueue(vk_device_, present_queue_family_index.value(), 0, &vk_present_queue_);
-}
-
-GALPlatformImplVk::~GALPlatformImplVk() {
-  vkDestroyDevice(vk_device_, nullptr);
-
-  vkDestroySurfaceKHR(vk_instance_, vk_surface_, nullptr);
-
-  auto destroy_debug_utils_messenger_func = 
-      (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(vk_instance_, 
-          "vkDestroyDebugUtilsMessengerEXT");
-  if (destroy_debug_utils_messenger_func != nullptr) {
-    destroy_debug_utils_messenger_func(vk_instance_, vk_debug_messenger_, nullptr);
-  }
-
-  vkDestroyInstance(vk_instance_, nullptr);
-}
-
-bool GALPlatformImplVk::IsPhysicalDeviceSuitable(VkPhysicalDevice physical_device) {
-  return false;
+  return result;
 }
 
 std::unique_ptr<GALPlatformImpl> GALPlatformImpl::Create(window::Window* window) {

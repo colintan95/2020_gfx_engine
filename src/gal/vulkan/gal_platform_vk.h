@@ -4,6 +4,7 @@
 #include <vulkan/vulkan.h>
 
 #include <memory>
+#include <optional>
 #include "gal/gal_platform.h"
 
 namespace gal {
@@ -23,7 +24,12 @@ public:
   }
 
 private:
-  bool IsPhysicalDeviceSuitable(VkPhysicalDevice physical_device);
+  struct PhysicalDeviceInfo {
+    uint32_t graphics_queue_family_index;
+    uint32_t present_queue_family_index;
+  };
+
+  std::optional<PhysicalDeviceInfo> ChoosePhysicalDevice();
 
 private:
   std::unique_ptr<PlatformDetails> details_;
