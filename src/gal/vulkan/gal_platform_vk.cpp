@@ -159,15 +159,15 @@ GALPlatformImplVk::GALPlatformImplVk(window::Window* window) {
   vkGetPhysicalDeviceSurfaceCapabilitiesKHR(vk_physical_device_, vk_surface_, 
                                             &surface_capabilities);
 
-  uint32_t image_count = surface_capabilities.minImageCount + 1;
+  uint32_t requested_image_count = surface_capabilities.minImageCount + 1;
   if (surface_capabilities.maxImageCount != 0) {
-    image_count = std::min(image_count, surface_capabilities.maxImageCount);
+    requested_image_count = std::min(requested_image_count, surface_capabilities.maxImageCount);
   }
 
   VkSwapchainCreateInfoKHR swapchain_create_info{};
   swapchain_create_info.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
   swapchain_create_info.surface = vk_surface_;
-  swapchain_create_info.minImageCount = image_count;
+  swapchain_create_info.minImageCount = requested_image_count;
   swapchain_create_info.imageFormat = surface_format.format;
   swapchain_create_info.imageColorSpace = surface_format.colorSpace;
   swapchain_create_info.imageExtent = extent;
@@ -196,6 +196,15 @@ GALPlatformImplVk::GALPlatformImplVk(window::Window* window) {
     std::cerr << "Could not create VkSwapchain." << std::endl;
     throw GALPlatform::InitException();
   }
+
+  uint32_t image_count = 0;
+  vkGetSwapchainImagesKHR(vk_device_, vk_swapchain_, &image_count, nullptr);
+
+  vk_images_.resize(image_count);
+  vkGetSwapchainImagesKHR(vk_device_, vk_swapchain_, &image_count, vk_images_.data());
+
+  vk_image_format_ = surface_format.format;
+  vk_extent_ = extent;
 }
 
 GALPlatformImplVk::~GALPlatformImplVk() {

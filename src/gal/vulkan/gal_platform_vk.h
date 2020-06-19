@@ -5,6 +5,7 @@
 
 #include <memory>
 #include <optional>
+#include <vector>
 #include "gal/gal_platform.h"
 
 namespace gal {
@@ -47,7 +48,12 @@ private:
   VkDevice vk_device_;
   VkQueue vk_graphics_queue_;
   VkQueue vk_present_queue_;
+
   VkSwapchainKHR vk_swapchain_;
+  VkFormat vk_image_format_;
+  VkExtent2D vk_extent_;
+
+  std::vector<VkImage> vk_images_;
 };
 
 } // namespace
