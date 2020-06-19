@@ -3,41 +3,41 @@ project(gfx_engine)
 
 set(CMAKE_CXX_STANDARD 17)
 
-message(${CMAKE_SYSTEM_NAME})
+set(GLSL_COMPILER_PATH "D:\\VulkanSDK\\1.2.141.0\\Bin\\glslc.exe")
 
 set(PLATFORM_GFXAPI "Vulkan")
 set(PLATFORM_WINDOW "GLFW")
 
 if("${PLATFORM_GFXAPI}" STREQUAL "OpenGL")
-    set(GFXAPI_GL true)
-    add_compile_definitions(GFXAPI_GL)
+  set(GFXAPI_GL true)
+  add_compile_definitions(GFXAPI_GL)
 elseif("${PLATFORM_GFXAPI}" STREQUAL "Vulkan")
-    set(GFXAPI_VK true)
-    add_compile_definitions(GFXAPI_VK)
+  set(GFXAPI_VK true)
+  add_compile_definitions(GFXAPI_VK)
 endif()
 
 if ("${PLATFORM_WINDOW}" STREQUAL "GLFW")
-    add_compile_definitions(WINDOW_GLFW)
+  add_compile_definitions(WINDOW_GLFW)
 endif()
 
 # OpenGL
 if (GFXAPI_GL)
-    find_package(OpenGL)
-    if(OPENGL_FOUND)
-        message(STATUS "Found OpenGL")
-    else()
-        message(FATAL_ERROR "Unable to find OpenGL")
-    endif()
+  find_package(OpenGL)
+  if(OPENGL_FOUND)
+    message(STATUS "Found OpenGL")
+  else()
+    essage(FATAL_ERROR "Unable to find OpenGL")
+  endif()
 endif()
 
 # Vulkan
 if(GFXAPI_VK)
-    find_package(Vulkan)
-    if(Vulkan_FOUND)
-        message(STATUS "Found Vulkan")
-    else()
-        message(FATAL_ERROR "Unable to find Vulkan")
-    endif()
+  find_package(Vulkan)
+  if(Vulkan_FOUND)
+    message(STATUS "Found Vulkan")
+  else()
+    message(FATAL_ERROR "Unable to find Vulkan")
+  endif()
 endif()
 
 
@@ -83,4 +83,5 @@ enable_testing()
 
 set(SRC_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
+add_subdirectory(shaders)
 add_subdirectory(src)

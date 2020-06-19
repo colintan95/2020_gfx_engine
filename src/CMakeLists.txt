@@ -8,7 +8,7 @@ target_link_libraries(gfx_engine PRIVATE glfw)
 target_include_directories(gfx_engine PRIVATE "${SRC_INCLUDE_DIRS}")
 
 if(GFXAPI_VK)
-    target_link_libraries(gfx_engine PRIVATE Vulkan::Vulkan)
+  target_link_libraries(gfx_engine PRIVATE Vulkan::Vulkan)
 endif()
 
 # TODO(colintan): Don't do this

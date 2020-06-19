@@ -7,4 +7,8 @@
 #include "gal/opengl/object_impl/gal_shader_impl_gl.h"
 #endif
 
+#if defined(GFXAPI_VK)
+#include "gal/vulkan/object_impl/gal_shader_impl_vk.h"
+#endif
+
 #endif //GAL_GAL_SHADER_H_
