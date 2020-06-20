@@ -4,7 +4,7 @@
 #include <exception>
 #include <memory>
 #include <optional>
-// #include "gal/gal_command_buffer.h"
+#include "gal/gal_command_buffer.h"
 
 namespace window {
 class Window;
@@ -23,6 +23,10 @@ class PlatformDetails;
 class GALPlatformImpl {
 public:
   virtual ~GALPlatformImpl() {}
+
+  virtual void Tick() = 0;
+
+  virtual bool ExecuteComandBuffer(const GALCommandBuffer& command_buffer) = 0;
 
   virtual PlatformDetails* GetPlatformDetails() = 0;
 
@@ -52,7 +56,11 @@ public:
     return T::Create(this, args...);
   }
 
-  // void ExecuteCommandBuffer(const GALCommandBuffer& cmd_buf);
+  void Tick() { impl_->Tick(); }
+
+  bool ExecuteCommandBuffer(const GALCommandBuffer& command_buffer) {
+    return impl_->ExecuteComandBuffer(command_buffer);
+  }
 
   internal::PlatformDetails* GetPlatformDetails() {
     return impl_->GetPlatformDetails();

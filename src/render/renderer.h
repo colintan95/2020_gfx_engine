@@ -7,6 +7,7 @@
 #include <string>
 #include <unordered_map>
 #include "gal/gal_platform.h"
+#include "gal/gal_command_buffer.h"
 // #include "render/mesh.h"
 #include "window/window.h"
 
@@ -37,6 +38,8 @@ public:
 private:  
   window::Window* window_ = nullptr;
   resource::ResourceSystem* resource_system_ = nullptr;
+
+  gal::GALCommandBuffer command_buffer_;
 
   // std::unique_ptr<resource::ResourceManagerGAL> resource_manager_;
   std::unique_ptr<gal::GALPlatform> gal_platform_;

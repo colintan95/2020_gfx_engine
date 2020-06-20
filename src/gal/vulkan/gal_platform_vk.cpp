@@ -11,6 +11,7 @@
 #include <unordered_set>
 #include <utility>
 #include <vector>
+#include "gal/gal_command_buffer.h"
 #include "window/window.h"
 
 namespace gal {
@@ -241,6 +242,21 @@ GALPlatformImplVk::GALPlatformImplVk(window::Window* window) {
     throw GALPlatform::InitException();
   }
 
+  VkSemaphoreCreateInfo semaphore_create_info{};
+  semaphore_create_info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+  if (vkCreateSemaphore(vk_device_, &semaphore_create_info, nullptr,
+                        &vk_image_available_semaphore_) != VK_SUCCESS) {
+    std::cerr << "Could not create semaphore." << std::endl;
+    throw GALPlatform::InitException();
+  }
+
+  if (vkCreateSemaphore(vk_device_, &semaphore_create_info, nullptr,
+                        &vk_render_finished_semaphore_) != VK_SUCCESS) {
+    std::cerr << "Could not create semaphore." << std::endl;
+    throw GALPlatform::InitException();
+  }
+
   details_ = std::make_unique<PlatformDetails>();
   details_->vk_device = vk_device_;
   details_->vk_swapchain_extent = vk_swapchain_extent_;
@@ -251,6 +267,9 @@ GALPlatformImplVk::GALPlatformImplVk(window::Window* window) {
 
 GALPlatformImplVk::~GALPlatformImplVk() {
   details_.release();
+
+  vkDestroySemaphore(vk_device_, vk_render_finished_semaphore_, nullptr);
+  vkDestroySemaphore(vk_device_, vk_image_available_semaphore_, nullptr);
 
   vkDestroyCommandPool(vk_device_, vk_command_pool_, nullptr);
 
@@ -272,6 +291,46 @@ GALPlatformImplVk::~GALPlatformImplVk() {
   }
 
   vkDestroyInstance(vk_instance_, nullptr);
+}
+
+void GALPlatformImplVk::Tick() {
+  vkAcquireNextImageKHR(vk_device_, vk_swapchain_, UINT64_MAX, vk_image_available_semaphore_,
+                        VK_NULL_HANDLE, &current_image_index_);
+}
+
+bool GALPlatformImplVk::ExecuteComandBuffer(const GALCommandBuffer& command_buffer) {
+  VkSemaphore wait_semaphores[] = { vk_image_available_semaphore_ };
+  VkSemaphore signal_semaphores[] = { vk_render_finished_semaphore_ };
+  VkPipelineStageFlags wait_stages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+
+  VkSubmitInfo submit_info{};
+  submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+  submit_info.waitSemaphoreCount = 1;
+  submit_info.pWaitSemaphores = wait_semaphores;
+  submit_info.pWaitDstStageMask = wait_stages;
+  submit_info.commandBufferCount = 1;
+  submit_info.pCommandBuffers = 
+      &(command_buffer.GetImpl().GetCommandBuffers()[current_image_index_]);
+  submit_info.signalSemaphoreCount = 1;
+  submit_info.pSignalSemaphores = signal_semaphores;
+
+  if (vkQueueSubmit(vk_graphics_queue_, 1, &submit_info, VK_NULL_HANDLE) != VK_SUCCESS) {
+    return false;
+  }
+
+  VkSwapchainKHR swapchains[] = { vk_swapchain_ };
+
+  VkPresentInfoKHR present_info{};
+  present_info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+  present_info.waitSemaphoreCount = 1;
+  present_info.pWaitSemaphores = signal_semaphores;
+  present_info.swapchainCount = 1;
+  present_info.pSwapchains = swapchains;
+  present_info.pImageIndices = &current_image_index_;
+
+  vkQueuePresentKHR(vk_present_queue_, &present_info);
+
+  return true;
 }
 
 std::optional<GALPlatformImplVk::PhysicalDeviceInfo> GALPlatformImplVk::ChoosePhysicalDevice() {

@@ -95,24 +95,28 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
   frag_shader.Destroy();
   vert_shader.Destroy();
 
-  gal::GALCommandBuffer command_buffer;
+  
   try {
-    command_buffer = gal::GALCommandBuffer::BeginBuild(gal_platform_.get()).Create();
+    command_buffer_ = gal::GALCommandBuffer::BeginBuild(gal_platform_.get()).Create();
   } catch (gal::GALCommandBuffer::InitException& e) {
     std::cerr << e.what() << std::endl;
     throw InitException();
   }
 
-  if (!command_buffer.BeginRecording()) {
+  if (!command_buffer_.BeginRecording()) {
     std::cerr << "Command buffer could not begin recording." << std::endl;
     throw InitException();
   }
 
   gal::command::SetPipeline set_pipeline;
   set_pipeline.pipeline = pipeline;
-  command_buffer.SubmitCommand(set_pipeline);
+  command_buffer_.SubmitCommand(set_pipeline);
 
-  if (!command_buffer.EndRecording()) {
+  gal::command::DrawTriangles draw_triangles;
+  draw_triangles.num_triangles = 1;
+  command_buffer_.SubmitCommand(draw_triangles);
+
+  if (!command_buffer_.EndRecording()) {
     std::cerr << "Command buffer could not end recording." << std::endl;
     throw InitException();
   }
@@ -253,6 +257,8 @@ Renderer::~Renderer() {
 }
 
 void Renderer::Tick() {
+  gal_platform_->Tick();
+  gal_platform_->ExecuteCommandBuffer(command_buffer_);
   // gal_platform_->ExecuteCommandBuffer(command_buffer_);
 }
 

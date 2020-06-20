@@ -24,6 +24,10 @@ public:
   GALPlatformImplVk(window::Window* window);
   ~GALPlatformImplVk();
 
+  void Tick() final;
+
+  bool ExecuteComandBuffer(const GALCommandBuffer& command_buffer) final;
+
   PlatformDetails* GetPlatformDetails() final {
     return details_.get();
   }
@@ -61,6 +65,11 @@ private:
 
   std::vector<VkImage> vk_swapchain_images_;
   std::vector<VkImageView> vk_swapchain_image_views_;
+
+  VkSemaphore vk_image_available_semaphore_;
+  VkSemaphore vk_render_finished_semaphore_;
+
+  uint32_t current_image_index_ = 0;;
 };
 
 } // namespace

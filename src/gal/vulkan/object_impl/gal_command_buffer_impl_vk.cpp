@@ -44,9 +44,9 @@ void GALCommandBufferImplVk::Destroy() {
 
 void GALCommandBufferImplVk::SubmitCommand(const CommandVariant& command_variant) {
   if (std::holds_alternative<command::SetPipeline>(command_variant)) {
-    for (size_t i = 0; i < vk_command_buffers_.size(); ++i) {
-      const command::SetPipeline& command = std::get<command::SetPipeline>(command_variant);
+    const command::SetPipeline& command = std::get<command::SetPipeline>(command_variant);
 
+    for (size_t i = 0; i < vk_command_buffers_.size(); ++i) {
       VkClearValue clear_color = {0.f, 0.f, 0.f, 1.f};
 
       VkRenderPassBeginInfo render_pass_begin_info{};
@@ -64,6 +64,12 @@ void GALCommandBufferImplVk::SubmitCommand(const CommandVariant& command_variant
 
       vkCmdBindPipeline(vk_command_buffers_[i], VK_PIPELINE_BIND_POINT_GRAPHICS, 
                         command.pipeline.GetImpl().GetPipeline());
+    }
+  } else if (std::holds_alternative<command::DrawTriangles>(command_variant)) {
+    const command::DrawTriangles& command = std::get<command::DrawTriangles>(command_variant);
+
+    for (VkCommandBuffer command_buffer : vk_command_buffers_) {
+      vkCmdDraw(command_buffer, 3, command.num_triangles, 0, 0);
     }
   }
 }

@@ -35,6 +35,8 @@ public:
   bool BeginRecording() final;
   bool EndRecording() final;
 
+  const std::vector<VkCommandBuffer>& GetCommandBuffers() const { return vk_command_buffers_; }
+
 private:
   void CreateFromBuilder(Builder& builder);
 

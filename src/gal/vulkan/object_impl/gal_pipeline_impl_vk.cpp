@@ -155,12 +155,22 @@ void GALPipelineImplVk::CreateFromBuilder(GALPipelineImplVk::Builder& builder) {
   subpass.colorAttachmentCount = 1;
   subpass.pColorAttachments = &color_attachment_ref;
 
+  VkSubpassDependency subpass_dependency{};
+  subpass_dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+  subpass_dependency.dstSubpass = 0;
+  subpass_dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+  subpass_dependency.srcAccessMask = 0;
+  subpass_dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+  subpass_dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
   VkRenderPassCreateInfo render_pass_create_info{};
   render_pass_create_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
   render_pass_create_info.attachmentCount = 1;
   render_pass_create_info.pAttachments = &color_attachment;
   render_pass_create_info.subpassCount = 1;
   render_pass_create_info.pSubpasses = &subpass;
+  render_pass_create_info.dependencyCount = 1;
+  render_pass_create_info.pDependencies = &subpass_dependency;
 
   if (vkCreateRenderPass(vk_device_, &render_pass_create_info, nullptr, 
                          &vk_render_pass_) != VK_SUCCESS) {
