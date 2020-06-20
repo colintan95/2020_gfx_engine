@@ -15,7 +15,7 @@ public:
 
   virtual void Destroy() = 0;
 
-  virtual void SubmitCommand(const CommandVariant& command) = 0;
+  virtual void SubmitCommand(const CommandVariant& command_variant) = 0;
 
   virtual bool BeginRecording() = 0;
   virtual bool EndRecording() = 0;
@@ -41,7 +41,7 @@ public:
   }
 
   template<typename T>
-  void SubmitCommand(const T& command) { impl_.SubmitCommand(command); }
+  void SubmitCommand(const T& command_variant) { impl_.SubmitCommand(command_variant); }
 
   bool BeginRecording() { return impl_.BeginRecording(); }
   bool EndRecording() { return impl_.EndRecording(); }

@@ -16,6 +16,7 @@ GALCommandBufferImplVk::Builder::ReturnType GALCommandBufferImplVk::Builder::Cre
 }
 
 void GALCommandBufferImplVk::CreateFromBuilder(GALCommandBufferImplVk::Builder& builder) {
+  gal_platform_ = builder.gal_platform_;
   vk_device_ = builder.gal_platform_->GetPlatformDetails()->vk_device;
 
   uint32_t framebuffer_count = 
@@ -41,17 +42,54 @@ void GALCommandBufferImplVk::Destroy() {
 
 }
 
-void GALCommandBufferImplVk::SubmitCommand(const CommandVariant& command) {
-  if (std::holds_alternative<command::SetPipeline>(command)) {
+void GALCommandBufferImplVk::SubmitCommand(const CommandVariant& command_variant) {
+  if (std::holds_alternative<command::SetPipeline>(command_variant)) {
+    for (size_t i = 0; i < vk_command_buffers_.size(); ++i) {
+      const command::SetPipeline& command = std::get<command::SetPipeline>(command_variant);
 
+      VkClearValue clear_color = {0.f, 0.f, 0.f, 1.f};
+
+      VkRenderPassBeginInfo render_pass_begin_info{};
+      render_pass_begin_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+      render_pass_begin_info.renderPass = command.pipeline.GetImpl().GetRenderPass();
+      render_pass_begin_info.framebuffer = command.pipeline.GetImpl().GetFramebuffers()[i];
+      render_pass_begin_info.renderArea.offset = {0, 0};
+      render_pass_begin_info.renderArea.extent = 
+          gal_platform_->GetPlatformDetails()->vk_swapchain_extent;
+      render_pass_begin_info.clearValueCount = 1;
+      render_pass_begin_info.pClearValues = &clear_color;
+
+      vkCmdBeginRenderPass(vk_command_buffers_[i], &render_pass_begin_info, 
+                           VK_SUBPASS_CONTENTS_INLINE);
+
+      vkCmdBindPipeline(vk_command_buffers_[i], VK_PIPELINE_BIND_POINT_GRAPHICS, 
+                        command.pipeline.GetImpl().GetPipeline());
+    }
   }
 }
 
 bool GALCommandBufferImplVk::BeginRecording() {
+  for (VkCommandBuffer command_buffer : vk_command_buffers_) {
+    VkCommandBufferBeginInfo begin_info{};
+    begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+
+    if (vkBeginCommandBuffer(command_buffer, &begin_info) != VK_SUCCESS) {
+      std::cerr << "Could not begin command buffer." << std::endl;
+      return false;
+    }
+  }
   return true;
 }
 
 bool GALCommandBufferImplVk::EndRecording() {
+  for (VkCommandBuffer command_buffer : vk_command_buffers_) {
+    vkCmdEndRenderPass(command_buffer);
+
+    if (vkEndCommandBuffer(command_buffer) != VK_SUCCESS) {
+      std::cerr << "Could not end command buffer." << std::endl;
+      return false;
+    }
+  }
   return true;
 }
 

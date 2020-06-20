@@ -30,7 +30,7 @@ public:
 public:
   void Destroy() final;
 
-  void SubmitCommand(const CommandVariant& command) final;
+  void SubmitCommand(const CommandVariant& command_variant) final;
 
   bool BeginRecording() final;
   bool EndRecording() final;
@@ -39,6 +39,8 @@ private:
   void CreateFromBuilder(Builder& builder);
 
 private:
+  GALPlatform* gal_platform_;
+
   VkDevice vk_device_;
   std::vector<VkCommandBuffer> vk_command_buffers_;
 };

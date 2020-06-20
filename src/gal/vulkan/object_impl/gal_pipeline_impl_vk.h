@@ -47,6 +47,11 @@ private:
 public:
   void Destroy() final;
 
+  VkPipeline GetPipeline() const { return vk_pipeline_; }
+
+  VkRenderPass GetRenderPass() const { return vk_render_pass_; }
+  const std::vector<VkFramebuffer>& GetFramebuffers() const { return vk_framebuffers_; }
+
 private:
   VkPipelineLayout vk_pipeline_layout_;
   VkRenderPass vk_render_pass_;
