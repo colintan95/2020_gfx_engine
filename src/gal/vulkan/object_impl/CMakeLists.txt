@@ -1,5 +1,7 @@
 target_sources(gfx_engine
   PRIVATE
+    "gal_command_buffer_impl_vk.cpp"
+    "gal_command_buffer_impl_vk.h"
     "gal_pipeline_impl_vk.cpp"
     "gal_pipeline_impl_vk.h"
     "gal_shader_impl_vk.cpp"
