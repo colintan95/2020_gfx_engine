@@ -31,13 +31,8 @@ GALPipelineImplVk::Builder&
 GALPipelineImplVk::Builder::ReturnType GALPipelineImplVk::Builder::Create() {
   ReturnType res;
   res.GetImpl().CreateFromBuilder(*this);
-
+  res.SetValid(true);
   return res;
-}
-
-bool GALPipelineImplVk::Create(GALPlatform* gal_platform, const GALShader& vert_shader, 
-                               const GALShader& frag_shader) {
-  return true;
 }
 
 void GALPipelineImplVk::Destroy() {

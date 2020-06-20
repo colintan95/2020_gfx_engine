@@ -46,12 +46,7 @@ private:
   void CreateFromBuilder(Builder& builder);
 
 public:
-  bool Create(GALPlatform* gal_platform, const GALShader& vert_shader, 
-              const GALShader& frag_shader) final;
   void Destroy() final;
-
-private:
-
 };
 
 using GALPipeline = GALPipelineBase<GALPipelineImplVk, GALPipelineImplVk::Builder>;

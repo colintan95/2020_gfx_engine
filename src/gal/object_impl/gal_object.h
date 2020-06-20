@@ -8,7 +8,6 @@ class GALObjectBase {
 public:
   bool IsValid() { return valid_; }
 
-protected:
   void SetValid(bool valid) { valid_ = valid; }
 
 private:

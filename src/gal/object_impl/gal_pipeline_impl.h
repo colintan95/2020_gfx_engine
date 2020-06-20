@@ -16,8 +16,6 @@ class IGALPipelineImpl {
 public:
   virtual ~IGALPipelineImpl() {}
   
-  virtual bool Create(GALPlatform* gal_platform, const GALShader& vert_shader, 
-                      const GALShader& frag_shader) = 0;
   virtual void Destroy() = 0;
 };
 
@@ -57,21 +55,8 @@ public:
   };
 
 public:
-  bool Create(GALPlatform* gal_platform, const GALShader& vert_shader, 
-              const GALShader& frag_shader) {
-    if (impl_.Create(gal_platform, vert_shader, frag_shader)) {
-      SetValid(true);
-      return true;
-    } else {
-      SetValid(false);
-      return false;
-    }
-  }
-
   void Destroy() {
-    if (IsValid()) {
-      impl_.Destroy();
-    }
+    if (IsValid()) { impl_.Destroy(); }
   }
 
   static BuilderType BeginBuild(GALPlatform* gal_platform) {
