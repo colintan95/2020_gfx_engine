@@ -55,12 +55,12 @@ public:
   };
 
 public:
-  void Destroy() {
-    if (IsValid()) { impl_.Destroy(); }
-  }
-
   static BuilderType BeginBuild(GALPlatform* gal_platform) {
     return BuilderType(gal_platform);
+  }
+
+  void Destroy() {
+    if (IsValid()) { impl_.Destroy(); }
   }
 
   const ImplType& GetImpl() const { return impl_; }

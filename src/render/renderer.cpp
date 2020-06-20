@@ -16,6 +16,7 @@
 #include <utility>
 #include <vector>
 // #include "gal/gal_buffer.h"
+#include "gal/gal_command_buffer.h"
 #include "gal/gal_pipeline.h"
 #include "gal/gal_shader.h"
 // #include "gal/gal_texture_sampler.h"
@@ -93,6 +94,15 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
 
   frag_shader.Destroy();
   vert_shader.Destroy();
+
+  gal::GALCommandBuffer command_buffer;
+  try {
+    command_buffer = gal::GALCommandBuffer::BeginBuild(gal_platform_.get())
+        .Create();
+  } catch (gal::GALCommandBuffer::InitException& e) {
+    std::cerr << e.what() << std::endl;
+    throw InitException();
+  }
 
   pipeline.Destroy();
 

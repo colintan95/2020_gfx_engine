@@ -39,6 +39,10 @@ public:
   };
 
 public:
+  static BuilderType BeginBuild(GALPlatform* gal_platform) {
+    return BuilderType(gal_platform);
+  }
+
   void Destroy() {
     if (IsValid()) { impl_.Destroy(); }
   }
