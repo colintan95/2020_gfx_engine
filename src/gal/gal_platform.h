@@ -24,7 +24,8 @@ class GALPlatformImpl {
 public:
   virtual ~GALPlatformImpl() {}
 
-  virtual void Tick() = 0;
+  virtual void StartTick() = 0;
+  virtual void EndTick() = 0;
 
   virtual bool ExecuteComandBuffer(const GALCommandBuffer& command_buffer) = 0;
 
@@ -56,7 +57,8 @@ public:
     return T::Create(this, args...);
   }
 
-  void Tick() { impl_->Tick(); }
+  void StartTick() { impl_->StartTick(); }
+  void EndTick() { impl_->EndTick(); }
 
   bool ExecuteCommandBuffer(const GALCommandBuffer& command_buffer) {
     return impl_->ExecuteComandBuffer(command_buffer);

@@ -19,12 +19,15 @@ struct PlatformDetails {
   VkCommandPool vk_command_pool;
 };
 
+const int kMaxFramesInFlight = 2;
+
 class GALPlatformImplVk : public GALPlatformImpl {
 public:
   GALPlatformImplVk(window::Window* window);
   ~GALPlatformImplVk();
 
-  void Tick() final;
+  void StartTick() final;
+  void EndTick() final;
 
   bool ExecuteComandBuffer(const GALCommandBuffer& command_buffer) final;
 
@@ -66,10 +69,13 @@ private:
   std::vector<VkImage> vk_swapchain_images_;
   std::vector<VkImageView> vk_swapchain_image_views_;
 
-  VkSemaphore vk_image_available_semaphore_;
-  VkSemaphore vk_render_finished_semaphore_;
+  std::vector<VkSemaphore> vk_image_available_semaphores_;
+  std::vector<VkSemaphore> vk_render_finished_semaphores_;
+  std::vector<VkFence> vk_in_flight_fences_;
+  std::vector<VkFence> vk_images_in_flight_;
 
-  uint32_t current_image_index_ = 0;;
+  uint32_t current_image_index_ = 0;
+  uint32_t current_frame_ = 0;
 };
 
 } // namespace

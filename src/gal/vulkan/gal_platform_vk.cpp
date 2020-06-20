@@ -242,19 +242,36 @@ GALPlatformImplVk::GALPlatformImplVk(window::Window* window) {
     throw GALPlatform::InitException();
   }
 
+  vk_image_available_semaphores_.resize(kMaxFramesInFlight);
+  vk_render_finished_semaphores_.resize(kMaxFramesInFlight);
+  vk_in_flight_fences_.resize(kMaxFramesInFlight);
+  vk_images_in_flight_.resize(vk_swapchain_images_.size(), VK_NULL_HANDLE);
+
   VkSemaphoreCreateInfo semaphore_create_info{};
   semaphore_create_info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
-  if (vkCreateSemaphore(vk_device_, &semaphore_create_info, nullptr,
-                        &vk_image_available_semaphore_) != VK_SUCCESS) {
-    std::cerr << "Could not create semaphore." << std::endl;
-    throw GALPlatform::InitException();
-  }
+  VkFenceCreateInfo fence_create_info{};
+  fence_create_info.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+  fence_create_info.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-  if (vkCreateSemaphore(vk_device_, &semaphore_create_info, nullptr,
-                        &vk_render_finished_semaphore_) != VK_SUCCESS) {
-    std::cerr << "Could not create semaphore." << std::endl;
-    throw GALPlatform::InitException();
+  for (size_t i = 0; i < kMaxFramesInFlight; ++i) {
+    if (vkCreateSemaphore(vk_device_, &semaphore_create_info, nullptr,
+                          &vk_image_available_semaphores_[i]) != VK_SUCCESS) {
+      std::cerr << "Could not create semaphore." << std::endl;
+      throw GALPlatform::InitException();
+    }
+
+    if (vkCreateSemaphore(vk_device_, &semaphore_create_info, nullptr,
+                          &vk_render_finished_semaphores_[i]) != VK_SUCCESS) {
+      std::cerr << "Could not create semaphore." << std::endl;
+      throw GALPlatform::InitException();
+    }
+
+    if (vkCreateFence(vk_device_, &fence_create_info, nullptr, &vk_in_flight_fences_[i]) 
+            != VK_SUCCESS) {
+      std::cerr << "Could not create fence." << std::endl;
+      throw GALPlatform::InitException();
+    }
   }
 
   details_ = std::make_unique<PlatformDetails>();
@@ -266,10 +283,16 @@ GALPlatformImplVk::GALPlatformImplVk(window::Window* window) {
 }
 
 GALPlatformImplVk::~GALPlatformImplVk() {
+  // TODO(colintan): Should this be here?
+  vkDeviceWaitIdle(vk_device_);
+
   details_.release();
 
-  vkDestroySemaphore(vk_device_, vk_render_finished_semaphore_, nullptr);
-  vkDestroySemaphore(vk_device_, vk_image_available_semaphore_, nullptr);
+  for (size_t i = 0; i < kMaxFramesInFlight; ++i) {
+    vkDestroyFence(vk_device_, vk_in_flight_fences_[i], nullptr);
+    vkDestroySemaphore(vk_device_, vk_render_finished_semaphores_[i], nullptr);
+    vkDestroySemaphore(vk_device_, vk_image_available_semaphores_[i], nullptr);
+  }
 
   vkDestroyCommandPool(vk_device_, vk_command_pool_, nullptr);
 
@@ -293,14 +316,28 @@ GALPlatformImplVk::~GALPlatformImplVk() {
   vkDestroyInstance(vk_instance_, nullptr);
 }
 
-void GALPlatformImplVk::Tick() {
-  vkAcquireNextImageKHR(vk_device_, vk_swapchain_, UINT64_MAX, vk_image_available_semaphore_,
-                        VK_NULL_HANDLE, &current_image_index_);
+void GALPlatformImplVk::StartTick() {
+  vkWaitForFences(vk_device_, 1, &vk_in_flight_fences_[current_frame_], VK_TRUE, UINT64_MAX);
+
+  vkAcquireNextImageKHR(vk_device_, vk_swapchain_, UINT64_MAX, 
+                        vk_image_available_semaphores_[current_frame_], VK_NULL_HANDLE, 
+                        &current_image_index_);
+
+  if (vk_images_in_flight_[current_image_index_] != VK_NULL_HANDLE) {
+    vkWaitForFences(vk_device_, 1, &vk_images_in_flight_[current_image_index_], VK_TRUE, 
+                    UINT64_MAX);
+  }
+
+  vk_images_in_flight_[current_image_index_] = vk_in_flight_fences_[current_frame_];
+}
+
+void GALPlatformImplVk::EndTick() {
+  current_frame_ = (current_frame_ + 1) % kMaxFramesInFlight;
 }
 
 bool GALPlatformImplVk::ExecuteComandBuffer(const GALCommandBuffer& command_buffer) {
-  VkSemaphore wait_semaphores[] = { vk_image_available_semaphore_ };
-  VkSemaphore signal_semaphores[] = { vk_render_finished_semaphore_ };
+  VkSemaphore wait_semaphores[] = { vk_image_available_semaphores_[current_frame_] };
+  VkSemaphore signal_semaphores[] = { vk_render_finished_semaphores_[current_frame_] };
   VkPipelineStageFlags wait_stages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 
   VkSubmitInfo submit_info{};
@@ -314,7 +351,10 @@ bool GALPlatformImplVk::ExecuteComandBuffer(const GALCommandBuffer& command_buff
   submit_info.signalSemaphoreCount = 1;
   submit_info.pSignalSemaphores = signal_semaphores;
 
-  if (vkQueueSubmit(vk_graphics_queue_, 1, &submit_info, VK_NULL_HANDLE) != VK_SUCCESS) {
+  vkResetFences(vk_device_, 1, &vk_in_flight_fences_[current_frame_]);
+
+  if (vkQueueSubmit(vk_graphics_queue_, 1, &submit_info, vk_in_flight_fences_[current_frame_]) 
+          != VK_SUCCESS) {
     return false;
   }
 

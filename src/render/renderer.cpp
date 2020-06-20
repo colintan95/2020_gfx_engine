@@ -80,9 +80,9 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
     throw InitException();
   }
 
-  gal::GALPipeline pipeline;
+  
   try {
-    pipeline = gal::GALPipeline::BeginBuild(gal_platform_.get())
+    pipeline_ = gal::GALPipeline::BeginBuild(gal_platform_.get())
         .SetShader(gal::ShaderType::Vertex, vert_shader)
         .SetShader(gal::ShaderType::Fragment, frag_shader)
         .SetViewport(0, 0, window_->GetWidth(), window_->GetHeight())
@@ -94,7 +94,6 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
 
   frag_shader.Destroy();
   vert_shader.Destroy();
-
   
   try {
     command_buffer_ = gal::GALCommandBuffer::BeginBuild(gal_platform_.get()).Create();
@@ -109,7 +108,7 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
   }
 
   gal::command::SetPipeline set_pipeline;
-  set_pipeline.pipeline = pipeline;
+  set_pipeline.pipeline = pipeline_;
   command_buffer_.SubmitCommand(set_pipeline);
 
   gal::command::DrawTriangles draw_triangles;
@@ -120,8 +119,6 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
     std::cerr << "Command buffer could not end recording." << std::endl;
     throw InitException();
   }
-
-  pipeline.Destroy();
 
   // resource_manager_ = std::make_unique<resource::ResourceManagerGAL>(gal_platform_.get());
 
@@ -249,6 +246,10 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
 }
 
 Renderer::~Renderer() {
+  command_buffer_.Destroy();
+
+  pipeline_.Destroy();
+
   // resource_manager_.release();
   gal_platform_.release();
 
@@ -257,8 +258,11 @@ Renderer::~Renderer() {
 }
 
 void Renderer::Tick() {
-  gal_platform_->Tick();
+  gal_platform_->StartTick();
+
   gal_platform_->ExecuteCommandBuffer(command_buffer_);
+
+  gal_platform_->EndTick();
   // gal_platform_->ExecuteCommandBuffer(command_buffer_);
 }
 

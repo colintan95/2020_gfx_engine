@@ -39,6 +39,7 @@ private:
   window::Window* window_ = nullptr;
   resource::ResourceSystem* resource_system_ = nullptr;
 
+  gal::GALPipeline pipeline_;
   gal::GALCommandBuffer command_buffer_;
 
   // std::unique_ptr<resource::ResourceManagerGAL> resource_manager_;
