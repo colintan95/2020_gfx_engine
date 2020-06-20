@@ -15,6 +15,7 @@ struct PlatformDetails {
   VkDevice vk_device;
   VkExtent2D vk_swapchain_extent;
   VkFormat vk_swapchain_image_format;
+  std::vector<VkImageView> vk_swapchain_image_views;
 };
 
 class GALPlatformImplVk : public GALPlatformImpl {

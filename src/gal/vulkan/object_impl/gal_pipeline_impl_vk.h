@@ -3,6 +3,7 @@
 
 #include <vulkan/vulkan.h>
 
+#include <vector>
 #include "gal/gal_shader.h"
 #include "gal/object_impl/gal_pipeline_impl.h"
 
@@ -50,6 +51,8 @@ private:
   VkPipelineLayout vk_pipeline_layout_;
   VkRenderPass vk_render_pass_;
   VkPipeline vk_pipeline_;
+
+  std::vector<VkFramebuffer> vk_framebuffers_;
   
   VkDevice vk_device_;
 };

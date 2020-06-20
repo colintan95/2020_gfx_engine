@@ -235,6 +235,7 @@ GALPlatformImplVk::GALPlatformImplVk(window::Window* window) {
   details_->vk_device = vk_device_;
   details_->vk_swapchain_extent = vk_swapchain_extent_;
   details_->vk_swapchain_image_format = vk_swapchain_image_format_;
+  details_->vk_swapchain_image_views = vk_swapchain_image_views_;
 }
 
 GALPlatformImplVk::~GALPlatformImplVk() {

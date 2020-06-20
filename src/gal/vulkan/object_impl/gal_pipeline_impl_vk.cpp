@@ -39,6 +39,10 @@ GALPipelineImplVk::Builder::ReturnType GALPipelineImplVk::Builder::Create() {
 }
 
 void GALPipelineImplVk::Destroy() {
+  for (VkFramebuffer framebuffer : vk_framebuffers_) {
+    vkDestroyFramebuffer(vk_device_, framebuffer, nullptr);
+  }
+
   vkDestroyPipeline(vk_device_, vk_pipeline_, nullptr);
   vkDestroyRenderPass(vk_device_, vk_render_pass_, nullptr);
   vkDestroyPipelineLayout(vk_device_, vk_pipeline_layout_, nullptr);
@@ -84,9 +88,11 @@ void GALPipelineImplVk::CreateFromBuilder(GALPipelineImplVk::Builder& builder) {
   viewport.minDepth = 0.f;
   viewport.maxDepth = 1.f;
 
+  VkExtent2D& swapchain_extent = builder.gal_platform_->GetPlatformDetails()->vk_swapchain_extent;
+
   VkRect2D scissor{};
   scissor.offset = {0, 0};
-  scissor.extent = builder.gal_platform_->GetPlatformDetails()->vk_swapchain_extent;
+  scissor.extent = swapchain_extent;
 
   VkPipelineViewportStateCreateInfo viewport_state{};
   viewport_state.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -118,6 +124,8 @@ void GALPipelineImplVk::CreateFromBuilder(GALPipelineImplVk::Builder& builder) {
   VkPipelineColorBlendStateCreateInfo color_blend_state{};
   color_blend_state.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
   color_blend_state.logicOpEnable = VK_FALSE;
+  color_blend_state.attachmentCount = 1;
+  color_blend_state.pAttachments = &color_blend_attachment;
 
   VkPipelineLayoutCreateInfo  pipeline_layout_create_info{};
   pipeline_layout_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -180,6 +188,29 @@ void GALPipelineImplVk::CreateFromBuilder(GALPipelineImplVk::Builder& builder) {
                                 &vk_pipeline_) != VK_SUCCESS) {
     std::cerr << "Coult not create VkPipeline." << std::endl;
     throw Builder::ReturnType::InitException();
+  }
+
+  std::vector<VkImageView>& swapchain_image_views = 
+      builder.gal_platform_->GetPlatformDetails()->vk_swapchain_image_views;
+
+  vk_framebuffers_.resize(swapchain_image_views.size());
+  for (size_t i = 0; i < swapchain_image_views.size(); ++i) {
+    VkImageView attachments[] = { swapchain_image_views[i] };
+
+    VkFramebufferCreateInfo framebuffer_create_info{};
+    framebuffer_create_info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+    framebuffer_create_info.renderPass = vk_render_pass_;
+    framebuffer_create_info.attachmentCount = 1;
+    framebuffer_create_info.pAttachments = attachments;
+    framebuffer_create_info.width = swapchain_extent.width;
+    framebuffer_create_info.height = swapchain_extent.height;
+    framebuffer_create_info.layers = 1;
+
+    if (vkCreateFramebuffer(vk_device_, &framebuffer_create_info, nullptr, 
+                            &vk_framebuffers_[i]) != VK_SUCCESS) {
+      std::cerr << "Coult not create VkFramebuffer." << std::endl;
+      throw Builder::ReturnType::InitException();
+    }
   }
 }
 
