@@ -35,10 +35,8 @@ public:
 
   private:
     GALPlatform* gal_platform_;
-
     GALShader vert_shader_;
     GALShader frag_shader_;
-
     Viewport viewport_;
   };
 
@@ -47,6 +45,13 @@ private:
 
 public:
   void Destroy() final;
+
+private:
+  VkPipelineLayout vk_pipeline_layout_;
+  VkRenderPass vk_render_pass_;
+  VkPipeline vk_pipeline_;
+  
+  VkDevice vk_device_;
 };
 
 using GALPipeline = GALPipelineBase<GALPipelineImplVk, GALPipelineImplVk::Builder>;

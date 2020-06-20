@@ -27,33 +27,6 @@
 
 namespace render {
 
-namespace {
-
-const char kVertShaderSrc[] =
-    "#version 430 core\n"
-    "layout(location = 0) in vec3 vert_pos;\n"
-    "layout(location = 2) in vec2 vert_texcoord;\n"
-    "out vec2 frag_texcoord;\n"
-    "layout(std140, binding = 0) uniform Matrices {\n"
-    "  mat4 model_mat;\n"
-    "  mat4 view_mat;\n"
-    "  mat4 proj_mat;\n"
-    "};\n"
-    "void main() {\n"
-    "  frag_texcoord = vert_texcoord;\n"
-    "  gl_Position = proj_mat * view_mat * model_mat * vec4(vert_pos, 1.0);\n"
-    "}";
-const char kFragShaderSrc[] =
-    "#version 430 core\n"
-    "in vec2 frag_texcoord;\n"
-    "out vec4 out_color;\n"
-    "layout(location = 1) uniform sampler2D tex_sampler;\n"
-    "void main() {\n"
-    "  out_color = texture(tex_sampler, frag_texcoord);\n"
-    "}";
-
-} // namespace
-
 Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_system) {
   window_ = window;
   resource_system_ = resource_system;
@@ -111,6 +84,7 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
     pipeline = gal::GALPipeline::BeginBuild(gal_platform_.get())
         .SetShader(gal::ShaderType::Vertex, vert_shader)
         .SetShader(gal::ShaderType::Fragment, frag_shader)
+        .SetViewport(0, 0, window_->GetWidth(), window_->GetHeight())
         .Create();
   } catch (gal::GALPipeline::InitException& e) {
     std::cerr << e.what() << std::endl;
@@ -119,6 +93,8 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
 
   frag_shader.Destroy();
   vert_shader.Destroy();
+
+  pipeline.Destroy();
 
   // resource_manager_ = std::make_unique<resource::ResourceManagerGAL>(gal_platform_.get());
 

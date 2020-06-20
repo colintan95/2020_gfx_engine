@@ -14,6 +14,7 @@ namespace internal {
 struct PlatformDetails {
   VkDevice vk_device;
   VkExtent2D vk_swapchain_extent;
+  VkFormat vk_swapchain_image_format;
 };
 
 class GALPlatformImplVk : public GALPlatformImpl {
