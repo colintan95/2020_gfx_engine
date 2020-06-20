@@ -231,15 +231,28 @@ GALPlatformImplVk::GALPlatformImplVk(window::Window* window) {
     }
   }
 
+  VkCommandPoolCreateInfo command_pool_create_info{};
+  command_pool_create_info.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+  command_pool_create_info.queueFamilyIndex = graphics_queue_family_index;
+
+  if (vkCreateCommandPool(vk_device_, &command_pool_create_info, nullptr,
+                          &vk_command_pool_) != VK_SUCCESS) {
+    std::cerr << "Could not create command pool." << std::endl;
+    throw GALPlatform::InitException();
+  }
+
   details_ = std::make_unique<PlatformDetails>();
   details_->vk_device = vk_device_;
   details_->vk_swapchain_extent = vk_swapchain_extent_;
   details_->vk_swapchain_image_format = vk_swapchain_image_format_;
   details_->vk_swapchain_image_views = vk_swapchain_image_views_;
+  details_->vk_command_pool = vk_command_pool_;
 }
 
 GALPlatformImplVk::~GALPlatformImplVk() {
   details_.release();
+
+  vkDestroyCommandPool(vk_device_, vk_command_pool_, nullptr);
 
   for (VkImageView image_view : vk_swapchain_image_views_) {
     vkDestroyImageView(vk_device_, image_view, nullptr);

@@ -15,7 +15,10 @@ public:
 
   virtual void Destroy() = 0;
 
-  virtual void AddCommand(const command::CommandUnion& command) = 0;
+  virtual void SubmitCommand(const CommandVariant& command) = 0;
+
+  virtual bool BeginRecording() = 0;
+  virtual bool EndRecording() = 0;
 };
 
 template<typename ImplType, typename BuilderType>
@@ -28,16 +31,6 @@ public:
     }
   };
 
-  struct Entry {
-    command::CommandUnion cmd;
-
-    template<typename T>
-    bool IsType() const { return std::holds_alternative<T>(cmd); }
-
-    template<typename T>
-    const T& AsType() const { return std::get<T>(cmd); }
-  };
-
 public:
   static BuilderType BeginBuild(GALPlatform* gal_platform) {
     return BuilderType(gal_platform);
@@ -48,7 +41,10 @@ public:
   }
 
   template<typename T>
-  void AddCommand(const T& command) { impl_.AddCommand(command); }
+  void SubmitCommand(const T& command) { impl_.SubmitCommand(command); }
+
+  bool BeginRecording() { return impl_.BeginRecording(); }
+  bool EndRecording() { return impl_.EndRecording(); }
 
   const ImplType& GetImpl() const { return impl_; }
   ImplType& GetImpl() { return impl_; }

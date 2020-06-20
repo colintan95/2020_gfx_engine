@@ -97,10 +97,23 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
 
   gal::GALCommandBuffer command_buffer;
   try {
-    command_buffer = gal::GALCommandBuffer::BeginBuild(gal_platform_.get())
-        .Create();
+    command_buffer = gal::GALCommandBuffer::BeginBuild(gal_platform_.get()).Create();
   } catch (gal::GALCommandBuffer::InitException& e) {
     std::cerr << e.what() << std::endl;
+    throw InitException();
+  }
+
+  if (!command_buffer.BeginRecording()) {
+    std::cerr << "Command buffer could not begin recording." << std::endl;
+    throw InitException();
+  }
+
+  gal::command::SetPipeline set_pipeline;
+  set_pipeline.pipeline = pipeline;
+  command_buffer.SubmitCommand(set_pipeline);
+
+  if (!command_buffer.EndRecording()) {
+    std::cerr << "Command buffer could not end recording." << std::endl;
     throw InitException();
   }
 

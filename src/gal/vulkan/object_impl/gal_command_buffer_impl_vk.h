@@ -3,6 +3,7 @@
 
 #include <vulkan/vulkan.h>
 
+#include <vector>
 #include "gal/object_impl/gal_command_buffer_impl.h"
 
 namespace gal {
@@ -29,10 +30,17 @@ public:
 public:
   void Destroy() final;
 
-  void AddCommand(const command::CommandUnion& command) final;
+  void SubmitCommand(const CommandVariant& command) final;
+
+  bool BeginRecording() final;
+  bool EndRecording() final;
 
 private:
   void CreateFromBuilder(Builder& builder);
+
+private:
+  VkDevice vk_device_;
+  std::vector<VkCommandBuffer> vk_command_buffers_;
 };
 
 using GALCommandBuffer = 

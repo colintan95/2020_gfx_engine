@@ -52,17 +52,18 @@ struct SetPipeline {
 struct DrawTriangles {
   uint32_t num_triangles;
 };
+    
+} // namespace
 
-using CommandUnion = 
+using CommandVariant = 
     std::variant<
-        SetViewport,
-        ClearScreen,
-        SetPipeline,
+        command::SetViewport,
+        command::ClearScreen,
+        command::SetPipeline,
         // SetTextureSampler,
         // SetUniformBuffer,
         // SetVertexBuffer,
-        DrawTriangles>;
-} // namespace
+        command::DrawTriangles>;
 
 } // namespace
 
