@@ -2,18 +2,59 @@
 
 namespace gal {
 
+GALPipelineImplVk::Builder& 
+    GALPipelineImplVk::Builder::SetShader(ShaderType type, const GALShader& shader) {
+  switch (type) {
+  case ShaderType::Vertex:
+    vert_shader_ = shader;
+    break;
+  case ShaderType::Fragment:
+    frag_shader_ = shader;
+    break;
+  default:
+    throw ReturnType::InitException();
+  }
+
+  return *this;
+}
+
+GALPipelineImplVk::Builder& 
+    GALPipelineImplVk::Builder::SetViewport(float x, float y, float width, float height) {
+  viewport_.x = x;
+  viewport_.y = y;
+  viewport_.width = width;
+  viewport_.height = height;
+
+  return *this;
+}
+
+GALPipelineImplVk::Builder::ReturnType GALPipelineImplVk::Builder::Create() {
+  ReturnType res;
+  res.GetImpl().CreateFromBuilder(*this);
+
+  return res;
+}
+
 bool GALPipelineImplVk::Create(GALPlatform* gal_platform, const GALShader& vert_shader, 
                                const GALShader& frag_shader) {
+  return true;
+}
+
+void GALPipelineImplVk::Destroy() {
+  
+}
+
+void GALPipelineImplVk::CreateFromBuilder(GALPipelineImplVk::Builder& builder) {
   VkPipelineShaderStageCreateInfo vert_shader_stage_create_info{};
   vert_shader_stage_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
   vert_shader_stage_create_info.stage = VK_SHADER_STAGE_VERTEX_BIT;
-  vert_shader_stage_create_info.module = vert_shader.GetImpl().GetShaderModule();
+  vert_shader_stage_create_info.module = builder.vert_shader_.GetImpl().GetShaderModule();
   vert_shader_stage_create_info.pName = "main";
 
   VkPipelineShaderStageCreateInfo frag_shader_stage_create_info{};
   frag_shader_stage_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
   frag_shader_stage_create_info.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-  frag_shader_stage_create_info.module = frag_shader.GetImpl().GetShaderModule();
+  frag_shader_stage_create_info.module = builder.frag_shader_.GetImpl().GetShaderModule();
   frag_shader_stage_create_info.pName = "main";
 
   VkPipelineVertexInputStateCreateInfo vert_input_stage_create_info{};
@@ -29,13 +70,6 @@ bool GALPipelineImplVk::Create(GALPlatform* gal_platform, const GALShader& vert_
   input_assembly_create_info.primitiveRestartEnable = VK_FALSE;
 
   VkViewport viewport{};
-  
-
-  return true;
-}
-
-void GALPipelineImplVk::Destroy() {
-  
 }
 
 } // namespace
