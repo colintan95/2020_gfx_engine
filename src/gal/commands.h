@@ -7,9 +7,9 @@
 #include <utility>
 #include <variant>
 #include <vector>
-#include "gal/gal_buffer.h"
+// #include "gal/gal_buffer.h"
 #include "gal/gal_pipeline.h"
-#include "gal/gal_texture_sampler.h"
+// #include "gal/gal_texture_sampler.h"
 
 namespace gal {
   
@@ -33,21 +33,21 @@ struct SetPipeline {
   GALPipeline pipeline;
 };
 
-struct SetTextureSampler {
-  GALTextureSampler sampler;
-  // TODO(colintan): Rename to something clearer - e.g. uniform_idx? but without uniform in it
-  uint8_t idx;
-};
+// struct SetTextureSampler {
+//   GALTextureSampler sampler;
+//   // TODO(colintan): Rename to something clearer - e.g. uniform_idx? but without uniform in it
+//   uint8_t idx;
+// };
 
-struct SetUniformBuffer {
-  GALBuffer buffer;
-  uint8_t idx; // Equivalent of opengl bindings
-};
+// struct SetUniformBuffer {
+//   GALBuffer buffer;
+//   uint8_t idx; // Equivalent of opengl bindings
+// };
 
-struct SetVertexBuffer {
-  GALBuffer buffer;
-  uint8_t vert_idx; // Index of vertex in the vertex description
-};
+// struct SetVertexBuffer {
+//   GALBuffer buffer;
+//   uint8_t vert_idx; // Index of vertex in the vertex description
+// };
 
 struct DrawTriangles {
   uint32_t num_triangles;
@@ -58,9 +58,9 @@ using CommandUnion =
         SetViewport,
         ClearScreen,
         SetPipeline,
-        SetTextureSampler,
-        SetUniformBuffer,
-        SetVertexBuffer,
+        // SetTextureSampler,
+        // SetUniformBuffer,
+        // SetVertexBuffer,
         DrawTriangles>;
 } // namespace
 

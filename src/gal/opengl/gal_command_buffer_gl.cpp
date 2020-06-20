@@ -93,9 +93,6 @@ void GALCommandBuffer::Execute() const {
     } else if (entry.IsType<command::SetUniformBuffer>()) {
       executor.SetUniformBuffer(entry.AsType<command::SetUniformBuffer>());
 
-    // } else if (entry.IsType<command::SetVertexDesc>()) {
-    //   executor.SetVertexDesc(entry.AsType<command::SetVertexDesc>());
-
     } else if (entry.IsType<command::SetVertexBuffer>()) {
       executor.SetVertexBuffer(entry.AsType<command::SetVertexBuffer>());
 
