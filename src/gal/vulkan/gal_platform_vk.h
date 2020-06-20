@@ -13,6 +13,7 @@ namespace internal {
 
 struct PlatformDetails {
   VkDevice vk_device;
+  VkExtent2D vk_swapchain_extent;
 };
 
 class GALPlatformImplVk : public GALPlatformImpl {
