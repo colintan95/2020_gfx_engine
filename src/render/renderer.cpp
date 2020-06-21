@@ -26,6 +26,21 @@
 #include "resource/resource_system.h"
 #include "window/window.h"
 
+namespace {
+
+struct Vertex {
+  glm::vec2 pos;
+  glm::vec3 color;
+};
+
+const std::vector<Vertex> kVertices = {
+  {{0.f, -0.5f}, {1.f, 0.f, 0.f}},
+  {{0.5f, 0.5f}, {0.f, 1.f, 0.f}},
+  {{-0.5f, 0.5f,}, {0.f, 0.f, 1.f}}
+};
+
+} // namespace
+
 namespace render {
 
 Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_system) {
@@ -79,7 +94,6 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
     std::cerr << "Failed to create GAL fragment shader." << std::endl;
     throw InitException();
   }
-
   
   try {
     pipeline_ = gal::GALPipeline::BeginBuild(gal_platform_.get())

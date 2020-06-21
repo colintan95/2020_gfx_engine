@@ -33,13 +33,15 @@ public:
   class VertexDesc {
   public:
     struct Entry {
-      uint8_t index;
-      uint8_t size;
+      uint8_t buffer_idx;
+      uint8_t shader_idx;
       // TODO(colintan): Add more fields
     };
 
   public:
-    void SetAttribute(uint8_t index, uint8_t size) {
+    void SetBufferDesc(int buffer_idx, int stride);
+
+    void SetAttribute(uint8_t buffer_idx, uint8_t shader_idx) {
       Entry entry;
       entry.index = index;
       entry.size = size;

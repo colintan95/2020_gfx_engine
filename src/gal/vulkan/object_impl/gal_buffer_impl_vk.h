@@ -1,0 +1,8 @@
+#ifndef GAL_VULKAN_OBJECT_IMPL_GAL_BUFFER_IMPL_VK_H_
+#define GAL_VULKAN_OBJECT_IMPL_GAL_BUFFER_IMPL_VK_H_
+
+namespace gal {
+
+} // namespace
+
+#endif // GAL_VULKAN_OBJECT_IMPL_GAL_BUFFER_IMPL_VK_H_
