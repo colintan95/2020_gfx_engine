@@ -6,6 +6,7 @@
 #include <optional>
 #include <string>
 #include <unordered_map>
+#include "gal/gal_buffer.h"
 #include "gal/gal_platform.h"
 #include "gal/gal_command_buffer.h"
 // #include "render/mesh.h"
@@ -40,6 +41,7 @@ private:
   resource::ResourceSystem* resource_system_ = nullptr;
 
   gal::GALPipeline pipeline_;
+  gal::GALBuffer vert_buffer_;
   gal::GALCommandBuffer command_buffer_;
 
   // std::unique_ptr<resource::ResourceManagerGAL> resource_manager_;

@@ -7,7 +7,7 @@
 #include <utility>
 #include <variant>
 #include <vector>
-// #include "gal/gal_buffer.h"
+#include "gal/gal_buffer.h"
 #include "gal/gal_pipeline.h"
 // #include "gal/gal_texture_sampler.h"
 
@@ -44,10 +44,10 @@ struct SetPipeline {
 //   uint8_t idx; // Equivalent of opengl bindings
 // };
 
-// struct SetVertexBuffer {
-//   GALBuffer buffer;
-//   uint8_t vert_idx; // Index of vertex in the vertex description
-// };
+struct SetVertexBuffer {
+  GALBuffer buffer;
+  int buffer_idx;
+};
 
 struct DrawTriangles {
   uint32_t num_triangles;
@@ -62,7 +62,7 @@ using CommandVariant =
         command::SetPipeline,
         // SetTextureSampler,
         // SetUniformBuffer,
-        // SetVertexBuffer,
+        command::SetVertexBuffer,
         command::DrawTriangles>;
 
 } // namespace

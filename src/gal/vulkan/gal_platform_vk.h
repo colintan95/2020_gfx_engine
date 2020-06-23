@@ -12,6 +12,7 @@ namespace gal {
 namespace internal {
 
 struct PlatformDetails {
+  VkPhysicalDevice vk_physical_device;
   VkDevice vk_device;
   VkExtent2D vk_swapchain_extent;
   VkFormat vk_swapchain_image_format;

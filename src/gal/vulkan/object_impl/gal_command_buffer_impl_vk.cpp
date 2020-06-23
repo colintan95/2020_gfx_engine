@@ -65,6 +65,15 @@ void GALCommandBufferImplVk::SubmitCommand(const CommandVariant& command_variant
       vkCmdBindPipeline(vk_command_buffers_[i], VK_PIPELINE_BIND_POINT_GRAPHICS, 
                         command.pipeline.GetImpl().GetPipeline());
     }
+  } else if (std::holds_alternative<command::SetVertexBuffer>(command_variant)) {
+    const command::SetVertexBuffer& command = std::get<command::SetVertexBuffer>(command_variant);
+
+    for (VkCommandBuffer command_buffer : vk_command_buffers_) {
+      VkBuffer buffers[] = { command.buffer.GetImpl().GetBuffer() };
+      VkDeviceSize offsets[] = {0};
+      vkCmdBindVertexBuffers(command_buffer, command.buffer_idx, 1, buffers, offsets);
+    }
+
   } else if (std::holds_alternative<command::DrawTriangles>(command_variant)) {
     const command::DrawTriangles& command = std::get<command::DrawTriangles>(command_variant);
 

@@ -33,12 +33,6 @@ struct Vertex {
   glm::vec3 color;
 };
 
-const std::vector<Vertex> kVertices = {
-  {{0.f, -0.5f}, {1.f, 0.f, 0.f}},
-  {{0.5f, 0.5f}, {0.f, 1.f, 0.f}},
-  {{-0.5f, 0.5f,}, {0.f, 0.f, 1.f}}
-};
-
 } // namespace
 
 namespace render {
@@ -103,7 +97,7 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
 
   gal::GALPipelineBuilder::VertexInput vert_input;
   vert_input.buffer_idx = 0;
-  vert_input.stride = 0;
+  vert_input.stride = sizeof(Vertex);
 
   gal::GALPipelineBuilder::VertexDesc pos_desc;
   pos_desc.buffer_idx = 0;
@@ -115,7 +109,7 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
   color_desc.buffer_idx = 0;
   color_desc.shader_idx = 1;
   color_desc.num_components = 3;
-  color_desc.offset = 2;
+  color_desc.offset = 2 * sizeof(float);
   
   try {
     pipeline_ = gal::GALPipeline::BeginBuild(gal_platform_.get())
@@ -133,6 +127,23 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
 
   frag_shader.Destroy();
   vert_shader.Destroy();
+
+  std::vector<Vertex> vertices = {
+    {{0.f, -0.5f}, {1.f, 0.f, 0.f}},
+    {{0.5f, 0.5f}, {0.f, 1.f, 0.f}},
+    {{-0.5f, 0.5f,}, {0.f, 0.f, 1.f}}
+  };
+
+  try {
+    vert_buffer_ = gal::GALBuffer::BeginBuild(gal_platform_.get())
+        .SetType(gal::BufferType::Vertex)
+        .SetBufferData(reinterpret_cast<uint8_t*>(vertices.data()), 
+                       sizeof(Vertex) * vertices.size())
+        .Create();
+  } catch (gal::GALBuffer::InitException& e) {
+    std::cerr << e.what() << std::endl;
+    throw InitException();
+  }
   
   try {
     command_buffer_ = gal::GALCommandBuffer::BeginBuild(gal_platform_.get()).Create();
@@ -149,6 +160,11 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
   gal::command::SetPipeline set_pipeline;
   set_pipeline.pipeline = pipeline_;
   command_buffer_.SubmitCommand(set_pipeline);
+
+  gal::command::SetVertexBuffer set_vert_buf;
+  set_vert_buf.buffer = vert_buffer_;
+  set_vert_buf.buffer_idx = 0;
+  command_buffer_.SubmitCommand(set_vert_buf);
 
   gal::command::DrawTriangles draw_triangles;
   draw_triangles.num_triangles = 1;
