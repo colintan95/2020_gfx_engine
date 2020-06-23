@@ -1,6 +1,7 @@
 #include "gal/vulkan/object_impl/gal_pipeline_impl_vk.h"
 
 #include <iostream>
+#include <utility>
 #include "gal/vulkan/gal_platform_vk.h"
 
 namespace gal {
@@ -15,24 +16,32 @@ GALPipelineImplVk::Builder&
     frag_shader_ = shader;
     break;
   default:
-    throw ReturnType::InitException();
+    throw ConcreteType::InitException();
   }
 
   return *this;
 }
 
 GALPipelineImplVk::Builder& 
-    GALPipelineImplVk::Builder::SetViewport(float x, float y, float width, float height) {
-  viewport_.x = x;
-  viewport_.y = y;
-  viewport_.width = width;
-  viewport_.height = height;
-
+    GALPipelineImplVk::Builder::SetViewport(const Viewport& viewport) {
+  viewport_ = viewport;
   return *this;
 }
 
-GALPipelineImplVk::Builder::ReturnType GALPipelineImplVk::Builder::Create() {
-  ReturnType res;
+GALPipelineImplVk::Builder&
+    GALPipelineImplVk::Builder::AddVertexInput(const VertexInput& vert_input) {
+  vert_inputs_.push_back(vert_input);
+  return *this;
+}
+
+GALPipelineImplVk::Builder&
+    GALPipelineImplVk::Builder::AddVertexDesc(const VertexDesc& vert_desc) {
+  vert_descs_.push_back(vert_desc);
+  return *this;
+}
+
+GALPipelineImplVk::Builder::ConcreteType GALPipelineImplVk::Builder::Create() {
+  ConcreteType res;
   res.GetImpl().CreateFromBuilder(*this);
   res.SetValid(true);
   return res;
@@ -65,12 +74,43 @@ void GALPipelineImplVk::CreateFromBuilder(GALPipelineImplVk::Builder& builder) {
 
   VkPipelineShaderStageCreateInfo shader_stages[] = { vert_shader_stage, frag_shader_stage };
 
+  std::vector<VkVertexInputBindingDescription> vert_binding_descs;
+  for (const GALPipelineImplVk::Builder::VertexInput& vert_input : builder.vert_inputs_) {
+    VkVertexInputBindingDescription desc;
+    desc.binding = vert_input.buffer_idx;
+    desc.stride = vert_input.stride;
+    desc.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+    vert_binding_descs.push_back(std::move(desc));
+  }
+
+  std::vector<VkVertexInputAttributeDescription> vert_attribute_descs;
+  for (const GALPipelineImplVk::Builder::VertexDesc& vert_desc : builder.vert_descs_) {
+    VkVertexInputAttributeDescription desc;
+    desc.binding = vert_desc.buffer_idx;
+    desc.location = vert_desc.shader_idx;
+    
+    switch (vert_desc.num_components) {
+    case 2:
+      desc.format = VK_FORMAT_R32G32_SFLOAT;
+      break;
+    case 3:
+      desc.format = VK_FORMAT_R32G32B32_SFLOAT;
+      break;
+    default: 
+      std::cerr << "Vertex format not supported." << std::endl;
+      throw Builder::ConcreteType::InitException();
+    }
+
+    desc.offset = vert_desc.offset;
+    vert_attribute_descs.push_back(std::move(desc));
+  }
+
   VkPipelineVertexInputStateCreateInfo vert_input_state{};
   vert_input_state.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-  vert_input_state.vertexBindingDescriptionCount = 0;
-  vert_input_state.pVertexBindingDescriptions = nullptr;
-  vert_input_state.vertexAttributeDescriptionCount = 0;
-  vert_input_state.pVertexAttributeDescriptions = nullptr;
+  vert_input_state.vertexBindingDescriptionCount = vert_binding_descs.size();
+  vert_input_state.pVertexBindingDescriptions = vert_binding_descs.data();
+  vert_input_state.vertexAttributeDescriptionCount = vert_attribute_descs.size();
+  vert_input_state.pVertexAttributeDescriptions = vert_attribute_descs.data();
 
   VkPipelineInputAssemblyStateCreateInfo input_assembly_state{};
   input_assembly_state.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -133,7 +173,7 @@ void GALPipelineImplVk::CreateFromBuilder(GALPipelineImplVk::Builder& builder) {
   if (vkCreatePipelineLayout(vk_device_, &pipeline_layout_create_info, nullptr,
                              &vk_pipeline_layout_) != VK_SUCCESS) {
     std::cerr << "Coult not create VkPipelineLayout." << std::endl;
-    throw Builder::ReturnType::InitException();
+    throw Builder::ConcreteType::InitException();
   }
 
   VkAttachmentDescription color_attachment{};
@@ -175,7 +215,7 @@ void GALPipelineImplVk::CreateFromBuilder(GALPipelineImplVk::Builder& builder) {
   if (vkCreateRenderPass(vk_device_, &render_pass_create_info, nullptr, 
                          &vk_render_pass_) != VK_SUCCESS) {
     std::cerr << "Coult not create VkRenderPass." << std::endl;
-    throw Builder::ReturnType::InitException();
+    throw Builder::ConcreteType::InitException();
   }
 
   VkGraphicsPipelineCreateInfo pipeline_create_info{};
@@ -197,7 +237,7 @@ void GALPipelineImplVk::CreateFromBuilder(GALPipelineImplVk::Builder& builder) {
   if (vkCreateGraphicsPipelines(vk_device_, VK_NULL_HANDLE, 1, &pipeline_create_info, nullptr,
                                 &vk_pipeline_) != VK_SUCCESS) {
     std::cerr << "Coult not create VkPipeline." << std::endl;
-    throw Builder::ReturnType::InitException();
+    throw Builder::ConcreteType::InitException();
   }
 
   std::vector<VkImageView>& swapchain_image_views = 
@@ -219,7 +259,7 @@ void GALPipelineImplVk::CreateFromBuilder(GALPipelineImplVk::Builder& builder) {
     if (vkCreateFramebuffer(vk_device_, &framebuffer_create_info, nullptr, 
                             &vk_framebuffers_[i]) != VK_SUCCESS) {
       std::cerr << "Coult not create VkFramebuffer." << std::endl;
-      throw Builder::ReturnType::InitException();
+      throw Builder::ConcreteType::InitException();
     }
   }
 }

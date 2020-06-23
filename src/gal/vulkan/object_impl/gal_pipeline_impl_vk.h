@@ -13,12 +13,14 @@ class GALPipelineImplVk : public IGALPipelineImpl {
 friend class Builder;
 
 public:
+  // TODO(colintan): Should inherit from an interface class
   class Builder {
   friend class GALPipelineImplVk;
 
   private:
-    using ReturnType = GALPipelineBase<GALPipelineImplVk, Builder>;
+    using ConcreteType = GALPipelineBase<GALPipelineImplVk, Builder>;
 
+  public:
     struct Viewport {
       float x = 0.f;
       float y = 0.f;
@@ -26,19 +28,38 @@ public:
       float height = 0.f;
     };
 
+    struct VertexInput {
+      int buffer_idx = 0;
+      int stride = 0;
+    };
+
+    struct VertexDesc {
+      int buffer_idx = 0;
+      int shader_idx = 0;
+      int num_components = 0;
+      int offset = 0;
+    };
+
   public:
     Builder(GALPlatform* gal_platform) : gal_platform_(gal_platform) {}
 
     Builder& SetShader(ShaderType type, const GALShader& shader);
-    Builder& SetViewport(float x, float y, float width, float height);
+    Builder& SetViewport(const Viewport& viewport);
+    Builder& AddVertexInput(const VertexInput& vert_input);
+    Builder& AddVertexDesc(const VertexDesc& vert_desc);
     
-    ReturnType Create();
+    ConcreteType Create();
 
   private:
     GALPlatform* gal_platform_;
+
     GALShader vert_shader_;
     GALShader frag_shader_;
+
     Viewport viewport_;
+
+    std::vector<VertexInput> vert_inputs_;
+    std::vector<VertexDesc> vert_descs_;
   };
 
 private:
@@ -63,6 +84,7 @@ private:
 };
 
 using GALPipeline = GALPipelineBase<GALPipelineImplVk, GALPipelineImplVk::Builder>;
+using GALPipelineBuilder = GALPipelineImplVk::Builder;
 
 } // namespace 
 

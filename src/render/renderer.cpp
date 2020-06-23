@@ -94,12 +94,37 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
     std::cerr << "Failed to create GAL fragment shader." << std::endl;
     throw InitException();
   }
+
+  gal::GALPipelineBuilder::Viewport viewport;
+  viewport.x = 0;
+  viewport.y = 0;
+  viewport.width = window_->GetWidth();
+  viewport.height = window_->GetHeight();
+
+  gal::GALPipelineBuilder::VertexInput vert_input;
+  vert_input.buffer_idx = 0;
+  vert_input.stride = 0;
+
+  gal::GALPipelineBuilder::VertexDesc pos_desc;
+  pos_desc.buffer_idx = 0;
+  pos_desc.shader_idx = 0;
+  pos_desc.num_components = 2;
+  pos_desc.offset = 0;
+
+  gal::GALPipelineBuilder::VertexDesc color_desc;
+  color_desc.buffer_idx = 0;
+  color_desc.shader_idx = 1;
+  color_desc.num_components = 3;
+  color_desc.offset = 2;
   
   try {
     pipeline_ = gal::GALPipeline::BeginBuild(gal_platform_.get())
         .SetShader(gal::ShaderType::Vertex, vert_shader)
         .SetShader(gal::ShaderType::Fragment, frag_shader)
-        .SetViewport(0, 0, window_->GetWidth(), window_->GetHeight())
+        .SetViewport(viewport)
+        .AddVertexInput(vert_input)
+        .AddVertexDesc(pos_desc)
+        .AddVertexDesc(color_desc)
         .Create();
   } catch (gal::GALPipeline::InitException& e) {
     std::cerr << e.what() << std::endl;

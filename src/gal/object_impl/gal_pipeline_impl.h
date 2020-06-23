@@ -30,33 +30,6 @@ public:
   };
 
 public:
-  class VertexDesc {
-  public:
-    struct Entry {
-      uint8_t buffer_idx;
-      uint8_t shader_idx;
-      // TODO(colintan): Add more fields
-    };
-
-  public:
-    void SetBufferDesc(int buffer_idx, int stride);
-
-    void SetAttribute(uint8_t buffer_idx, uint8_t shader_idx) {
-      Entry entry;
-      entry.index = index;
-      entry.size = size;
-      entries_.push_back(std::move(entry));
-    }
-
-    const std::vector<Entry>& GetEntries() const { return entries_; }
-
-  private:
-    // TODO(colintan): This will probably be copied when GALPipeline is copied (e.g. when
-    // we copy the GALPipeline into the command buffer). Consider using shared_ptr
-    std::vector<Entry> entries_;
-  };
-
-public:
   static BuilderType BeginBuild(GALPlatform* gal_platform) {
     return BuilderType(gal_platform);
   }
@@ -68,14 +41,8 @@ public:
   const ImplType& GetImpl() const { return impl_; }
   ImplType& GetImpl() { return impl_; }
 
-public:
- const VertexDesc& GetVertexDesc() const { return vert_desc_; }
-  VertexDesc& GetVertexDesc() { return vert_desc_; }
-
 private:
   ImplType impl_;
-
-  VertexDesc vert_desc_;
 };
 
 } // namespace
