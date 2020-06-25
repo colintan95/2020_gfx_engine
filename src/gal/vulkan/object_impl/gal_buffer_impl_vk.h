@@ -3,6 +3,7 @@
 
 #include <vulkan/vulkan.h>
 
+#include <optional>
 #include "gal/object_impl/gal_buffer_impl.h"
 
 namespace gal {
@@ -34,7 +35,16 @@ public:
   };
 
 private:
+  struct BufferInfo {
+    VkBuffer vk_buffer;
+    VkDeviceMemory vk_buffer_memory;
+  };
+
+private:
   void CreateFromBuilder(Builder& builder);
+
+  std::optional<BufferInfo> CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, 
+                                         VkMemoryPropertyFlags properties);
 
 public:
   void Destroy() final;
@@ -42,9 +52,10 @@ public:
   VkBuffer GetBuffer() const { return vk_buffer_; }
 
 private:
+  VkPhysicalDevice vk_physical_device_;
   VkDevice vk_device_;
   VkBuffer vk_buffer_;
-  VkDeviceMemory vk_device_memory_;
+  VkDeviceMemory vk_buffer_memory_;
 }; 
 
 using GALBuffer = GALBufferBase<GALBufferImplVk, GALBufferImplVk::Builder>;
