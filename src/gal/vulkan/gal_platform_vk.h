@@ -18,6 +18,7 @@ struct PlatformDetails {
   VkFormat vk_swapchain_image_format;
   std::vector<VkImageView> vk_swapchain_image_views;
   VkCommandPool vk_command_pool;
+  VkQueue vk_graphics_queue;
 };
 
 const int kMaxFramesInFlight = 2;
