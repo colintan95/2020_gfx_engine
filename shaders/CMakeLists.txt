@@ -1,4 +1,6 @@
 set(SHADER_SRC_FILES
+    "model_frag.frag"
+    "model_vert.vert"
     "textured_model_frag.frag"
     "textured_model_vert.vert"
     "triangle_frag.frag"

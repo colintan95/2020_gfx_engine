@@ -40,6 +40,11 @@ public:
       int offset = 0;
     };
 
+    struct UniformDesc {
+      int shader_idx = 0;
+      ShaderType shader_stage = ShaderType::Invalid;
+    };
+
   public:
     Builder(GALPlatform* gal_platform) : gal_platform_(gal_platform) {}
 
@@ -47,6 +52,7 @@ public:
     Builder& SetViewport(const Viewport& viewport);
     Builder& AddVertexInput(const VertexInput& vert_input);
     Builder& AddVertexDesc(const VertexDesc& vert_desc);
+    Builder& AddUniformDesc(const UniformDesc& uniform_desc);
     
     ConcreteType Create();
 
@@ -60,6 +66,7 @@ public:
 
     std::vector<VertexInput> vert_inputs_;
     std::vector<VertexDesc> vert_descs_;
+    std::vector<UniformDesc> uniform_descs_;
   };
 
 private:
@@ -76,6 +83,7 @@ public:
 private:
   VkPipelineLayout vk_pipeline_layout_;
   VkRenderPass vk_render_pass_;
+  VkDescriptorSetLayout vk_descriptor_set_layout_;
   VkPipeline vk_pipeline_;
 
   std::vector<VkFramebuffer> vk_framebuffers_;

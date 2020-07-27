@@ -110,6 +110,10 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
   color_desc.shader_idx = 1;
   color_desc.num_components = 3;
   color_desc.offset = 2 * sizeof(float);
+
+  gal::GALPipelineBuilder::UniformDesc uniform_desc;
+  uniform_desc.shader_idx = 0;
+  uniform_desc.shader_stage = gal::ShaderType::Vertex;
   
   try {
     pipeline_ = gal::GALPipeline::BeginBuild(gal_platform_.get())
@@ -119,6 +123,7 @@ Renderer::Renderer(window::Window* window, resource::ResourceSystem* resource_sy
         .AddVertexInput(vert_input)
         .AddVertexDesc(pos_desc)
         .AddVertexDesc(color_desc)
+        .AddUniformDesc(uniform_desc)
         .Create();
   } catch (gal::GALPipeline::InitException& e) {
     std::cerr << e.what() << std::endl;

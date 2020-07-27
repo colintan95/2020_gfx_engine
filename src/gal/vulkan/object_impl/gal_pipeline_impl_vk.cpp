@@ -40,6 +40,12 @@ GALPipelineImplVk::Builder&
   return *this;
 }
 
+GALPipelineImplVk::Builder&
+    GALPipelineImplVk::Builder::AddUniformDesc(const UniformDesc& uniform_desc) {
+  uniform_descs_.push_back(uniform_desc);
+  return *this;
+}
+
 GALPipelineImplVk::Builder::ConcreteType GALPipelineImplVk::Builder::Create() {
   ConcreteType res;
   res.GetImpl().CreateFromBuilder(*this);
@@ -55,6 +61,7 @@ void GALPipelineImplVk::Destroy() {
   vkDestroyPipeline(vk_device_, vk_pipeline_, nullptr);
   vkDestroyRenderPass(vk_device_, vk_render_pass_, nullptr);
   vkDestroyPipelineLayout(vk_device_, vk_pipeline_layout_, nullptr);
+  vkDestroyDescriptorSetLayout(vk_device_, vk_descriptor_set_layout_, nullptr);
 }
 
 void GALPipelineImplVk::CreateFromBuilder(GALPipelineImplVk::Builder& builder) {
@@ -103,6 +110,23 @@ void GALPipelineImplVk::CreateFromBuilder(GALPipelineImplVk::Builder& builder) {
 
     desc.offset = vert_desc.offset;
     vert_attribute_descs.push_back(std::move(desc));
+  }
+
+  std::vector<VkDescriptorSetLayoutBinding> uniform_bindings;
+  for (const GALPipelineImplVk::Builder::UniformDesc& uniform_desc : builder.uniform_descs_) {
+    VkDescriptorSetLayoutBinding uniform_binding{};
+    uniform_binding.binding = uniform_desc.shader_idx;
+    uniform_binding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    uniform_binding.descriptorCount = 1;
+
+    if (uniform_desc.shader_stage == ShaderType::Vertex) {
+      uniform_binding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+    } else {
+      std::cerr << "Vertex format not supported for uniform description." << std::endl;
+      throw Builder::ConcreteType::InitException();
+    }
+
+    uniform_bindings.push_back(uniform_binding);
   }
 
   VkPipelineVertexInputStateCreateInfo vert_input_state{};
@@ -167,8 +191,21 @@ void GALPipelineImplVk::CreateFromBuilder(GALPipelineImplVk::Builder& builder) {
   color_blend_state.attachmentCount = 1;
   color_blend_state.pAttachments = &color_blend_attachment;
 
+  VkDescriptorSetLayoutCreateInfo descriptor_set_layout_create_info{};
+  descriptor_set_layout_create_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+  descriptor_set_layout_create_info.bindingCount = uniform_bindings.size();
+  descriptor_set_layout_create_info.pBindings = uniform_bindings.data();
+
+  if (vkCreateDescriptorSetLayout(vk_device_, &descriptor_set_layout_create_info, nullptr,
+                                  &vk_descriptor_set_layout_) != VK_SUCCESS) {
+    std::cerr << "Coult not create VkDescriptorSetLayout." << std::endl;
+    throw Builder::ConcreteType::InitException();
+  }
+
   VkPipelineLayoutCreateInfo  pipeline_layout_create_info{};
   pipeline_layout_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+  pipeline_layout_create_info.setLayoutCount = 1;
+  pipeline_layout_create_info.pSetLayouts = &vk_descriptor_set_layout_;
   
   if (vkCreatePipelineLayout(vk_device_, &pipeline_layout_create_info, nullptr,
                              &vk_pipeline_layout_) != VK_SUCCESS) {
