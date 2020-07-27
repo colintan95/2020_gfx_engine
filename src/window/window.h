@@ -31,9 +31,7 @@ public:
 
   bool ShouldClose();
 
-  bool CreateWindowSurface(const WindowSurface::CreateInfo& create_info);
-
-  WindowSurface* GetWindowSurface();
+  std::unique_ptr<WindowSurface> CreateWindowSurface(const WindowSurface::CreateInfo& create_info);
 
   int GetWidth() const;
   int GetHeight() const;

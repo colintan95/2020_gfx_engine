@@ -13,8 +13,4 @@ WindowSurface::WindowSurface(CreateInfo create_info, GLFWwindow* glfw_window) {
   vk_instance_ = create_info.vk_instance;
 }
 
-WindowSurface::~WindowSurface() {
-  vkDestroySurfaceKHR(vk_instance_, vk_surface_, nullptr);
-}
-
 } // namespace

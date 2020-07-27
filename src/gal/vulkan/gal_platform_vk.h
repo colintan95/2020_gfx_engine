@@ -56,6 +56,7 @@ private:
 
   VkInstance vk_instance_;
   VkDebugUtilsMessengerEXT vk_debug_messenger_;
+
   VkSurfaceKHR vk_surface_;
   VkPhysicalDevice vk_physical_device_;
   VkDevice vk_device_;

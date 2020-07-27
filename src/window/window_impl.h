@@ -23,9 +23,8 @@ public:
 
   virtual bool ShouldClose() = 0;
 
-  virtual bool CreateWindowSurface(const WindowSurface::CreateInfo& create_info) = 0;
-
-  virtual WindowSurface* GetWindowSurface() = 0;
+  virtual std::unique_ptr<WindowSurface>
+      CreateWindowSurface(const WindowSurface::CreateInfo& create_info) = 0;
 
   virtual std::optional<event::Event> ConsumeEvent() = 0;
 

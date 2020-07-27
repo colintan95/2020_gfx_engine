@@ -17,12 +17,9 @@ bool Window::ShouldClose() {
   return impl_->ShouldClose();
 }
 
-bool Window::CreateWindowSurface(const WindowSurface::CreateInfo& create_info) {
+std::unique_ptr<WindowSurface> 
+    Window::CreateWindowSurface(const WindowSurface::CreateInfo& create_info) {
   return impl_->CreateWindowSurface(create_info);
-}
-
-WindowSurface* Window::GetWindowSurface() {
-  return impl_->GetWindowSurface();
 }
 
 int Window::GetWidth() const {

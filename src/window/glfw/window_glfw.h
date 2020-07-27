@@ -26,9 +26,8 @@ public:
 
   bool ShouldClose() final;
 
-  bool CreateWindowSurface(const WindowSurface::CreateInfo& create_info) final;
-
-  WindowSurface* GetWindowSurface() final;
+  std::unique_ptr<WindowSurface> 
+      CreateWindowSurface(const WindowSurface::CreateInfo& create_info) final;
 
   std::optional<event::Event> ConsumeEvent() final;
 
@@ -42,7 +41,6 @@ private:
 
 private:
   GLFWwindow* glfw_window_;
-  std::unique_ptr<WindowSurface> window_surface_;
 
   int width_;
   int height_;

@@ -43,8 +43,6 @@ bool WindowImplGLFW::CreateWindow(int width, int height, const std::string& titl
 }
 
 void WindowImplGLFW::DestroyWindow() {
-  window_surface_.reset();
-
   if (glfw_window_ != nullptr) {
     glfwDestroyWindow(glfw_window_);
   }
@@ -58,18 +56,16 @@ void WindowImplGLFW::SwapBuffers() {
   glfwSwapBuffers(glfw_window_);
 }
 
-bool WindowImplGLFW::CreateWindowSurface(const WindowSurface::CreateInfo& create_info) {
+std::unique_ptr<WindowSurface>  
+    WindowImplGLFW::CreateWindowSurface(const WindowSurface::CreateInfo& create_info) {
+  std::unique_ptr<WindowSurface> surface;
   try {
-    window_surface_ = std::make_unique<WindowSurface>(create_info, glfw_window_);
+    surface = std::make_unique<WindowSurface>(create_info, glfw_window_);
   } catch (WindowSurface::InitException& e) {
     std::cerr << e.what() << std::endl;
-    return false;
+    return nullptr;
   }
-  return true;
-}
-
-WindowSurface* WindowImplGLFW::GetWindowSurface() {
-  return window_surface_.get();
+  return surface;
 }
 
 std::optional<event::Event> WindowImplGLFW::ConsumeEvent() {

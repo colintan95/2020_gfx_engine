@@ -27,7 +27,6 @@ public:
 
 public:
   WindowSurface(CreateInfo create_info, GLFWwindow* glfw_window);
-  ~WindowSurface();
 
   VkSurfaceKHR GetVkSurface() { return vk_surface_; }
 

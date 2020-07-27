@@ -95,12 +95,15 @@ GALPlatformImplVk::GALPlatformImplVk(window::Window* window) {
 
   window::WindowSurface::CreateInfo window_surface_create_info;
   window_surface_create_info.vk_instance = vk_instance_;
-  if (!window->CreateWindowSurface(window_surface_create_info)) {
+
+  std::unique_ptr<window::WindowSurface> 
+      window_surface = window->CreateWindowSurface(window_surface_create_info);
+  if (window_surface == nullptr) {
     std::cerr << "Could not create WindowSurface" << std::endl;
     throw GALPlatform::InitException();
   }
 
-  vk_surface_ = window->GetWindowSurface()->GetVkSurface();
+  vk_surface_ = window_surface->GetVkSurface();
 
   std::optional<PhysicalDeviceInfo> physical_device_info = ChoosePhysicalDevice();
 
