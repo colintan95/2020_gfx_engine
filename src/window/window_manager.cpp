@@ -32,7 +32,7 @@ Window* WindowManager::CreateWindow(int width, int height, const std::string& ti
 
 void WindowManager::DestroyWindow(Window* window) {
   window_->DestroyWindow();
-  window_.release();
+  window_.reset();
 }
 
 } // namespace

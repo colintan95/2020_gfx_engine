@@ -288,7 +288,7 @@ GALPlatformImplVk::~GALPlatformImplVk() {
   // TODO(colintan): Should this be here?
   vkDeviceWaitIdle(vk_device_);
 
-  details_.release();
+  details_.reset();
 
   for (size_t i = 0; i < kMaxFramesInFlight; ++i) {
     vkDestroyFence(vk_device_, vk_in_flight_fences_[i], nullptr);

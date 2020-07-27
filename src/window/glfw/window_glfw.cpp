@@ -43,7 +43,7 @@ bool WindowImplGLFW::CreateWindow(int width, int height, const std::string& titl
 }
 
 void WindowImplGLFW::DestroyWindow() {
-  window_surface_.release();
+  window_surface_.reset();
 
   if (glfw_window_ != nullptr) {
     glfwDestroyWindow(glfw_window_);
