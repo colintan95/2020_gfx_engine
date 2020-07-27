@@ -16,7 +16,7 @@ EventHandler::~EventHandler() {
   assert(manager_ != nullptr);
   assert(impl_ != nullptr);
   
-  impl_.release();
+  impl_.reset();
   manager_->RemoveEventHandler(this);
   manager_ = nullptr;
 }

@@ -15,9 +15,7 @@ ResourceSystem::ResourceSystem() {
   }
 }
 
-ResourceSystem::~ResourceSystem() {
-  default_manager_.release();
-}
+ResourceSystem::~ResourceSystem() {}
 
 Handle<Model> ResourceSystem::LoadModel(const std::string& file_path) {
   Handle<Model> resource_handle = default_manager_->CreateResource<Model>();

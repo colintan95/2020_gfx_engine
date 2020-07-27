@@ -63,16 +63,16 @@ int main() {
     window->SwapBuffers();
   }
 
-  scene.release();
+  scene.reset();
   
-  renderer.release();
+  renderer.reset();
 
-  event_manager.release();
+  event_manager.reset();
 
   window_manager->DestroyWindow(window);
-  window_manager.release();
+  window_manager.reset();
 
-  resource_system.release();
+  resource_system.reset();
   
   return 0;
 }

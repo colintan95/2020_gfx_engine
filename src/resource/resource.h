@@ -30,7 +30,7 @@ public:
   }
 
   void Dealloc() final {
-    resource_.release();
+    resource_.reset();
   }
 
   const T& Get() const { return *resource_; }

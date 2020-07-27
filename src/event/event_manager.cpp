@@ -21,10 +21,7 @@ EventManager::EventManager(window::Window* window) {
   }
 }
 
-EventManager::~EventManager() {
-  event_consumer_.release();
-  window_ = nullptr;
-}
+EventManager::~EventManager() {}
 
 void EventManager::Tick() {
   while (std::optional<event::Event> event_opt = event_consumer_->ConsumeEvent()) {
