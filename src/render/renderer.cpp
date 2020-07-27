@@ -310,7 +310,7 @@ Renderer::~Renderer() {
 
   pipeline_.Destroy();
 
-  // resource_manager_.release();
+  // resource_manager_.reset();
   gal_platform_.reset();
 
   resource_system_ = nullptr;
